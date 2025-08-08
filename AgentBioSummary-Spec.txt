@@ -1,0 +1,10 @@
+This is a high level spec that describes the AgentBioSummary system.
+
+The AgentBioSummary system is a agentic system that will search the web
+for the most relevant articles in synthetic biology, create a summary of 
+a new articles from the past 24 hours, and then create a summary of the 
+the top 10 articles. The summary should be understandable for a 15 year 
+old high school student, who has a good foundation is basic biology. 
+
+The agent will run every day at a certain time and the summary will be 
+emailed to a recipient with an email address.
