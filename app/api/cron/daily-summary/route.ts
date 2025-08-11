@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
             createdAt: new Date().toISOString()
           }
         ]
-        await emailService.sendErrorNotification(defaultRecipients, error.message)
+        await emailService.sendErrorNotification(defaultRecipients, error instanceof Error ? error.message : 'Unknown error occurred')
       } catch (emailError) {
         console.error('Failed to send error notification:', emailError)
       }

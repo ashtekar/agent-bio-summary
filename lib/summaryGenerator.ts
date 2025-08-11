@@ -51,7 +51,7 @@ export class SummaryGenerator {
       return response.choices[0]?.message?.content || 'Unable to generate summary'
     } catch (error) {
       console.error('Error generating daily summary:', error)
-      if (error.code === 'insufficient_quota') {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
         return 'OpenAI API quota exceeded. Please check your billing or try again later.'
       }
       return 'Error generating summary'
@@ -99,7 +99,7 @@ export class SummaryGenerator {
       return response.choices[0]?.message?.content || 'Unable to generate top 10 summary'
     } catch (error) {
       console.error('Error generating top 10 summary:', error)
-      if (error.code === 'insufficient_quota') {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
         return 'OpenAI API quota exceeded. Please check your billing or try again later.'
       }
       return 'Error generating summary'
@@ -143,7 +143,7 @@ export class SummaryGenerator {
       return response.choices[0]?.message?.content || article.summary
     } catch (error) {
       console.error('Error simplifying article content:', error)
-      if (error.code === 'insufficient_quota') {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
         return 'OpenAI API quota exceeded. Using original summary.'
       }
       return article.summary
@@ -189,7 +189,7 @@ export class SummaryGenerator {
       return response.choices[0]?.message?.content || 'Educational context unavailable'
     } catch (error) {
       console.error('Error generating educational context:', error)
-      if (error.code === 'insufficient_quota') {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
         return 'OpenAI API quota exceeded. Educational context unavailable.'
       }
       return 'Educational context unavailable'
