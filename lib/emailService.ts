@@ -30,7 +30,7 @@ export class EmailService {
     const emailText = this.generateEmailText(summary, recipient.name)
 
     await this.resend.emails.send({
-      from: 'AgentBioSummary <noreply@agentbiosummary.com>',
+      from: 'AgentBioSummary <noreply@news.ashtekar.net>',
       to: recipient.email,
       subject: `Synthetic Biology Daily Digest - ${summary.date}`,
       html: emailHtml,
@@ -169,7 +169,7 @@ Designed for high school students with an interest in synthetic biology
 
     try {
       const result = await this.resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: 'noreply@news.ashtekar.net',
         to: recipient.email,
         subject: 'AgentBioSummary - Test Email',
         html: emailHtml,
@@ -264,7 +264,7 @@ Designed for high school students with an interest in synthetic biology
       const errorEmailPromises = recipients
         .filter(recipient => recipient.active)
         .map(recipient => this.resend.emails.send({
-          from: 'AgentBioSummary <noreply@agentbiosummary.com>',
+          from: 'AgentBioSummary <noreply@news.ashtekar.net>',
           to: recipient.email,
           subject: 'AgentBioSummary - System Error',
           html: `
