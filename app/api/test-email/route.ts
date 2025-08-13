@@ -61,12 +61,15 @@ export async function POST(request: NextRequest) {
           title: 'Test Daily Summary',
           articles: [
             {
+              id: 'test-article-1',
               title: 'Sample Synthetic Biology Article',
               url: 'https://example.com/article1',
               source: 'Nature',
               publishedDate: new Date().toISOString(),
               relevanceScore: 0.95,
-              content: 'This is a sample article about synthetic biology breakthroughs.'
+              content: 'This is a sample article about synthetic biology breakthroughs.',
+              summary: 'A breakthrough in synthetic biology research.',
+              keywords: ['synthetic biology', 'breakthrough']
             }
           ],
           dailySummary: 'This is a test daily summary showing how the email system works.',
