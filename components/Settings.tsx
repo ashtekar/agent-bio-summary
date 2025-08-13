@@ -72,20 +72,30 @@ export function Settings() {
   const addEmailRecipient = async () => {
     if (newEmail && newName) {
       try {
+        console.log('Adding recipient:', { name: newName, email: newEmail })
+        
         const response = await fetch('/api/recipients', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: newName, email: newEmail })
         })
         
+        console.log('Response status:', response.status)
+        
         if (response.ok) {
           const newRecipient = await response.json()
+          console.log('New recipient created:', newRecipient)
           setEmailRecipients([...emailRecipients, newRecipient])
           setNewEmail('')
           setNewName('')
+        } else {
+          const errorData = await response.json()
+          console.error('Failed to add recipient:', errorData)
+          alert(`Failed to add recipient: ${errorData.error}`)
         }
       } catch (error) {
         console.error('Error adding recipient:', error)
+        alert(`Error adding recipient: ${error}`)
       }
     }
   }

@@ -30,35 +30,48 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST /api/recipients called')
+    
     if (!supabaseAdmin) {
+      console.error('Supabase admin not configured')
       return NextResponse.json(
         { error: 'Database not configured' },
         { status: 500 }
       )
     }
 
-    const { name, email } = await request.json()
+    const body = await request.json()
+    console.log('Request body:', body)
+    
+    const { name, email } = body
 
     if (!name || !email) {
+      console.error('Missing name or email:', { name, email })
       return NextResponse.json(
         { error: 'Name and email are required' },
         { status: 400 }
       )
     }
 
+    console.log('Attempting to insert recipient:', { name, email })
+    
     const { data, error } = await supabaseAdmin
       .from('email_recipients')
       .insert([{ name, email }])
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('Supabase error:', error)
+      throw error
+    }
 
+    console.log('Successfully created recipient:', data)
     return NextResponse.json(data)
   } catch (error) {
     console.error('Error creating recipient:', error)
     return NextResponse.json(
-      { error: 'Failed to create recipient' },
+      { error: 'Failed to create recipient', details: error },
       { status: 500 }
     )
   }
