@@ -6,77 +6,153 @@ interface EmailRecipient {
   id: string
   email: string
   name: string
-  active: boolean
+  is_active: boolean
 }
 
 interface SearchSettings {
-  timeWindow: number
+  time_window_hours: number
   sources: string[]
   keywords: string[]
-  maxArticles: number
+  max_articles: number
 }
 
 interface SystemSettings {
-  scheduleTime: string
-  emailTemplate: string
-  summaryLength: 'short' | 'medium' | 'long'
-  includeImages: boolean
+  schedule_time: string
+  summary_length: 'short' | 'medium' | 'long'
+  include_images: boolean
 }
 
 export function Settings() {
   const [emailRecipients, setEmailRecipients] = useState<EmailRecipient[]>([])
   const [searchSettings, setSearchSettings] = useState<SearchSettings>({
-    timeWindow: 24,
-    sources: ['Nature', 'Science', 'Cell', 'PNAS'],
-    keywords: ['synthetic biology', 'CRISPR', 'gene editing', 'bioengineering'],
-    maxArticles: 50
+    time_window_hours: 24,
+    sources: ['pubmed', 'arxiv', 'sciencedaily'],
+    keywords: ['synthetic biology', 'biotechnology', 'genetic engineering'],
+    max_articles: 50
   })
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    scheduleTime: '08:00',
-    emailTemplate: 'default',
-    summaryLength: 'medium',
-    includeImages: true
+    schedule_time: '08:00',
+    summary_length: 'medium',
+    include_images: false
   })
   const [newEmail, setNewEmail] = useState('')
   const [newName, setNewName] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    // Simulate loading settings
-    setTimeout(() => {
-      setEmailRecipients([
-        { id: '1', email: 'student@school.edu', name: 'High School Student', active: true },
-        { id: '2', email: 'teacher@school.edu', name: 'Biology Teacher', active: true }
-      ])
-    }, 500)
+    loadSettings()
   }, [])
 
-  const addEmailRecipient = () => {
-    if (newEmail && newName) {
-      const newRecipient: EmailRecipient = {
-        id: Date.now().toString(),
-        email: newEmail,
-        name: newName,
-        active: true
+  const loadSettings = async () => {
+    try {
+      setLoading(true)
+      
+      // Load recipients
+      const recipientsRes = await fetch('/api/recipients')
+      if (recipientsRes.ok) {
+        const recipients = await recipientsRes.json()
+        setEmailRecipients(recipients)
       }
-      setEmailRecipients([...emailRecipients, newRecipient])
-      setNewEmail('')
-      setNewName('')
+
+      // Load settings
+      const settingsRes = await fetch('/api/settings')
+      if (settingsRes.ok) {
+        const settings = await settingsRes.json()
+        if (settings.search) setSearchSettings(settings.search)
+        if (settings.system) setSystemSettings(settings.system)
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const removeEmailRecipient = (id: string) => {
-    setEmailRecipients(emailRecipients.filter(recipient => recipient.id !== id))
+  const addEmailRecipient = async () => {
+    if (newEmail && newName) {
+      try {
+        const response = await fetch('/api/recipients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newName, email: newEmail })
+        })
+        
+        if (response.ok) {
+          const newRecipient = await response.json()
+          setEmailRecipients([...emailRecipients, newRecipient])
+          setNewEmail('')
+          setNewName('')
+        }
+      } catch (error) {
+        console.error('Error adding recipient:', error)
+      }
+    }
   }
 
-  const toggleRecipientActive = (id: string) => {
-    setEmailRecipients(emailRecipients.map(recipient => 
-      recipient.id === id ? { ...recipient, active: !recipient.active } : recipient
-    ))
+  const removeEmailRecipient = async (id: string) => {
+    try {
+      const response = await fetch(`/api/recipients?id=${id}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.ok) {
+        setEmailRecipients(emailRecipients.filter(recipient => recipient.id !== id))
+      }
+    } catch (error) {
+      console.error('Error removing recipient:', error)
+    }
+  }
+
+  const toggleRecipientActive = async (id: string) => {
+    try {
+      const recipient = emailRecipients.find(r => r.id === id)
+      if (recipient) {
+        const response = await fetch('/api/recipients', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            id, 
+            is_active: !recipient.is_active 
+          })
+        })
+        
+        if (response.ok) {
+          setEmailRecipients(emailRecipients.map(r => 
+            r.id === id ? { ...r, is_active: !r.is_active } : r
+          ))
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling recipient:', error)
+    }
   }
 
   const saveSettings = async () => {
-    // TODO: Implement settings save functionality
-    console.log('Saving settings...', { emailRecipients, searchSettings, systemSettings })
+    try {
+      setSaving(true)
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ search: searchSettings, system: systemSettings })
+      })
+      
+      if (response.ok) {
+        console.log('Settings saved successfully')
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-gray-600">Loading settings...</div>
+      </div>
+    )
   }
 
   return (
@@ -116,7 +192,7 @@ export function Settings() {
               <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
-                  checked={recipient.active}
+                  checked={recipient.is_active}
                   onChange={() => toggleRecipientActive(recipient.id)}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
@@ -147,8 +223,8 @@ export function Settings() {
             </label>
             <input
               type="number"
-              value={searchSettings.timeWindow}
-              onChange={(e) => setSearchSettings({...searchSettings, timeWindow: parseInt(e.target.value)})}
+              value={searchSettings.time_window_hours}
+              onChange={(e) => setSearchSettings({...searchSettings, time_window_hours: parseInt(e.target.value)})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -159,8 +235,8 @@ export function Settings() {
             </label>
             <input
               type="number"
-              value={searchSettings.maxArticles}
-              onChange={(e) => setSearchSettings({...searchSettings, maxArticles: parseInt(e.target.value)})}
+              value={searchSettings.max_articles}
+              onChange={(e) => setSearchSettings({...searchSettings, max_articles: parseInt(e.target.value)})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -191,8 +267,8 @@ export function Settings() {
             </label>
             <input
               type="time"
-              value={systemSettings.scheduleTime}
-              onChange={(e) => setSystemSettings({...systemSettings, scheduleTime: e.target.value})}
+              value={systemSettings.schedule_time}
+              onChange={(e) => setSystemSettings({...systemSettings, schedule_time: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -202,8 +278,8 @@ export function Settings() {
               Summary Length
             </label>
             <select
-              value={systemSettings.summaryLength}
-              onChange={(e) => setSystemSettings({...systemSettings, summaryLength: e.target.value as any})}
+              value={systemSettings.summary_length}
+              onChange={(e) => setSystemSettings({...systemSettings, summary_length: e.target.value as any})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="short">Short</option>
@@ -217,8 +293,8 @@ export function Settings() {
           <label className="flex items-center">
             <input
               type="checkbox"
-              checked={systemSettings.includeImages}
-              onChange={(e) => setSystemSettings({...systemSettings, includeImages: e.target.checked})}
+              checked={systemSettings.include_images}
+              onChange={(e) => setSystemSettings({...systemSettings, include_images: e.target.checked})}
               className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
             />
             <span className="ml-2 text-sm text-gray-700">Include images in email summaries</span>
@@ -230,9 +306,10 @@ export function Settings() {
       <div className="flex justify-end">
         <button
           onClick={saveSettings}
-          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+          disabled={saving}
+          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save Settings
+          {saving ? 'Saving...' : 'Save Settings'}
         </button>
       </div>
     </div>

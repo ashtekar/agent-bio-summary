@@ -24,36 +24,24 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate loading system status
-    setTimeout(() => {
-      setSystemStatus({
-        lastRun: '2024-01-15 08:00:00',
-        articlesFound: 23,
-        summariesGenerated: 2,
-        emailSent: true,
-        nextScheduledRun: '2024-01-16 08:00:00'
-      })
-      
-      setRecentSummaries([
-        {
-          id: '1',
-          date: '2024-01-15',
-          title: 'Daily Summary - January 15, 2024',
-          articleCount: 10,
-          status: 'completed'
-        },
-        {
-          id: '2',
-          date: '2024-01-14',
-          title: 'Daily Summary - January 14, 2024',
-          articleCount: 8,
-          status: 'completed'
-        }
-      ])
-      
-      setLoading(false)
-    }, 1000)
+    loadDashboardData()
   }, [])
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/dashboard')
+      if (response.ok) {
+        const data = await response.json()
+        setSystemStatus(data.systemStatus)
+        setRecentSummaries(data.recentSummaries)
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleManualRun = async () => {
     // TODO: Implement manual run functionality

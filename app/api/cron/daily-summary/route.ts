@@ -2,10 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { WebSearchModule } from '@/lib/webSearch'
 import { SummaryGenerator } from '@/lib/summaryGenerator'
 import { EmailService } from '@/lib/emailService'
+import { supabaseAdmin } from '@/lib/supabase'
 import { SearchSettings, DailySummary } from '@/lib/types'
 
 export async function GET(request: NextRequest) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { success: false, error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     // Verify this is a legitimate cron request (you can add more security here)
     const authHeader = request.headers.get('authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -17,11 +25,22 @@ export async function GET(request: NextRequest) {
 
     console.log('Starting daily summary generation...')
 
-    // Step 1: Search for articles
-    const searchSettings: SearchSettings = {
+    // Step 1: Get settings from database
+    const { data: searchSettingsData, error: searchError } = await supabaseAdmin
+      .from('search_settings')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (searchError && searchError.code !== 'PGRST116') {
+      throw new Error(`Failed to fetch search settings: ${searchError.message}`)
+    }
+
+    const searchSettings: SearchSettings = searchSettingsData || {
       timeWindow: 24,
-      sources: ['Nature', 'Science', 'Cell', 'PNAS', 'PubMed', 'arXiv'],
-      keywords: ['synthetic biology', 'CRISPR', 'gene editing', 'bioengineering'],
+      sources: ['pubmed', 'arxiv', 'sciencedaily'],
+      keywords: ['synthetic biology', 'biotechnology', 'genetic engineering'],
       maxArticles: 50
     }
 
@@ -51,8 +70,26 @@ export async function GET(request: NextRequest) {
 
     console.log('Summaries generated successfully')
 
-    // Step 3: Create daily summary object
-    const today = new Date().toLocaleDateString()
+    // Step 3: Store articles in database
+    if (articles.length > 0) {
+      const { error: articlesError } = await supabaseAdmin
+        .from('articles')
+        .insert(articles.map(article => ({
+          title: article.title,
+          url: article.url,
+          source: article.source,
+          published_date: article.publishedDate,
+          relevance_score: article.relevanceScore,
+          content: article.content
+        })))
+
+      if (articlesError) {
+        console.error('Error storing articles:', articlesError)
+      }
+    }
+
+    // Step 4: Create and store daily summary
+    const today = new Date().toISOString().split('T')[0]
     const summary: DailySummary = {
       id: `summary-${Date.now()}`,
       date: today,
@@ -65,27 +102,39 @@ export async function GET(request: NextRequest) {
       updatedAt: new Date().toISOString()
     }
 
-    // Step 4: Send emails (if configured)
+    // Store summary in database
+    const { error: summaryError } = await supabaseAdmin
+      .from('daily_summaries')
+      .insert([{
+        date: today,
+        daily_overview: dailySummary,
+        top_10_summary: top10Summary,
+        featured_articles: articles.slice(0, 10).map(a => a.title)
+      }])
+
+    if (summaryError) {
+      console.error('Error storing summary:', summaryError)
+    }
+
+    // Step 5: Send emails (if configured)
     let emailSent = false
     if (process.env.RESEND_API_KEY) {
-      // For now, we'll use a default recipient list
-      // In a real implementation, this would come from your database
-      const defaultRecipients = [
-        {
-          id: '1',
-          email: process.env.DEFAULT_RECIPIENT_EMAIL || 'test@example.com',
-          name: 'Test Recipient',
-          active: true,
-          createdAt: new Date().toISOString()
-        }
-      ]
+      // Get recipients from database
+      const { data: recipients, error: recipientsError } = await supabaseAdmin
+        .from('email_recipients')
+        .select('*')
+        .eq('is_active', true)
 
-      const emailService = new EmailService(process.env.RESEND_API_KEY)
-      emailSent = await emailService.sendDailySummary(defaultRecipients, summary)
-      
-      if (emailSent) {
-        summary.emailSent = true
-        summary.updatedAt = new Date().toISOString()
+      if (recipientsError) {
+        console.error('Error fetching recipients:', recipientsError)
+      } else if (recipients && recipients.length > 0) {
+        const emailService = new EmailService(process.env.RESEND_API_KEY)
+        emailSent = await emailService.sendDailySummary(recipients, summary)
+        
+        if (emailSent) {
+          summary.emailSent = true
+          summary.updatedAt = new Date().toISOString()
+        }
       }
     }
 
@@ -106,19 +155,18 @@ export async function GET(request: NextRequest) {
     console.error('Error in daily summary cron job:', error)
     
     // Send error notification if email service is available
-    if (process.env.RESEND_API_KEY) {
+    if (process.env.RESEND_API_KEY && supabaseAdmin) {
       try {
         const emailService = new EmailService(process.env.RESEND_API_KEY)
-        const defaultRecipients = [
-          {
-            id: '1',
-            email: process.env.ADMIN_EMAIL || 'admin@example.com',
-            name: 'System Admin',
-            active: true,
-            createdAt: new Date().toISOString()
-          }
-        ]
-        await emailService.sendErrorNotification(defaultRecipients, error instanceof Error ? error.message : 'Unknown error occurred')
+        const { data: recipients } = await supabaseAdmin
+          .from('email_recipients')
+          .select('*')
+          .eq('is_active', true)
+          .limit(1)
+
+        if (recipients && recipients.length > 0) {
+          await emailService.sendErrorNotification(recipients, error instanceof Error ? error.message : 'Unknown error occurred')
+        }
       } catch (emailError) {
         console.error('Failed to send error notification:', emailError)
       }
