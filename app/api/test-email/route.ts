@@ -85,10 +85,15 @@ export async function POST(request: NextRequest) {
 
       case 'error':
         // Send an error notification
-        emailSent = await emailService.sendErrorNotification(
-          recipients, 
-          'This is a test error notification to verify the email system is working properly.'
-        )
+        try {
+          await emailService.sendErrorNotification(
+            recipients, 
+            'This is a test error notification to verify the email system is working properly.'
+          )
+          emailSent = true
+        } catch (error) {
+          emailSent = false
+        }
         emailContent = 'Error Notification Test Email'
         break
 
