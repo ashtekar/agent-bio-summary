@@ -26,6 +26,13 @@ export async function POST(request: NextRequest) {
       }]
     } else {
       // Get active recipients from database
+      if (!supabaseAdmin) {
+        return NextResponse.json(
+          { error: 'Database not configured' },
+          { status: 500 }
+        )
+      }
+
       const { data: dbRecipients, error } = await supabaseAdmin
         .from('email_recipients')
         .select('*')
