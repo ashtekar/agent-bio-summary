@@ -26,8 +26,10 @@ export interface EmailRecipient {
   id: string
   email: string
   name: string
-  active: boolean
-  createdAt: string
+  active?: boolean
+  is_active?: boolean
+  createdAt?: string
+  created_at?: string
 }
 
 export interface SearchSettings {

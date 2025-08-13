@@ -11,7 +11,7 @@ export class EmailService {
   async sendDailySummary(recipients: EmailRecipient[], summary: DailySummary): Promise<boolean> {
     try {
       const emailPromises = recipients
-        .filter(recipient => recipient.active)
+        .filter(recipient => recipient.active || recipient.is_active)
         .map(recipient => this.sendEmailToRecipient(recipient, summary))
 
       const results = await Promise.allSettled(emailPromises)
@@ -143,38 +143,120 @@ Designed for high school students with an interest in synthetic biology
     `
   }
 
-  async sendTestEmail(recipient: EmailRecipient): Promise<boolean> {
+  async sendTestEmail(recipients: EmailRecipient[]): Promise<boolean> {
     try {
-      const testSummary: DailySummary = {
-        id: 'test',
-        date: new Date().toLocaleDateString(),
-        title: 'Test Summary',
-        articles: [
-          {
-            id: 'test-1',
-            title: 'Test Article: CRISPR Gene Editing Breakthrough',
-            url: 'https://example.com',
-            source: 'Nature',
-            publishedDate: new Date().toISOString(),
-            content: 'This is a test article about CRISPR gene editing.',
-            summary: 'Researchers made a breakthrough in CRISPR gene editing technology.',
-            relevanceScore: 9.0,
-            keywords: ['crispr', 'gene editing']
-          }
-        ],
-        top10Summary: 'This is a test summary of the top 10 articles for today.',
-        dailySummary: 'This is a test daily overview of synthetic biology developments.',
-        emailSent: false,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      const emailPromises = recipients
+        .filter(recipient => recipient.active || recipient.is_active)
+        .map(recipient => this.sendBasicTestEmail(recipient))
 
-      await this.sendEmailToRecipient(recipient, testSummary)
-      return true
+      const results = await Promise.allSettled(emailPromises)
+      const successCount = results.filter(result => result.status === 'fulfilled').length
+
+      console.log(`Test email sent successfully to ${successCount}/${recipients.length} recipients`)
+      return successCount > 0
     } catch (error) {
-      console.error('Error sending test email:', error)
+      console.error('Error sending test emails:', error)
       return false
     }
+  }
+
+  private async sendBasicTestEmail(recipient: EmailRecipient): Promise<void> {
+    const emailHtml = this.generateBasicTestEmailHTML(recipient.name)
+    const emailText = this.generateBasicTestEmailText(recipient.name)
+
+    console.log('Attempting to send email to:', recipient.email)
+    console.log('Using Resend API key:', process.env.RESEND_API_KEY ? 'Present' : 'Missing')
+
+    try {
+      const result = await this.resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: recipient.email,
+        subject: 'AgentBioSummary - Test Email',
+        html: emailHtml,
+        text: emailText
+      })
+      
+      console.log('Resend API response:', result)
+    } catch (error) {
+      console.error('Resend API error:', error)
+      throw error
+    }
+  }
+
+  private generateBasicTestEmailHTML(recipientName: string): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AgentBioSummary Test Email</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
+          .content { background: white; padding: 30px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+          .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; border-left: 4px solid #28a745; margin: 15px 0; }
+          .footer { text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>🧬 AgentBioSummary</h1>
+          <p>Test Email - Email System Verification</p>
+        </div>
+        
+        <div class="content">
+          <p>Hello ${recipientName},</p>
+          
+          <div class="success">
+            <h2>✅ Email System Test Successful!</h2>
+            <p>This is a test email to verify that the AgentBioSummary email system is working correctly.</p>
+          </div>
+          
+          <p>If you received this email, it means:</p>
+          <ul>
+            <li>✅ The Resend email service is properly configured</li>
+            <li>✅ Your email address is correctly set up in the system</li>
+            <li>✅ The email templates are working</li>
+            <li>✅ Daily summaries will be delivered successfully</li>
+          </ul>
+          
+          <p><strong>What's Next?</strong></p>
+          <p>The system will now automatically send you daily synthetic biology summaries at the scheduled time. You can manage your preferences in the AgentBioSummary dashboard.</p>
+        </div>
+        
+        <div class="footer">
+          <p>This is a test email from AgentBioSummary</p>
+          <p>Designed for high school students with an interest in synthetic biology</p>
+        </div>
+      </body>
+      </html>
+    `
+  }
+
+  private generateBasicTestEmailText(recipientName: string): string {
+    return `
+AgentBioSummary - Test Email
+
+Hello ${recipientName},
+
+✅ EMAIL SYSTEM TEST SUCCESSFUL!
+
+This is a test email to verify that the AgentBioSummary email system is working correctly.
+
+If you received this email, it means:
+✅ The Resend email service is properly configured
+✅ Your email address is correctly set up in the system
+✅ The email templates are working
+✅ Daily summaries will be delivered successfully
+
+What's Next?
+The system will now automatically send you daily synthetic biology summaries at the scheduled time. You can manage your preferences in the AgentBioSummary dashboard.
+
+---
+This is a test email from AgentBioSummary
+Designed for high school students with an interest in synthetic biology
+    `
   }
 
   async sendErrorNotification(recipients: EmailRecipient[], error: string): Promise<void> {

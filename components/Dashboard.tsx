@@ -43,9 +43,36 @@ export function Dashboard() {
     }
   }
 
+  const [testingEmail, setTestingEmail] = useState(false)
+
   const handleManualRun = async () => {
     // TODO: Implement manual run functionality
     console.log('Manual run triggered')
+  }
+
+  const handleTestEmail = async () => {
+    try {
+      setTestingEmail(true)
+      
+      const response = await fetch('/api/test-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ testType: 'basic' })
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        alert(`✅ ${result.message}`)
+      } else {
+        alert(`❌ ${result.error}`)
+      }
+    } catch (error) {
+      console.error('Error testing email:', error)
+      alert('❌ Failed to send test email. Please check the console for details.')
+    } finally {
+      setTestingEmail(false)
+    }
   }
 
   if (loading) {
@@ -96,8 +123,12 @@ export function Dashboard() {
           <button className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
             View Latest Summary
           </button>
-          <button className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-            Test Email
+          <button 
+            onClick={handleTestEmail}
+            disabled={testingEmail}
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {testingEmail ? 'Sending...' : 'Test Email'}
           </button>
         </div>
       </div>
