@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { formatDate, formatLastRun } from '@/lib/utils'
 
 export async function GET() {
   try {
@@ -62,11 +63,11 @@ export async function GET() {
     const nextScheduledRun = tomorrow.toISOString()
 
     const systemStatus = {
-      lastRun: latestSummary?.created_at || 'Never',
+      lastRun: formatLastRun(latestSummary?.created_at || 'Never'),
       articlesFound: todayArticles?.length || 0,
       summariesGenerated: totalSummaries?.length || 0,
       emailSent: latestSummary ? true : false,
-      nextScheduledRun: nextScheduledRun
+      nextScheduledRun: formatDate(nextScheduledRun)
     }
 
     const formattedSummaries = recentSummaries?.map(summary => ({

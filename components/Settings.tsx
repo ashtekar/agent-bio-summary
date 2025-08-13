@@ -178,14 +178,14 @@ export function Settings() {
             placeholder="Email address"
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           />
           <input
             type="text"
             placeholder="Name"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           />
           <button
             onClick={addEmailRecipient}
@@ -235,7 +235,7 @@ export function Settings() {
               type="number"
               value={searchSettings.time_window_hours}
               onChange={(e) => setSearchSettings({...searchSettings, time_window_hours: parseInt(e.target.value)})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
             />
           </div>
           
@@ -247,7 +247,7 @@ export function Settings() {
               type="number"
               value={searchSettings.max_articles}
               onChange={(e) => setSearchSettings({...searchSettings, max_articles: parseInt(e.target.value)})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
             />
           </div>
         </div>
@@ -260,7 +260,7 @@ export function Settings() {
             type="text"
             value={searchSettings.keywords.join(', ')}
             onChange={(e) => setSearchSettings({...searchSettings, keywords: e.target.value.split(',').map(k => k.trim())})}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
             placeholder="synthetic biology, CRISPR, gene editing"
           />
         </div>
@@ -279,7 +279,7 @@ export function Settings() {
               type="time"
               value={systemSettings.schedule_time}
               onChange={(e) => setSystemSettings({...systemSettings, schedule_time: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
             />
           </div>
           
@@ -290,7 +290,7 @@ export function Settings() {
             <select
               value={systemSettings.summary_length}
               onChange={(e) => setSystemSettings({...systemSettings, summary_length: e.target.value as any})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
             >
               <option value="short">Short</option>
               <option value="medium">Medium</option>
