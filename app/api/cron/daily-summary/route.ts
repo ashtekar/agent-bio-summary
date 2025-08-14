@@ -19,6 +19,27 @@ export async function GET(request: NextRequest) {
 
     console.log('Starting daily summary generation...')
 
+    // Step 0: Check if summary already exists for today
+    const today = new Date().toISOString().split('T')[0]
+    const { data: existingSummary } = await supabaseAdmin
+      .from('daily_summaries')
+      .select('id')
+      .eq('date', today)
+      .single()
+
+    if (existingSummary) {
+      console.log(`Daily summary for ${today} already exists, skipping generation`)
+      return NextResponse.json({
+        success: true,
+        message: 'Daily summary already exists for today',
+        summary: {
+          date: today,
+          articlesCount: 0,
+          emailSent: false
+        }
+      })
+    }
+
     // Step 1: Get settings from database
     const { data: searchSettingsData, error: searchError } = await supabaseAdmin
       .from('search_settings')
@@ -64,26 +85,30 @@ export async function GET(request: NextRequest) {
 
     console.log('Summaries generated successfully')
 
-    // Step 3: Store articles in database
+    // Step 3: Store articles in database (upsert to handle duplicates)
     if (articles.length > 0) {
       const { error: articlesError } = await supabaseAdmin
         .from('articles')
-        .insert(articles.map(article => ({
+        .upsert(articles.map(article => ({
           title: article.title,
           url: article.url,
           source: article.source,
           published_date: article.publishedDate,
           relevance_score: article.relevanceScore,
           content: article.content
-        })))
+        })), {
+          onConflict: 'url',
+          ignoreDuplicates: false
+        })
 
       if (articlesError) {
         console.error('Error storing articles:', articlesError)
+      } else {
+        console.log(`Successfully stored/updated ${articles.length} articles`)
       }
     }
 
     // Step 4: Create and store daily summary
-    const today = new Date().toISOString().split('T')[0]
     const summary: DailySummary = {
       id: `summary-${Date.now()}`,
       date: today,
@@ -96,18 +121,23 @@ export async function GET(request: NextRequest) {
       updatedAt: new Date().toISOString()
     }
 
-    // Store summary in database
+    // Store summary in database (upsert to handle duplicates)
     const { error: summaryError } = await supabaseAdmin
       .from('daily_summaries')
-      .insert([{
+      .upsert([{
         date: today,
         daily_overview: dailySummary,
         top_10_summary: top10Summary,
         featured_articles: articles.slice(0, 10).map(a => a.title)
-      }])
+      }], {
+        onConflict: 'date',
+        ignoreDuplicates: false
+      })
 
     if (summaryError) {
       console.error('Error storing summary:', summaryError)
+    } else {
+      console.log(`Successfully stored/updated daily summary for ${today}`)
     }
 
     // Step 5: Send emails (if configured)
