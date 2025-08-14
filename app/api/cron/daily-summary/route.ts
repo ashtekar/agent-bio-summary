@@ -152,6 +152,8 @@ export async function GET(request: NextRequest) {
     // Step 5: Send emails (if configured)
     let emailSent = false
     if (process.env.RESEND_API_KEY) {
+      console.log('Resend API key is configured, attempting to send emails...')
+      
       // Get recipients from database
       const { data: recipients, error: recipientsError } = await supabaseAdmin
         .from('email_recipients')
@@ -161,14 +163,22 @@ export async function GET(request: NextRequest) {
       if (recipientsError) {
         console.error('Error fetching recipients:', recipientsError)
       } else if (recipients && recipients.length > 0) {
+        console.log(`Found ${recipients.length} active recipients:`, recipients.map(r => r.email))
+        
         const emailService = new EmailService(process.env.RESEND_API_KEY)
         emailSent = await emailService.sendDailySummary(recipients, summary)
+        
+        console.log(`Email sending result: ${emailSent}`)
         
         if (emailSent) {
           summary.emailSent = true
           summary.updatedAt = new Date().toISOString()
         }
+      } else {
+        console.log('No active recipients found')
       }
+    } else {
+      console.log('Resend API key not configured, skipping email sending')
     }
 
     console.log('Daily summary process completed successfully')

@@ -262,7 +262,7 @@ Designed for high school students with an interest in synthetic biology
   async sendErrorNotification(recipients: EmailRecipient[], error: string): Promise<void> {
     try {
       const errorEmailPromises = recipients
-        .filter(recipient => recipient.active)
+        .filter(recipient => recipient.active || recipient.is_active)
         .map(recipient => this.resend.emails.send({
           from: 'AgentBioSummary <noreply@news.ashtekar.net>',
           to: recipient.email,
