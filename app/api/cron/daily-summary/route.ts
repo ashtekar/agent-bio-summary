@@ -85,14 +85,25 @@ export async function GET(request: NextRequest) {
       throw new Error('OpenAI API key not configured')
     }
 
+    console.log('Starting summary generation with OpenAI...')
     const summaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY)
     
-    const [dailySummary, top10Summary] = await Promise.all([
-      summaryGenerator.generateDailySummary(articles),
-      summaryGenerator.generateTop10Summary(articles)
-    ])
+    let dailySummary: string
+    let top10Summary: string
+    
+    try {
+      [dailySummary, top10Summary] = await Promise.all([
+        summaryGenerator.generateDailySummary(articles),
+        summaryGenerator.generateTop10Summary(articles)
+      ])
 
-    console.log('Summaries generated successfully')
+      console.log('Summaries generated successfully')
+      console.log('Daily summary length:', dailySummary.length)
+      console.log('Top 10 summary length:', top10Summary.length)
+    } catch (summaryError) {
+      console.error('Error generating summaries:', summaryError)
+      throw new Error(`Summary generation failed: ${summaryError instanceof Error ? summaryError.message : 'Unknown error'}`)
+    }
 
     // Step 3: Store articles in database (upsert to handle duplicates)
     if (articles.length > 0) {
