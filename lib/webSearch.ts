@@ -48,7 +48,8 @@ export class WebSearchModule {
       const response = await axios.get(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+        },
+        timeout: 10000 // 10 second timeout
       })
 
       const $ = cheerio.load(response.data)
@@ -89,7 +90,9 @@ export class WebSearchModule {
       const keywords = this.settings.keywords.join(' OR ')
       const url = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(keywords)}&start=0&max_results=20&sortBy=submittedDate&sortOrder=descending`
       
-      const response = await axios.get(url)
+      const response = await axios.get(url, {
+        timeout: 10000 // 10 second timeout
+      })
       const $ = cheerio.load(response.data, { xmlMode: true })
       
       $('entry').each((index, element) => {
@@ -125,11 +128,12 @@ export class WebSearchModule {
     
     try {
       // Search Science Daily
-      const scienceDailyUrl = `https://www.sciencedaily.com/news/computers_math/synthetic_biology/`
+      const scienceDailyUrl = `https://www.sciencedaily.com/news/top/technology/`
       const response = await axios.get(scienceDailyUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+        },
+        timeout: 10000 // 10 second timeout
       })
 
       const $ = cheerio.load(response.data)
