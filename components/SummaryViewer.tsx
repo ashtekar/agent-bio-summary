@@ -28,49 +28,66 @@ export function SummaryViewer() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate loading summaries
-    setTimeout(() => {
-      const mockSummaries: DailySummary[] = [
-        {
-          id: '1',
-          date: '2024-01-15',
-          title: 'Daily Summary - January 15, 2024',
-          emailSent: true,
-          top10Summary: 'Today\'s top 10 synthetic biology articles include breakthroughs in CRISPR gene editing, new biofuel production methods, and advances in synthetic cell development. Key highlights include a novel approach to genome engineering and promising results in sustainable biomanufacturing.',
-          dailySummary: 'The synthetic biology field saw significant progress today with 23 new articles published. Major themes include gene editing technologies, sustainable bioproduction, and synthetic cell engineering. Researchers are making strides in making complex biological systems more accessible and controllable.',
-          articles: [
-            {
-              id: '1',
-              title: 'Novel CRISPR-Cas9 System Shows Improved Precision in Gene Editing',
-              url: 'https://example.com/article1',
-              source: 'Nature Biotechnology',
-              publishedDate: '2024-01-15',
-              summary: 'Researchers developed a new CRISPR-Cas9 variant that reduces off-target effects by 90% while maintaining high editing efficiency.',
-              relevanceScore: 9.5
-            },
-            {
-              id: '2',
-              title: 'Synthetic Biology Approach to Biofuel Production from Algae',
-              url: 'https://example.com/article2',
-              source: 'Science',
-              publishedDate: '2024-01-15',
-              summary: 'A team engineered algae to produce biofuels more efficiently, potentially making renewable energy more cost-effective.',
-              relevanceScore: 8.8
-            }
-          ]
+    const fetchSummaries = async () => {
+      try {
+        setLoading(true)
+        
+        const response = await fetch('/api/summaries')
+        const result = await response.json()
+        
+        if (response.ok && result.success) {
+          setSummaries(result.summaries)
+          // Select the most recent summary if available
+          if (result.summaries.length > 0) {
+            setSelectedSummary(result.summaries[0])
+          }
+        } else {
+          console.error('Failed to fetch summaries:', result.error)
+          // Fallback to empty array if API fails
+          setSummaries([])
         }
-      ]
-      
-      setSummaries(mockSummaries)
-      setSelectedSummary(mockSummaries[0])
-      setLoading(false)
-    }, 1000)
+      } catch (error) {
+        console.error('Error fetching summaries:', error)
+        setSummaries([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSummaries()
   }, [])
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+      </div>
+    )
+  }
+
+  if (summaries.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Daily Summaries</h2>
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Summaries Available</h3>
+            <p className="text-gray-500 mb-4">
+              No daily summaries have been generated yet. Use the "Run Now" button on the Dashboard to generate your first summary.
+            </p>
+            <button
+              onClick={() => window.location.href = '/'}
+              className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
