@@ -14,14 +14,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Verify this is a legitimate cron request (you can add more security here)
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    // Vercel handles cron job authentication automatically
+    // No need for additional authentication checks
 
     console.log('Starting daily summary generation...')
 

@@ -118,10 +118,7 @@ export function Dashboard() {
             onClick={handleManualRun}
             className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
           >
-            Run Manual Search
-          </button>
-          <button className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-            View Latest Summary
+            Run Now
           </button>
           <button 
             onClick={handleTestEmail}
