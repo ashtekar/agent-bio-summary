@@ -44,8 +44,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 1000,
-        temperature: 0.7
+        max_completion_tokens: 1000
       })
 
       return response.choices[0]?.message?.content || 'Unable to generate summary'
@@ -92,8 +91,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 800,
-        temperature: 0.7
+        max_completion_tokens: 800
       })
 
       return response.choices[0]?.message?.content || 'Unable to generate top 10 summary'
@@ -136,8 +134,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 500,
-        temperature: 0.7
+        max_completion_tokens: 500
       })
 
       return response.choices[0]?.message?.content || article.summary
@@ -182,8 +179,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 400,
-        temperature: 0.7
+        max_completion_tokens: 400
       })
 
       return response.choices[0]?.message?.content || 'Educational context unavailable'
