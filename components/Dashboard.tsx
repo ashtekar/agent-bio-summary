@@ -44,10 +44,32 @@ export function Dashboard() {
   }
 
   const [testingEmail, setTestingEmail] = useState(false)
+  const [runningManual, setRunningManual] = useState(false)
 
   const handleManualRun = async () => {
-    // TODO: Implement manual run functionality
-    console.log('Manual run triggered')
+    try {
+      setRunningManual(true)
+      
+      const response = await fetch('/api/cron/daily-summary?manual=true', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      
+      const result = await response.json()
+      
+      if (response.ok) {
+        alert(`✅ ${result.message}`)
+        // Refresh the dashboard data to show updated status
+        window.location.reload()
+      } else {
+        alert(`❌ ${result.error}`)
+      }
+    } catch (error) {
+      console.error('Error running manual search:', error)
+      alert('❌ Failed to run manual search. Please check the console for details.')
+    } finally {
+      setRunningManual(false)
+    }
   }
 
   const handleTestEmail = async () => {
@@ -116,9 +138,10 @@ export function Dashboard() {
         <div className="flex space-x-4">
           <button
             onClick={handleManualRun}
-            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+            disabled={runningManual}
+            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Run Now
+            {runningManual ? 'Running...' : 'Run Now'}
           </button>
           <button 
             onClick={handleTestEmail}

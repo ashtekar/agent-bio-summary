@@ -17,27 +17,36 @@ export async function GET(request: NextRequest) {
     // Vercel handles cron job authentication automatically
     // No need for additional authentication checks
 
-    console.log('Starting daily summary generation...')
+    // Check if this is a manual run (from the Run Now button)
+    const { searchParams } = new URL(request.url)
+    const isManualRun = searchParams.get('manual') === 'true'
 
-    // Step 0: Check if summary already exists for today
+    console.log(`Starting daily summary generation... ${isManualRun ? '(Manual Run)' : '(Scheduled Run)'}`)
+
+    // Step 0: Check if summary already exists for today (skip for manual runs)
     const today = new Date().toISOString().split('T')[0]
-    const { data: existingSummary } = await supabaseAdmin
-      .from('daily_summaries')
-      .select('id')
-      .eq('date', today)
-      .single()
+    
+    if (!isManualRun) {
+      const { data: existingSummary } = await supabaseAdmin
+        .from('daily_summaries')
+        .select('id')
+        .eq('date', today)
+        .single()
 
-    if (existingSummary) {
-      console.log(`Daily summary for ${today} already exists, skipping generation`)
-      return NextResponse.json({
-        success: true,
-        message: 'Daily summary already exists for today',
-        summary: {
-          date: today,
-          articlesCount: 0,
-          emailSent: false
-        }
-      })
+      if (existingSummary) {
+        console.log(`Daily summary for ${today} already exists, skipping generation`)
+        return NextResponse.json({
+          success: true,
+          message: 'Daily summary already exists for today',
+          summary: {
+            date: today,
+            articlesCount: 0,
+            emailSent: false
+          }
+        })
+      }
+    } else {
+      console.log('Manual run detected - proceeding with generation even if summary exists')
     }
 
     // Step 1: Get settings from database
