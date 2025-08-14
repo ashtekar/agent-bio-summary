@@ -44,7 +44,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 1000,
+        max_completion_tokens: 1000,
         temperature: 0.7
       })
 
@@ -92,7 +92,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 800,
+        max_completion_tokens: 800,
         temperature: 0.7
       })
 
@@ -136,7 +136,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 500,
+        max_completion_tokens: 500,
         temperature: 0.7
       })
 
@@ -182,7 +182,7 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 400,
+        max_completion_tokens: 400,
         temperature: 0.7
       })
 
