@@ -33,7 +33,7 @@ export class SummaryGenerator {
       Please provide a well-structured daily summary that captures the excitement and importance of these developments in synthetic biology.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -44,7 +44,8 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 1000
+        max_tokens: 1000,
+        temperature: 0.7
       })
 
       const content = response.choices[0]?.message?.content
@@ -83,7 +84,7 @@ export class SummaryGenerator {
       Please provide a compelling summary of these top 10 articles that would interest and educate a high school student.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -94,7 +95,8 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 800
+        max_tokens: 800,
+        temperature: 0.7
       })
 
       const content = response.choices[0]?.message?.content
@@ -129,7 +131,7 @@ export class SummaryGenerator {
       Please provide a simplified explanation that maintains scientific accuracy while being accessible to a high school student.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -140,7 +142,8 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 500
+        max_tokens: 500,
+        temperature: 0.7
       })
 
       return response.choices[0]?.message?.content || article.summary
@@ -174,7 +177,7 @@ export class SummaryGenerator {
       Please provide a brief educational context that helps students understand the significance of these developments.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-5-nano-2025-08-07',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -185,7 +188,8 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_completion_tokens: 400
+        max_tokens: 400,
+        temperature: 0.7
       })
 
       return response.choices[0]?.message?.content || 'Educational context unavailable'

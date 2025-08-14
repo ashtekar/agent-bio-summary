@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     console.log('Testing OpenAI API with simple prompt...')
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-5-nano-2025-08-07',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
           content: 'Say "Hello, this is a test!"'
         }
       ],
-      max_completion_tokens: 100
+      max_tokens: 100,
+      temperature: 0.7
     })
 
     const content = response.choices[0]?.message?.content
