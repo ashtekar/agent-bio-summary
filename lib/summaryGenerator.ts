@@ -47,7 +47,10 @@ export class SummaryGenerator {
         max_completion_tokens: 1000
       })
 
-      return response.choices[0]?.message?.content || 'Unable to generate summary'
+      const content = response.choices[0]?.message?.content
+      console.log('OpenAI response content length:', content?.length || 0)
+      console.log('OpenAI response content preview:', content?.substring(0, 100) || 'No content')
+      return content || 'Unable to generate summary'
     } catch (error) {
       console.error('Error generating daily summary:', error)
       if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
@@ -94,7 +97,10 @@ export class SummaryGenerator {
         max_completion_tokens: 800
       })
 
-      return response.choices[0]?.message?.content || 'Unable to generate top 10 summary'
+      const content = response.choices[0]?.message?.content
+      console.log('OpenAI top 10 response content length:', content?.length || 0)
+      console.log('OpenAI top 10 response content preview:', content?.substring(0, 100) || 'No content')
+      return content || 'Unable to generate top 10 summary'
     } catch (error) {
       console.error('Error generating top 10 summary:', error)
       if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {

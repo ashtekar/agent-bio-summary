@@ -86,6 +86,13 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('Starting summary generation with OpenAI...')
+    console.log('Number of articles to summarize:', articles.length)
+    console.log('Sample article:', articles[0] ? {
+      title: articles[0].title,
+      summary: articles[0].summary?.substring(0, 100),
+      content: articles[0].content?.substring(0, 100)
+    } : 'No articles')
+    
     const summaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY)
     
     let dailySummary: string
@@ -99,7 +106,9 @@ export async function GET(request: NextRequest) {
 
       console.log('Summaries generated successfully')
       console.log('Daily summary length:', dailySummary.length)
+      console.log('Daily summary preview:', dailySummary.substring(0, 100))
       console.log('Top 10 summary length:', top10Summary.length)
+      console.log('Top 10 summary preview:', top10Summary.substring(0, 100))
     } catch (summaryError) {
       console.error('Error generating summaries:', summaryError)
       throw new Error(`Summary generation failed: ${summaryError instanceof Error ? summaryError.message : 'Unknown error'}`)
