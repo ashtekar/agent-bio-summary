@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const summariesWithArticles = await Promise.all(
       summaries.map(async (summary) => {
         // Get articles for this date (articles created on the same date as the summary)
-        const { data: articles, error: articlesError } = await supabaseAdmin
+        const { data: articles, error: articlesError } = await supabaseAdmin!
           .from('articles')
           .select('*')
           .gte('created_at', `${summary.date}T00:00:00Z`)
