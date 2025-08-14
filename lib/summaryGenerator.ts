@@ -33,7 +33,7 @@ export class SummaryGenerator {
       Please provide a well-structured daily summary that captures the excitement and importance of these developments in synthetic biology.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-5-nano-2025-08-07',
         messages: [
           {
             role: 'system',
@@ -81,7 +81,7 @@ export class SummaryGenerator {
       Please provide a compelling summary of these top 10 articles that would interest and educate a high school student.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-5-nano-2025-08-07',
         messages: [
           {
             role: 'system',
@@ -125,7 +125,7 @@ export class SummaryGenerator {
       Please provide a simplified explanation that maintains scientific accuracy while being accessible to a high school student.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-5-nano-2025-08-07',
         messages: [
           {
             role: 'system',
@@ -171,7 +171,7 @@ export class SummaryGenerator {
       Please provide a brief educational context that helps students understand the significance of these developments.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-5-nano-2025-08-07',
         messages: [
           {
             role: 'system',

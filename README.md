@@ -21,7 +21,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 
 ### Backend
 - **Vercel Edge Functions** for serverless processing
-- **OpenAI GPT-3.5-turbo** for intelligent summarization
+- **OpenAI GPT-5-nano-2025-08-07** for intelligent summarization
 - **Resend** for email delivery
 - **Web scraping** with Cheerio and Axios
 
@@ -72,7 +72,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 
 ### API Quota Management
 
-**Important**: The system uses OpenAI's GPT-3.5-turbo model for summarization. If you encounter quota exceeded errors:
+**Important**: The system uses OpenAI's GPT-5-nano-2025-08-07 model for summarization. If you encounter quota exceeded errors:
 
 1. **Check your OpenAI billing** at https://platform.openai.com/account/billing
 2. **Upgrade your plan** if needed for higher usage limits
