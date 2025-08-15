@@ -365,11 +365,11 @@ export function Settings() {
             <option value="gpt-4-turbo">GPT-4 Turbo</option>
             <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
             <option value="gpt-4">GPT-4</option>
-            <option value="gpt-5o">GPT-5o</option>
-            <option value="gpt-5o-mini">GPT-5o Mini</option>
-            <option value="gpt-5o-micro">GPT-5o Micro</option>
-            <option value="gpt-5o-nano">GPT-5o Nano</option>
-            <option value="gpt-5o-nano-2025-08-07">GPT-5o Nano (Latest)</option>
+            <option value="gpt-5">GPT-5</option>
+            <option value="gpt-5-mini">GPT-5 Mini</option>
+            <option value="gpt-5-micro">GPT-5 Micro</option>
+            <option value="gpt-5-nano">GPT-5 Nano</option>
+            <option value="gpt-5-nano-2025-08-07">GPT-5 Nano (Latest)</option>
           </select>
           <p className="text-sm text-gray-500 mt-1">
             Select the OpenAI model for generating summaries. GPT-4o Mini offers the best balance of quality and cost.
