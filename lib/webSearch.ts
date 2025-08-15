@@ -29,8 +29,9 @@ export class WebSearchModule {
       })
 
       // Filter by relevance threshold, sort by relevance score, and take top articles
-      const filteredArticles = articles.filter(article => article.relevanceScore >= this.settings.relevance_threshold)
-      console.log(`Filtered ${articles.length} articles to ${filteredArticles.length} articles above threshold ${this.settings.relevance_threshold}`)
+      const threshold = this.settings.relevance_threshold ?? 6.0
+      const filteredArticles = articles.filter(article => article.relevanceScore >= threshold)
+      console.log(`Filtered ${articles.length} articles to ${filteredArticles.length} articles above threshold ${threshold}`)
       
       filteredArticles.sort((a, b) => b.relevanceScore - a.relevanceScore)
       return filteredArticles.slice(0, this.settings.maxArticles)
