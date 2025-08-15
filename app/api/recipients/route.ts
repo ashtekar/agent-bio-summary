@@ -13,7 +13,6 @@ export async function GET() {
     const { data, error } = await supabaseAdmin
       .from('email_recipients')
       .select('*')
-      .eq('is_active', true)
       .order('created_at', { ascending: false })
 
     if (error) throw error
