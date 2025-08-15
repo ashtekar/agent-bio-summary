@@ -49,13 +49,14 @@ export class SummaryGenerator {
             role: 'user',
             content: prompt
           }
-        ],
-        temperature: 0.7
+        ]
       }
       if (isGpt5Model(this.model)) {
         params.max_completion_tokens = 1000
+        // Do not set temperature for GPT-5 models
       } else {
         params.max_tokens = 1000
+        params.temperature = 0.7
       }
 
       const response = await this.openai.chat.completions.create(params)
@@ -106,13 +107,14 @@ export class SummaryGenerator {
             role: 'user',
             content: prompt
           }
-        ],
-        temperature: 0.7
+        ]
       }
       if (isGpt5Model(this.model)) {
         params.max_completion_tokens = 800
+        // Do not set temperature for GPT-5 models
       } else {
         params.max_tokens = 800
+        params.temperature = 0.7
       }
 
       const response = await this.openai.chat.completions.create(params)
@@ -159,13 +161,14 @@ export class SummaryGenerator {
             role: 'user',
             content: prompt
           }
-        ],
-        temperature: 0.7
+        ]
       }
       if (isGpt5Model(this.model)) {
         params.max_completion_tokens = 500
+        // Do not set temperature for GPT-5 models
       } else {
         params.max_tokens = 500
+        params.temperature = 0.7
       }
 
       const response = await this.openai.chat.completions.create(params)
@@ -211,13 +214,14 @@ export class SummaryGenerator {
             role: 'user',
             content: prompt
           }
-        ],
-        temperature: 0.7
+        ]
       }
       if (isGpt5Model(this.model)) {
         params.max_completion_tokens = 400
+        // Do not set temperature for GPT-5 models
       } else {
         params.max_tokens = 400
+        params.temperature = 0.7
       }
 
       const response = await this.openai.chat.completions.create(params)
