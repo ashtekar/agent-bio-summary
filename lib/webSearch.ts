@@ -178,8 +178,8 @@ export class WebSearchModule {
 
     // Check for synthetic biology keywords
     const syntheticBiologyKeywords = [
-      'synthetic biology', 'synthetic biology', 'genetic engineering',
-      'crispr', 'gene editing', 'bioengineering', 'biotechnology',
+      'synthetic biology', 'molecular biology', 'cellular biology','genetic engineering',
+      'crispr', 'gene editing', 'bioengineering', 'biotechnology', 'mRNA', 'CRISPR',
       'metabolic engineering', 'synthetic genome', 'synthetic cell'
     ]
 
@@ -206,8 +206,9 @@ export class WebSearchModule {
   private extractKeywords(text: string): string[] {
     const keywords = new Set<string>()
     const syntheticBiologyTerms = [
-      'synthetic biology', 'crispr', 'gene editing', 'bioengineering',
-      'genetic engineering', 'metabolic engineering', 'synthetic genome'
+      'synthetic biology', 'molecular biology', 'cellular biology','genetic engineering',
+      'crispr', 'gene editing', 'bioengineering', 'biotechnology', 'mRNA', 'CRISPR',
+      'metabolic engineering', 'synthetic genome', 'synthetic cell'
     ]
 
     const lowerText = text.toLowerCase()
