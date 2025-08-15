@@ -61,11 +61,12 @@ export async function GET(request: NextRequest) {
       throw new Error(`Failed to fetch search settings: ${searchError.message}`)
     }
 
-    const searchSettings: SearchSettings = searchSettingsData || {
-      timeWindow: 24,
-      sources: ['pubmed', 'arxiv', 'sciencedaily'],
-      keywords: ['synthetic biology', 'biotechnology', 'genetic engineering'],
-      maxArticles: 50
+    const searchSettings: SearchSettings = {
+      timeWindow: searchSettingsData?.time_window_hours || 24,
+      sources: searchSettingsData?.sources || ['pubmed', 'arxiv', 'sciencedaily'],
+      keywords: searchSettingsData?.keywords || ['synthetic biology', 'biotechnology', 'genetic engineering'],
+      maxArticles: searchSettingsData?.max_articles || 50,
+      relevance_threshold: searchSettingsData?.relevance_threshold || 6.0
     }
 
     const webSearch = new WebSearchModule(searchSettings)

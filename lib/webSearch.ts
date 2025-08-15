@@ -28,43 +28,18 @@ export class WebSearchModule {
         }
       })
 
-      // Sort by relevance score and take top articles
-      articles.sort((a, b) => b.relevanceScore - a.relevanceScore)
-      return articles.slice(0, this.settings.maxArticles)
+      // Filter by relevance threshold, sort by relevance score, and take top articles
+      const filteredArticles = articles.filter(article => article.relevanceScore >= this.settings.relevance_threshold)
+      console.log(`Filtered ${articles.length} articles to ${filteredArticles.length} articles above threshold ${this.settings.relevance_threshold}`)
+      
+      filteredArticles.sort((a, b) => b.relevanceScore - a.relevanceScore)
+      return filteredArticles.slice(0, this.settings.maxArticles)
 
     } catch (error) {
       console.error('Error searching articles:', error)
       return []
     }
 
-    // If no articles found, create some sample articles for testing
-    if (articles.length === 0) {
-      console.log('No articles found from web search, creating sample articles for testing')
-      articles = [
-        {
-          id: 'sample-1',
-          title: 'Breakthrough in CRISPR Gene Editing Technology',
-          url: 'https://example.com/article1',
-          source: 'Sample Source',
-          publishedDate: new Date().toISOString(),
-          content: 'Researchers have developed a new CRISPR-Cas9 system that shows improved precision in gene editing. The novel approach reduces off-target effects by 90% while maintaining high editing efficiency. This breakthrough could revolutionize genetic engineering and synthetic biology applications.',
-          summary: 'Researchers have developed a new CRISPR-Cas9 system that shows improved precision in gene editing. The novel approach reduces off-target effects by 90% while maintaining high editing efficiency.',
-          relevanceScore: 9.5,
-          keywords: ['crispr', 'gene editing', 'synthetic biology']
-        },
-        {
-          id: 'sample-2',
-          title: 'Synthetic Biology Approach to Biofuel Production',
-          url: 'https://example.com/article2',
-          source: 'Sample Source',
-          publishedDate: new Date().toISOString(),
-          content: 'A team of scientists has engineered algae to produce biofuels more efficiently. The synthetic biology approach involves modifying metabolic pathways to increase biofuel yield while reducing production costs. This could make renewable energy more cost-effective and sustainable.',
-          summary: 'A team of scientists has engineered algae to produce biofuels more efficiently using synthetic biology approaches.',
-          relevanceScore: 8.8,
-          keywords: ['synthetic biology', 'biofuel', 'metabolic engineering']
-        }
-      ]
-    }
   }
 
   private async searchPubMed(): Promise<Article[]> {

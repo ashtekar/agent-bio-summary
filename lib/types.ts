@@ -37,6 +37,7 @@ export interface SearchSettings {
   sources: string[]
   keywords: string[]
   maxArticles: number
+  relevance_threshold?: number
 }
 
 export interface SystemSettings {

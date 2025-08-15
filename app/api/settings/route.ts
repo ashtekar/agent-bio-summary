@@ -35,7 +35,8 @@ export async function GET() {
         time_window_hours: 24,
         sources: ['pubmed', 'arxiv', 'sciencedaily'],
         keywords: ['synthetic biology', 'biotechnology', 'genetic engineering'],
-        max_articles: 50
+        max_articles: 50,
+        relevance_threshold: 6.0
       },
       system: systemSettings || {
         schedule_time: '08:00',

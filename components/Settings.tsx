@@ -14,6 +14,7 @@ interface SearchSettings {
   sources: string[]
   keywords: string[]
   max_articles: number
+  relevance_threshold: number
 }
 
 interface SystemSettings {
@@ -29,7 +30,8 @@ export function Settings() {
     time_window_hours: 24,
     sources: ['pubmed', 'arxiv', 'sciencedaily'],
     keywords: ['synthetic biology', 'biotechnology', 'genetic engineering'],
-    max_articles: 50
+    max_articles: 50,
+    relevance_threshold: 6.0
   })
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
     schedule_time: '08:00',
@@ -278,6 +280,28 @@ export function Settings() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
             />
           </div>
+        </div>
+
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Relevance Score Threshold
+          </label>
+          <select
+            value={searchSettings.relevance_threshold}
+            onChange={e => setSearchSettings({ ...searchSettings, relevance_threshold: parseFloat(e.target.value) })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+          >
+            <option value={8.0}>🟢 Very Strict (8.0+) - Only the most relevant articles</option>
+            <option value={6.0}>🟡 High Quality (6.0+) - Recommended</option>
+            <option value={4.0}>🟠 Broader Coverage (4.0+)</option>
+            <option value={0.0}>⚫ All Articles (0.0+) - No filtering</option>
+          </select>
+          <p className="text-sm text-gray-500 mt-1">
+            {searchSettings.relevance_threshold === 8.0 && 'Only articles with a relevance score of 8.0 or higher will be included. This is very strict and ensures only the most relevant articles are selected.'}
+            {searchSettings.relevance_threshold === 6.0 && 'Only articles with a relevance score of 6.0 or higher will be included. This is recommended for high quality and relevance.'}
+            {searchSettings.relevance_threshold === 4.0 && 'Articles with a relevance score of 4.0 or higher will be included. This allows for broader coverage, including some tangential content.'}
+            {searchSettings.relevance_threshold === 0.0 && 'All articles will be included, regardless of relevance. This may result in low quality or unrelated articles.'}
+          </p>
         </div>
 
         <div className="mt-6">

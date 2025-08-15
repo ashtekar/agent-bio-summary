@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS search_settings (
     sources TEXT[] DEFAULT ARRAY['pubmed', 'arxiv', 'sciencedaily'],
     keywords TEXT[] DEFAULT ARRAY['synthetic biology', 'biotechnology', 'genetic engineering'],
     max_articles INTEGER DEFAULT 50,
+    relevance_threshold FLOAT DEFAULT 6.0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -91,8 +92,8 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Insert default data
-INSERT INTO search_settings (time_window_hours, sources, keywords, max_articles)
-VALUES (24, ARRAY['pubmed', 'arxiv', 'sciencedaily'], ARRAY['synthetic biology', 'biotechnology', 'genetic engineering'], 50)
+INSERT INTO search_settings (time_window_hours, sources, keywords, max_articles, relevance_threshold)
+VALUES (24, ARRAY['pubmed', 'arxiv', 'sciencedaily'], ARRAY['synthetic biology', 'biotechnology', 'genetic engineering'], 50, 6.0)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO system_settings (schedule_time, summary_length, include_images, openai_model)
