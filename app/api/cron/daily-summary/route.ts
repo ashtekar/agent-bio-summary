@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       sources: searchSettingsData?.sources || ['pubmed', 'arxiv', 'sciencedaily'],
       keywords: searchSettingsData?.keywords || ['synthetic biology', 'biotechnology', 'genetic engineering'],
       maxArticles: searchSettingsData?.max_articles || 50,
-      relevance_threshold: searchSettingsData?.relevance_threshold || 6.0
+      relevance_threshold: searchSettingsData?.relevance_threshold ?? 6.0
     }
 
     const webSearch = new WebSearchModule(searchSettings)
