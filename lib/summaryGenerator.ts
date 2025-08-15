@@ -1,6 +1,10 @@
 import OpenAI from 'openai'
 import { Article, SummaryGenerationRequest } from './types'
 
+function isGpt5Model(model: string) {
+  return model.startsWith('gpt-5') || model.startsWith('gpt-5o')
+}
+
 export class SummaryGenerator {
   private openai: OpenAI
   private targetAudience: string
@@ -34,7 +38,7 @@ export class SummaryGenerator {
       
       Please provide a well-structured daily summary that captures the excitement and importance of these developments in synthetic biology.`
 
-      const response = await this.openai.chat.completions.create({
+      const params: any = {
         model: this.model,
         messages: [
           {
@@ -46,9 +50,15 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 1000,
         temperature: 0.7
-      })
+      }
+      if (isGpt5Model(this.model)) {
+        params.max_completion_tokens = 1000
+      } else {
+        params.max_tokens = 1000
+      }
+
+      const response = await this.openai.chat.completions.create(params)
 
       const content = response.choices[0]?.message?.content
       console.log('OpenAI response content length:', content?.length || 0)
@@ -85,7 +95,7 @@ export class SummaryGenerator {
       
       Please provide a compelling summary of these top 10 articles that would interest and educate a high school student.`
 
-      const response = await this.openai.chat.completions.create({
+      const params: any = {
         model: this.model,
         messages: [
           {
@@ -97,9 +107,15 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 800,
         temperature: 0.7
-      })
+      }
+      if (isGpt5Model(this.model)) {
+        params.max_completion_tokens = 800
+      } else {
+        params.max_tokens = 800
+      }
+
+      const response = await this.openai.chat.completions.create(params)
 
       const content = response.choices[0]?.message?.content
       console.log('OpenAI top 10 response content length:', content?.length || 0)
@@ -132,7 +148,7 @@ export class SummaryGenerator {
       
       Please provide a simplified explanation that maintains scientific accuracy while being accessible to a high school student.`
 
-      const response = await this.openai.chat.completions.create({
+      const params: any = {
         model: this.model,
         messages: [
           {
@@ -144,9 +160,15 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 500,
         temperature: 0.7
-      })
+      }
+      if (isGpt5Model(this.model)) {
+        params.max_completion_tokens = 500
+      } else {
+        params.max_tokens = 500
+      }
+
+      const response = await this.openai.chat.completions.create(params)
 
       return response.choices[0]?.message?.content || article.summary
     } catch (error) {
@@ -178,7 +200,7 @@ export class SummaryGenerator {
       
       Please provide a brief educational context that helps students understand the significance of these developments.`
 
-      const response = await this.openai.chat.completions.create({
+      const params: any = {
         model: this.model,
         messages: [
           {
@@ -190,9 +212,15 @@ export class SummaryGenerator {
             content: prompt
           }
         ],
-        max_tokens: 400,
         temperature: 0.7
-      })
+      }
+      if (isGpt5Model(this.model)) {
+        params.max_completion_tokens = 400
+      } else {
+        params.max_tokens = 400
+      }
+
+      const response = await this.openai.chat.completions.create(params)
 
       return response.choices[0]?.message?.content || 'Educational context unavailable'
     } catch (error) {
