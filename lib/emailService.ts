@@ -84,16 +84,7 @@ export class EmailService {
             </div>
           </div>
           
-          <div class="section">
-            <h2>📝 Featured Articles</h2>
-            ${summary.articles.slice(0, 5).map(article => `
-              <div class="article">
-                <h3>${article.title}</h3>
-                <p>${article.summary}</p>
-                <p class="source">Source: ${article.source} | Published: ${new Date(article.publishedDate).toLocaleDateString()}</p>
-              </div>
-            `).join('')}
-          </div>
+
           
           <div class="section">
             <h2>🎯 Why This Matters</h2>
@@ -124,13 +115,7 @@ ${summary.dailySummary}
 TOP 10 ARTICLES SUMMARY:
 ${summary.top10Summary}
 
-FEATURED ARTICLES:
-${summary.articles.slice(0, 5).map((article, index) => `
-${index + 1}. ${article.title}
-   ${article.summary}
-   Source: ${article.source}
-   Published: ${new Date(article.publishedDate).toLocaleDateString()}
-`).join('\n')}
+
 
 WHY THIS MATTERS:
 Synthetic biology is revolutionizing how we understand and manipulate living systems. Today's discoveries bring us closer to solving some of humanity's biggest challenges, from sustainable energy to medical breakthroughs.

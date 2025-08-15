@@ -80,7 +80,22 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Step 2: Generate summaries
+    // Step 2: Get system settings for model selection
+    const { data: systemSettings, error: systemError } = await supabaseAdmin
+      .from('system_settings')
+      .select('openai_model')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (systemError && systemError.code !== 'PGRST116') {
+      console.error('Error fetching system settings:', systemError)
+    }
+
+    const selectedModel = systemSettings?.openai_model || 'gpt-4o-mini'
+    console.log('Using OpenAI model:', selectedModel)
+
+    // Step 3: Generate summaries
     if (!process.env.OPENAI_API_KEY) {
       throw new Error('OpenAI API key not configured')
     }
@@ -93,7 +108,7 @@ export async function GET(request: NextRequest) {
       content: articles[0].content?.substring(0, 100)
     } : 'No articles')
     
-    const summaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY)
+    const summaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY, selectedModel)
     
     let dailySummary: string
     let top10Summary: string

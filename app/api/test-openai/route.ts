@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,12 +11,27 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    // Get the model from system settings
+    let selectedModel = 'gpt-4o-mini' // default
+    if (supabaseAdmin) {
+      const { data: systemSettings, error: systemError } = await supabaseAdmin
+        .from('system_settings')
+        .select('openai_model')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+
+      if (!systemError && systemSettings?.openai_model) {
+        selectedModel = systemSettings.openai_model
+      }
+    }
+
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
-    console.log('Testing OpenAI API with simple prompt...')
+    console.log('Testing OpenAI API with model:', selectedModel)
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: selectedModel,
       messages: [
         {
           role: 'system',

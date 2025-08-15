@@ -40,7 +40,8 @@ export async function GET() {
       system: systemSettings || {
         schedule_time: '08:00',
         summary_length: 'medium',
-        include_images: false
+        include_images: false,
+        openai_model: 'gpt-4o-mini'
       }
     })
   } catch (error) {

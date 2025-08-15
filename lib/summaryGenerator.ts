@@ -4,10 +4,12 @@ import { Article, SummaryGenerationRequest } from './types'
 export class SummaryGenerator {
   private openai: OpenAI
   private targetAudience: string
+  private model: string
 
-  constructor(apiKey: string) {
+  constructor(apiKey: string, model: string = 'gpt-4o-mini') {
     this.openai = new OpenAI({ apiKey })
     this.targetAudience = '15-year-old high school student with a good foundation in basic biology'
+    this.model = model
   }
 
   async generateDailySummary(articles: Article[]): Promise<string> {
@@ -33,7 +35,7 @@ export class SummaryGenerator {
       Please provide a well-structured daily summary that captures the excitement and importance of these developments in synthetic biology.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: this.model,
         messages: [
           {
             role: 'system',
@@ -84,7 +86,7 @@ export class SummaryGenerator {
       Please provide a compelling summary of these top 10 articles that would interest and educate a high school student.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: this.model,
         messages: [
           {
             role: 'system',
@@ -131,7 +133,7 @@ export class SummaryGenerator {
       Please provide a simplified explanation that maintains scientific accuracy while being accessible to a high school student.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: this.model,
         messages: [
           {
             role: 'system',
@@ -177,7 +179,7 @@ export class SummaryGenerator {
       Please provide a brief educational context that helps students understand the significance of these developments.`
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
+        model: this.model,
         messages: [
           {
             role: 'system',

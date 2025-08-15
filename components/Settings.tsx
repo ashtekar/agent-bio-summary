@@ -20,6 +20,7 @@ interface SystemSettings {
   schedule_time: string
   summary_length: 'short' | 'medium' | 'long'
   include_images: boolean
+  openai_model: string
 }
 
 export function Settings() {
@@ -33,7 +34,8 @@ export function Settings() {
   const [systemSettings, setSystemSettings] = useState<SystemSettings>({
     schedule_time: '08:00',
     summary_length: 'medium',
-    include_images: false
+    include_images: false,
+    openai_model: 'gpt-4o-mini'
   })
   const [newEmail, setNewEmail] = useState('')
   const [newName, setNewName] = useState('')
@@ -323,6 +325,31 @@ export function Settings() {
               <option value="long">Long</option>
             </select>
           </div>
+        </div>
+
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            OpenAI Model
+          </label>
+          <select
+            value={systemSettings.openai_model}
+            onChange={(e) => setSystemSettings({...systemSettings, openai_model: e.target.value})}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+          >
+            <option value="gpt-4o-mini">GPT-4o Mini (Recommended)</option>
+            <option value="gpt-4o">GPT-4o</option>
+            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+            <option value="gpt-4">GPT-4</option>
+            <option value="gpt-5o">GPT-5o</option>
+            <option value="gpt-5o-mini">GPT-5o Mini</option>
+            <option value="gpt-5o-micro">GPT-5o Micro</option>
+            <option value="gpt-5o-nano">GPT-5o Nano</option>
+            <option value="gpt-5o-nano-2025-08-07">GPT-5o Nano (Latest)</option>
+          </select>
+          <p className="text-sm text-gray-500 mt-1">
+            Select the OpenAI model for generating summaries. GPT-4o Mini offers the best balance of quality and cost.
+          </p>
         </div>
 
         <div className="mt-6">

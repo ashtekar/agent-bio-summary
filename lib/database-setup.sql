@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS system_settings (
     schedule_time TEXT DEFAULT '08:00',
     summary_length TEXT DEFAULT 'medium',
     include_images BOOLEAN DEFAULT false,
+    openai_model TEXT DEFAULT 'gpt-4o-mini',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -94,8 +95,8 @@ INSERT INTO search_settings (time_window_hours, sources, keywords, max_articles)
 VALUES (24, ARRAY['pubmed', 'arxiv', 'sciencedaily'], ARRAY['synthetic biology', 'biotechnology', 'genetic engineering'], 50)
 ON CONFLICT DO NOTHING;
 
-INSERT INTO system_settings (schedule_time, summary_length, include_images)
-VALUES ('08:00', 'medium', false)
+INSERT INTO system_settings (schedule_time, summary_length, include_images, openai_model)
+VALUES ('08:00', 'medium', false, 'gpt-4o-mini')
 ON CONFLICT DO NOTHING;
 
 -- Insert default email recipients (replace with your actual emails)
