@@ -12,7 +12,7 @@ export class SummaryGenerator {
 
   constructor(apiKey: string, model: string = 'gpt-4o-mini') {
     this.openai = new OpenAI({ apiKey })
-    this.targetAudience = '15-year-old high school student with a good foundation in basic biology'
+    this.targetAudience = 'College sophomore with a good foundation in basic biology'
     this.model = model
   }
 
@@ -28,10 +28,11 @@ export class SummaryGenerator {
       Below are the top 10 synthetic biology articles from the past 24 hours. Create a comprehensive daily summary that:
       
       1. Explains the major themes and breakthroughs in simple terms
-      2. Uses basic biology terminology that a high school student would understand
+      2. Uses basic biology terminology that a college sophomore would understand
       3. Highlights the most important discoveries and their potential impact
       4. Makes complex concepts accessible and engaging
       5. Is written in clear, concise language
+      6. Content of your response will be used in an email newsletter
       
       Articles:
       ${articlesText}
@@ -43,7 +44,7 @@ export class SummaryGenerator {
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who specializes in making complex synthetic biology concepts accessible to high school students. Write in clear, engaging language that builds excitement for science.'
+            content: 'You are a science educator who specializes in making complex synthetic biology concepts accessible to college students. Write in clear, engaging language that builds excitement for science.'
           },
           {
             role: 'user',
@@ -87,14 +88,15 @@ export class SummaryGenerator {
       
       1. Highlights the key findings from each article
       2. Explains why these discoveries are important
-      3. Uses simple language that a high school student can understand
+      3. Uses simple language that a college sophomore can understand
       4. Connects the articles to show broader trends in synthetic biology
       5. Makes the science exciting and relevant
+      6. Content of your response will be used in an email newsletter
       
       Top 10 Articles:
       ${articlesText}
       
-      Please provide a compelling summary of these top 10 articles that would interest and educate a high school student.`
+      Please provide a compelling summary of these top 10 articles that would interest and educate a college sophomore.`
 
       const params: any = {
         model: this.model,
@@ -147,15 +149,16 @@ export class SummaryGenerator {
       3. Focus on the main findings and their importance
       4. Make it engaging and interesting
       5. Keep it concise (2-3 paragraphs)
-      
-      Please provide a simplified explanation that maintains scientific accuracy while being accessible to a high school student.`
+      6. Content of your response will be used in an email newsletter
+
+      Please provide a simplified explanation that maintains scientific accuracy while being accessible to a college sophomore.`
 
       const params: any = {
         model: this.model,
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who specializes in making complex scientific concepts accessible to high school students. Write clearly and engagingly.'
+            content: 'You are a science educator who specializes in making complex scientific concepts accessible to college students. Write clearly and engagingly.'
           },
           {
             role: 'user',
@@ -198,6 +201,7 @@ export class SummaryGenerator {
       2. Provides background information on synthetic biology
       3. Connects the articles to broader scientific themes
       4. Suggests why this field is important and exciting
+      5. Content of your response will be used in an email newsletter
       
       Key topics from the articles: ${Array.from(keywords).join(', ')}
       
