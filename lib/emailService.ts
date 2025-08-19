@@ -45,7 +45,7 @@ export class EmailService {
     const top10SummaryHtml = marked.parse(summary.top10Summary || '')
     // Feedback links for summary (use emoji)
     const summaryFeedback = `
-      <div style="margin-top:10px; color:#fff;">
+      <div style="margin-top:10px; color:#fff; text-align:left;">
         <span style="font-size:14px;">Was this summary helpful?</span>
         <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px; text-decoration:none; font-size:20px; color:#fff;" target="_blank">👍</a>
         <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px; text-decoration:none; font-size:20px; color:#fff;" target="_blank">👎</a>
@@ -53,11 +53,11 @@ export class EmailService {
     `
     // Feedback links for articles (use emoji)
     const articlesFeedback = (summary.articles || []).map(article => `
-      <div style="background:#222; padding:15px; margin:10px 0; border-radius:5px; border-left:4px solid #3498db;">
-        <h3 style="color:#fff;">${article.title}</h3>
-        <p style="color:#fff;">${article.summary}</p>
-        <p style="font-size:12px; color:#aaa;">Source: ${article.source} | Published: ${new Date(article.publishedDate).toLocaleDateString()}</p>
-        <div style="margin-top:5px; color:#fff;">
+      <div style="background:#222; padding:15px; margin:10px 0; border-radius:5px; border-left:4px solid #3498db; text-align:left;">
+        <h3 style="color:#fff; text-align:left;">${article.title}</h3>
+        <p style="color:#fff; text-align:left;">${article.summary}</p>
+        <p style="font-size:12px; color:#aaa; text-align:left;">Source: ${article.source} | Published: ${new Date(article.publishedDate).toLocaleDateString()}</p>
+        <div style="margin-top:5px; color:#fff; text-align:left;">
           <span style="font-size:13px;">Feedback:</span>
           <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&articleId=${article.id}&feedbackType=article&feedbackValue=up" style="margin-left:8px; text-decoration:none; font-size:18px; color:#fff;" target="_blank">👍</a>
           <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&articleId=${article.id}&feedbackType=article&feedbackValue=down" style="margin-left:4px; text-decoration:none; font-size:18px; color:#fff;" target="_blank">👎</a>
@@ -82,26 +82,26 @@ export class EmailService {
                   <p style="color:#fff;">Your daily summary of the latest developments in synthetic biology</p>
                   <p style="color:#fff;"><strong>${summary.date}</strong></p>
                 </div>
-                <div style="background:#111; color:#fff; padding:30px; border-radius:10px; margin-top:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
-                  <p style="color:#fff;">Hello ${recipientName},</p>
-                  <div style="margin-bottom:30px;">
-                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px;">📊 Daily Overview</h2>
-                    <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0;">
+                <div style="background:#111; color:#fff; padding:30px; border-radius:10px; margin-top:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1); text-align:left;">
+                  <p style="color:#fff; text-align:left;">Hello ${recipientName},</p>
+                  <div style="margin-bottom:30px; text-align:left;">
+                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">📊 Daily Overview</h2>
+                    <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0; text-align:left;">
                       ${dailySummaryHtml}
                     </div>
                     ${summaryFeedback}
                   </div>
-                  <div style="margin-bottom:30px;">
-                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px;">🏆 Top 10 Articles Summary</h2>
-                    <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0;">
+                  <div style="margin-bottom:30px; text-align:left;">
+                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">🏆 Top 10 Articles Summary</h2>
+                    <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0; text-align:left;">
                       ${top10SummaryHtml}
                     </div>
                     ${articlesFeedback}
                   </div>
-                  <div style="margin-bottom:30px;">
-                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px;">🎯 Why This Matters</h2>
-                    <p style="color:#fff;">Synthetic biology is revolutionizing how we understand and manipulate living systems. Today's discoveries bring us closer to solving some of humanity's biggest challenges, from sustainable energy to medical breakthroughs.</p>
-                    <p style="color:#fff;">As a student interested in biology, these developments show you the exciting future of science and the incredible potential of genetic engineering.</p>
+                  <div style="margin-bottom:30px; text-align:left;">
+                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">🎯 Why This Matters</h2>
+                    <p style="color:#fff; text-align:left;">Synthetic biology is revolutionizing how we understand and manipulate living systems. Today's discoveries bring us closer to solving some of humanity's biggest challenges, from sustainable energy to medical breakthroughs.</p>
+                    <p style="color:#fff; text-align:left;">As a student interested in biology, these developments show you the exciting future of science and the incredible potential of genetic engineering.</p>
                   </div>
                 </div>
                 <div style="text-align:center; margin-top:30px; padding:20px; color:#aaa; font-size:12px;">
