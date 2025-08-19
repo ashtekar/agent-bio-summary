@@ -10,6 +10,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 2. **Analyzes** and ranks articles based on relevance, impact, and novelty
 3. **Generates** educational summaries written for 15-year-old high school students
 4. **Emails** daily digests to specified recipients
+5. **Collects human feedback** on summaries and articles via thumbs up/down links in emails for future model fine-tuning
 
 ## 🏗️ Architecture
 
@@ -24,6 +25,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 - **OpenAI GPT-5-nano-2025-08-07** for intelligent summarization
 - **Resend** for email delivery
 - **Web scraping** with Cheerio and Axios
+- **Feedback API** for silent human feedback collection
 
 ### Infrastructure
 - **Vercel** for hosting and deployment
@@ -58,6 +60,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
    RESEND_API_KEY=your_resend_api_key_here
    DEFAULT_RECIPIENT_EMAIL=student@school.edu
    ADMIN_EMAIL=admin@school.edu
+   NEXT_PUBLIC_BASE_URL=https://your-production-url.vercel.app
    ```
 
 4. **Run the development server**
@@ -85,10 +88,11 @@ The system gracefully handles quota errors and will display appropriate messages
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `OPENAI_API_KEY` | OpenAI API key for GPT-4 access | Yes |
+| `OPENAI_API_KEY` | OpenAI API key for GPT-4/5 access | Yes |
 | `RESEND_API_KEY` | Resend API key for email delivery | No |
 | `DEFAULT_RECIPIENT_EMAIL` | Default email for testing | No |
 | `ADMIN_EMAIL` | Admin email for error notifications | No |
+| `NEXT_PUBLIC_BASE_URL` | Base URL for feedback links in emails | Yes |
 
 ### Search Settings
 
@@ -119,8 +123,9 @@ Sources include:
 The system generates beautiful HTML emails with:
 - Daily overview of synthetic biology developments
 - Top 10 articles summary
-- Featured articles with links
 - Educational context for students
+- **Thumbs up/down feedback links** for both summaries and articles (using inline SVGs for maximum compatibility)
+- **Dark mode**: black background, white text, and consistent styling for all content
 
 ## 🕐 Scheduling
 
@@ -140,6 +145,30 @@ Send test emails to verify email configuration.
 - `POST /api/summarize` - Generate summaries
 - `POST /api/email` - Send emails
 - `GET /api/cron/daily-summary` - Daily cron job
+- `GET /api/feedback` - **Silent feedback endpoint for thumbs up/down links in emails. Records recipient, summary/article, and feedback value. Returns 204 No Content.**
+
+## 🗄️ Database & Data Retention
+
+### Schema
+- **Articles**: Retained for 30 days
+- **Daily Summaries**: Retained for 30 days
+- **Feedback**: Linked to recipient, summary, and article. Retained for at least 30 days for model fine-tuning.
+- **Recipients, Settings, etc.**: Permanent
+
+### Feedback Table
+| Field         | Type    | Description                                 |
+|--------------|---------|---------------------------------------------|
+| id           | UUID    | Primary key                                 |
+| recipient_id | UUID    | References email_recipients(id)             |
+| summary_id   | UUID    | References daily_summaries(id) (nullable)   |
+| article_id   | UUID    | References articles(id) (nullable)          |
+| feedback_type| TEXT    | 'summary' or 'article'                      |
+| feedback_value| TEXT   | 'up' or 'down'                              |
+| created_at   | TIMESTAMP | Feedback timestamp                        |
+
+### Data Retention Policy
+- **Articles, summaries, and feedback are retained for 30 days by default.**
+- You can adjust this in the database cleanup functions if needed.
 
 ## 🚀 Deployment
 
@@ -164,6 +193,7 @@ Add these to your Vercel project settings:
 - `RESEND_API_KEY`
 - `DEFAULT_RECIPIENT_EMAIL`
 - `ADMIN_EMAIL`
+- `NEXT_PUBLIC_BASE_URL`
 
 ## 📊 Monitoring
 
