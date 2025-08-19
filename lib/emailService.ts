@@ -27,7 +27,7 @@ export class EmailService {
   }
 
   private async sendEmailToRecipient(recipient: EmailRecipient, summary: DailySummary): Promise<void> {
-    const emailHtml = this.generateEmailHTML(summary, recipient.name)
+    const emailHtml = this.generateEmailHTML(summary, recipient.name, recipient.id)
     const emailText = this.generateEmailText(summary, recipient.name)
 
     await this.resend.emails.send({
@@ -39,10 +39,39 @@ export class EmailService {
     })
   }
 
-  private generateEmailHTML(summary: DailySummary, recipientName: string): string {
+  private generateEmailHTML(summary: DailySummary, recipientName: string, recipientId?: string): string {
     // Convert markdown to HTML for summaries
     const dailySummaryHtml = marked.parse(summary.dailySummary || '')
     const top10SummaryHtml = marked.parse(summary.top10Summary || '')
+    // Feedback links for summary
+    const summaryFeedback = `
+      <div style="margin-top:10px;">
+        <span style="font-size:14px;">Was this summary helpful?</span>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px;" target="_blank">
+          <img src='https://upload.wikimedia.org/wikipedia/commons/2/21/Thumbs_up_icon.png' alt="Thumbs Up" width="20" height="20" style="vertical-align:middle;"/>
+        </a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px;" target="_blank">
+          <img src='https://upload.wikimedia.org/wikipedia/commons/0/0e/Thumbs_down_icon.png' alt="Thumbs Down" width="20" height="20" style="vertical-align:middle;"/>
+        </a>
+      </div>
+    `
+    // Feedback links for articles
+    const articlesFeedback = (summary.articles || []).map(article => `
+      <div class="article">
+        <h3>${article.title}</h3>
+        <p>${article.summary}</p>
+        <p class="source">Source: ${article.source} | Published: ${new Date(article.publishedDate).toLocaleDateString()}</p>
+        <div style="margin-top:5px;">
+          <span style="font-size:13px;">Feedback:</span>
+          <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&articleId=${article.id}&feedbackType=article&feedbackValue=up" style="margin-left:8px;" target="_blank">
+            <img src='https://upload.wikimedia.org/wikipedia/commons/2/21/Thumbs_up_icon.png' alt="Thumbs Up" width="16" height="16" style="vertical-align:middle;"/>
+          </a>
+          <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&articleId=${article.id}&feedbackType=article&feedbackValue=down" style="margin-left:4px;" target="_blank">
+            <img src='https://upload.wikimedia.org/wikipedia/commons/0/0e/Thumbs_down_icon.png' alt="Thumbs Down" width="16" height="16" style="vertical-align:middle;"/>
+          </a>
+        </div>
+      </div>
+    `).join('')
     return `
       <!DOCTYPE html>
       <html>
@@ -86,12 +115,14 @@ export class EmailService {
             <div class="highlight">
               ${dailySummaryHtml}
             </div>
+            ${summaryFeedback}
           </div>
           <div class="section">
             <h2>🏆 Top 10 Articles Summary</h2>
             <div class="highlight">
               ${top10SummaryHtml}
             </div>
+            ${articlesFeedback}
           </div>
           <div class="section">
             <h2>🎯 Why This Matters</h2>

@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS system_settings (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Articles Table (2-day retention)
+-- Articles Table (30-day retention)
 CREATE TABLE IF NOT EXISTS articles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title TEXT NOT NULL,
@@ -48,13 +48,24 @@ CREATE TABLE IF NOT EXISTS articles (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Daily Summaries Table (7-day retention)
+-- Daily Summaries Table (30-day retention)
 CREATE TABLE IF NOT EXISTS daily_summaries (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     date DATE UNIQUE NOT NULL,
     daily_overview TEXT NOT NULL,
     top_10_summary TEXT NOT NULL,
     featured_articles TEXT[] NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Feedback Table (30-day retention, no auto-cleanup)
+CREATE TABLE IF NOT EXISTS feedback (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    recipient_id UUID REFERENCES email_recipients(id) ON DELETE CASCADE,
+    summary_id UUID REFERENCES daily_summaries(id) ON DELETE CASCADE,
+    article_id UUID REFERENCES articles(id) ON DELETE CASCADE,
+    feedback_type TEXT CHECK (feedback_type IN ('summary', 'article')) NOT NULL,
+    feedback_value TEXT CHECK (feedback_value IN ('up', 'down')) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -73,21 +84,21 @@ ALTER TABLE system_settings DISABLE ROW LEVEL SECURITY;
 ALTER TABLE articles DISABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_summaries DISABLE ROW LEVEL SECURITY;
 
--- Cleanup function for old articles (2 days)
+-- Cleanup function for old articles (30 days)
 CREATE OR REPLACE FUNCTION cleanup_old_articles()
 RETURNS void AS $$
 BEGIN
     DELETE FROM articles 
-    WHERE created_at < NOW() - INTERVAL '2 days';
+    WHERE created_at < NOW() - INTERVAL '30 days';
 END;
 $$ LANGUAGE plpgsql;
 
--- Cleanup function for old summaries (7 days)
+-- Cleanup function for old summaries (30 days)
 CREATE OR REPLACE FUNCTION cleanup_old_summaries()
 RETURNS void AS $$
 BEGIN
     DELETE FROM daily_summaries 
-    WHERE created_at < NOW() - INTERVAL '7 days';
+    WHERE created_at < NOW() - INTERVAL '30 days';
 END;
 $$ LANGUAGE plpgsql;
 
