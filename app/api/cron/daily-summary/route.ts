@@ -155,35 +155,42 @@ export async function GET(request: NextRequest) {
     }
 
     // Step 4: Create and store daily summary
+    // Upsert summary in database (get real UUID)
+    await supabaseAdmin
+      .from('daily_summaries')
+      .upsert([
+        {
+          date: today,
+          daily_overview: dailySummary,
+          top_10_summary: top10Summary,
+          featured_articles: articles.slice(0, 10).map(a => a.title)
+        }
+      ], {
+        onConflict: 'date',
+        ignoreDuplicates: false
+      })
+
+    // Fetch the real summary UUID
+    const { data: summaryRow, error: fetchSummaryError } = await supabaseAdmin
+      .from('daily_summaries')
+      .select('id')
+      .eq('date', today)
+      .single()
+    if (fetchSummaryError) {
+      console.error('Error fetching summary UUID:', fetchSummaryError)
+      throw new Error('Failed to fetch summary UUID')
+    }
+
     const summary: DailySummary = {
-      id: `summary-${Date.now()}`,
+      id: summaryRow.id,
       date: today,
       title: `Daily Summary - ${today}`,
-      articles: articles.slice(0, 10), // Top 10 articles
+      articles: [], // No per-article summaries in email
       dailySummary,
       top10Summary,
       emailSent: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    }
-
-    // Store summary in database (upsert to handle duplicates)
-    const { error: summaryError } = await supabaseAdmin
-      .from('daily_summaries')
-      .upsert([{
-        date: today,
-        daily_overview: dailySummary,
-        top_10_summary: top10Summary,
-        featured_articles: articles.slice(0, 10).map(a => a.title)
-      }], {
-        onConflict: 'date',
-        ignoreDuplicates: false
-      })
-
-    if (summaryError) {
-      console.error('Error storing summary:', summaryError)
-    } else {
-      console.log(`Successfully stored/updated daily summary for ${today}`)
     }
 
     // Step 5: Send emails (if configured)

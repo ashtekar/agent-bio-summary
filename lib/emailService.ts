@@ -51,19 +51,6 @@ export class EmailService {
         <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px; text-decoration:none; font-size:20px; color:#fff;" target="_blank">👎</a>
       </div>
     `
-    // Feedback links for articles (use emoji)
-    const articlesFeedback = (summary.articles || []).map(article => `
-      <div style="background:#222; padding:15px; margin:10px 0; border-radius:5px; border-left:4px solid #3498db; text-align:left;">
-        <h3 style="color:#fff; text-align:left;">${article.title}</h3>
-        <p style="color:#fff; text-align:left;">${article.summary}</p>
-        <p style="font-size:12px; color:#aaa; text-align:left;">Source: ${article.source} | Published: ${new Date(article.publishedDate).toLocaleDateString()}</p>
-        <div style="margin-top:5px; color:#fff; text-align:left;">
-          <span style="font-size:13px;">Feedback:</span>
-          <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&articleId=${article.id}&feedbackType=article&feedbackValue=up" style="margin-left:8px; text-decoration:none; font-size:18px; color:#fff;" target="_blank">👍</a>
-          <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&articleId=${article.id}&feedbackType=article&feedbackValue=down" style="margin-left:4px; text-decoration:none; font-size:18px; color:#fff;" target="_blank">👎</a>
-        </div>
-      </div>
-    `).join('')
     return `
       <!DOCTYPE html>
       <html>
@@ -96,7 +83,6 @@ export class EmailService {
                     <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0; text-align:left;">
                       ${top10SummaryHtml}
                     </div>
-                    ${articlesFeedback}
                   </div>
                   <div style="margin-bottom:30px; text-align:left;">
                     <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">🎯 Why This Matters</h2>
