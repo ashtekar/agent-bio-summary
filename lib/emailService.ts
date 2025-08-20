@@ -196,7 +196,7 @@ export class EmailService {
             <div class="highlight">
               <!-- ${top10SummaryHtml} -->
             </div>
-            ${top10Feedback}
+            <!-- ${top10Feedback} -->
           </div>
           <div class="section">
             <h2>🎯 Why This Matters</h2>
