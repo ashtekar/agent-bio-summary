@@ -190,7 +190,7 @@ export class EmailService {
           <p><strong>${summary.date}</strong></p>
         </div>
         <div class="content">
-          <p>Hello ${recipientName},</p>
+          <!-- <p>Hello ${recipientName},</p> -->
           <div class="section">
             <h2>🏆 Top 10 Articles Summary</h2>
             <div class="highlight">
