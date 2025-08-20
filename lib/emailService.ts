@@ -43,31 +43,12 @@ export class EmailService {
     // Convert markdown to HTML for summaries
     const dailySummaryHtml = marked.parse(summary.dailySummary || '')
     const top10SummaryHtml = marked.parse(summary.top10Summary || '')
-    // Inline SVGs for thumbs up/down
-    const thumbsUpSvg = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDBhM2IwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTkgMjEuNzVWMTRIM0M0LjUgMTQgNSAxMi41IDUgMTF2LTJjMC0xLjUgMS41LTUgNSA1aDQuNzNsLS4zMy0uMzNDOS4yNSAxMy4yNSA5IDIxLjc1IDkgMjEuNzV6bTExLjI1LTguNzVjMC0xLjEtLjktMi0yLTJoLTQuNXYtNWMwLTEuMS0uOS0yLTItMi0uNTUgMC0xLjA1LjI1LTEuNDEuNjdsLTYuNTggNi41OEMyLjI1IDExLjUgMiAxMi4wNSAyIDEyLjV2Mi4wNWMwIC41LjI1IDEuMDUuNjcgMS40MWw2LjU4IDYuNThjLjM2LjM2Ljg2LjU5IDEuNDEuNTloNS41YzEuMSAwIDItLjkgMi0ydi0yYzAtLjU1LS4yNS0xLjA1LS42Ny0xLjQxbC02LjU4LTYuNThjLS4zNi0uMzYtLjg2LS41OS0xLjQxLS41OXoiLz48L3N2Zz4='
-    const thumbsDownSvg = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZDMwMDAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTkgMi4yNVYxMGgtNmMwIDEuNSAxLjUgNSA1IDVoNC43M2wtLjMzLjMzQzkuMjUgMTAuNzUgOSAyLjI1IDkgMi4yNXptMTEuMjUgOC43NWMwIDEuMS0uOSAyLTJIMTQuNXY1YzAgMS4xLS45IDItMiAyLS41NSAwLTEuMDUtLjI1LTEuNDEtLjY3bC02LjU4LTYuNThDMy4yNSAxMi41IDMgMTEuOTUgMyAxMS41di0yLjA1YzAtLjU1LjI1LTEuMDUuNjctMS40MWw2LjU4LTYuNThjLjM2LS4zNi44Ni0uNTkgMS40MS0uNTloNS41YzEuMSAwIDIgLjkgMiAydjJjMCAuNTUtLjI1IDEuMDUtLjY3IDEuNDFsLTYuNTggNi41OGMtLjM2LjM2LS44Ni41OS0xLjQxLjU5eiIvPjwvc3ZnPg=='
-    // Feedback links for summary
+    // Feedback links for summary (use emoji)
     const summaryFeedback = `
-      <div style="margin-top:10px;">
+      <div style="margin-top:10px; color:#fff; text-align:left;">
         <span style="font-size:14px;">Was this summary helpful?</span>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px;" target="_blank">
-          <img src='${thumbsUpSvg}' alt="Thumbs Up" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px;" target="_blank">
-          <img src='${thumbsDownSvg}' alt="Thumbs Down" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
-      </div>
-    `
-    // Feedback links for Top 10 Articles Summary
-    const top10Feedback = `
-      <div style="margin-top:10px;">
-        <span style="font-size:14px;">Was the Top 10 Articles Summary helpful?</span>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=up" style="margin-left:10px;" target="_blank">
-          <img src='${thumbsUpSvg}' alt="Thumbs Up" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=down" style="margin-left:5px;" target="_blank">
-          <img src='${thumbsDownSvg}' alt="Thumbs Down" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px; text-decoration:none; font-size:20px; color:#fff;" target="_blank">👍</a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px; text-decoration:none; font-size:20px; color:#fff;" target="_blank">👎</a>
       </div>
     `
     return `
@@ -77,58 +58,47 @@ export class EmailService {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Synthetic Biology Daily Digest</title>
-        <style>
-          body { background: #000; color: #fff; font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #222 0%, #333 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
-          .content { background: #111; padding: 30px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-          .section { margin-bottom: 30px; }
-          .section h2 { color: #fff; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-          .footer { text-align: center; margin-top: 30px; padding: 20px; color: #aaa; font-size: 12px; }
-          .highlight { background: #ffc107; color: #222; padding: 15px; border-radius: 5px; border-left: 4px solid #fff3cd; margin: 15px 0; }
-          /* Inline markdown styles */
-          h1, h2, h3, h4, h5, h6 { color: #fff; margin-top: 1em; margin-bottom: 0.5em; }
-          ul, ol { margin: 0 0 1em 1.5em; }
-          li { margin-bottom: 0.5em; color: #fff; }
-          strong { color: #fff; }
-          em { color: #ccc; }
-          a { color: #4fa3ff; text-decoration: underline; }
-          blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 1em; color: #ccc; background: #181818; }
-          code { background: #181818; color: #fff; padding: 2px 4px; border-radius: 3px; font-size: 90%; }
-        </style>
       </head>
-      <body>
-        <div class="header">
-          <h1>🧬 Synthetic Biology Daily Digest</h1>
-          <p>Your daily summary of the latest developments in synthetic biology</p>
-          <p><strong>${summary.date}</strong></p>
-        </div>
-        <div class="content">
-          <p>Hello ${recipientName},</p>
-          <div class="section">
-            <h2>📊 Daily Overview</h2>
-            <div class="highlight">
-              ${dailySummaryHtml}
-            </div>
-            ${summaryFeedback}
-          </div>
-          <div class="section">
-            <h2>🏆 Top 10 Articles Summary</h2>
-            <div class="highlight" style="background:#ffc107; color:#222;">
-              ${top10SummaryHtml}
-            </div>
-            ${top10Feedback}
-          </div>
-          <div class="section">
-            <h2>🎯 Why This Matters</h2>
-            <p>Synthetic biology is revolutionizing how we understand and manipulate living systems. Today's discoveries bring us closer to solving some of humanity's biggest challenges, from sustainable energy to medical breakthroughs.</p>
-            <p>As a student interested in biology, these developments show you the exciting future of science and the incredible potential of genetic engineering.</p>
-          </div>
-        </div>
-        <div class="footer">
-          <p>This digest is automatically generated by AgentBioSummary</p>
-          <p>Designed for high school students with an interest in synthetic biology</p>
-          <p>To unsubscribe or change settings, please contact your administrator</p>
-        </div>
+      <body style="margin:0; padding:0; background:#000; color:#fff;">
+        <table width="100%" bgcolor="#000000" cellpadding="0" cellspacing="0" border="0" style="background:#000; color:#fff;">
+          <tr>
+            <td align="center">
+              <div style="max-width:600px; margin:0 auto;">
+                <div style="background: linear-gradient(135deg, #222 0%, #333 100%); color: white; padding: 30px; border-radius: 10px; text-align: center;">
+                  <h1 style="color:#fff;">🧬 Synthetic Biology Daily Digest</h1>
+                  <p style="color:#fff;">Your daily summary of the latest developments in synthetic biology</p>
+                  <p style="color:#fff;"><strong>${summary.date}</strong></p>
+                </div>
+                <div style="background:#111; color:#fff; padding:30px; border-radius:10px; margin-top:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1); text-align:left;">
+                  <p style="color:#fff; text-align:left;">Hello ${recipientName},</p>
+                  <div style="margin-bottom:30px; text-align:left;">
+                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">📊 Daily Overview</h2>
+                    <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0; text-align:left;">
+                      ${dailySummaryHtml}
+                    </div>
+                    ${summaryFeedback}
+                  </div>
+                  <div style="margin-bottom:30px; text-align:left;">
+                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">🏆 Top 10 Articles Summary</h2>
+                    <div style="background:#222; color:#fff; padding:15px; border-radius:5px; border-left:4px solid #ffc107; margin:15px 0; text-align:left;">
+                      ${top10SummaryHtml}
+                    </div>
+                  </div>
+                  <div style="margin-bottom:30px; text-align:left;">
+                    <h2 style="color:#fff; border-bottom:2px solid #3498db; padding-bottom:10px; text-align:left;">🎯 Why This Matters</h2>
+                    <p style="color:#fff; text-align:left;">Synthetic biology is revolutionizing how we understand and manipulate living systems. Today's discoveries bring us closer to solving some of humanity's biggest challenges, from sustainable energy to medical breakthroughs.</p>
+                    <p style="color:#fff; text-align:left;">As a student interested in biology, these developments show you the exciting future of science and the incredible potential of genetic engineering.</p>
+                  </div>
+                </div>
+                <div style="text-align:center; margin-top:30px; padding:20px; color:#aaa; font-size:12px;">
+                  <p>This digest is automatically generated by AgentBioSummary</p>
+                  <p>Designed for high school students with an interest in synthetic biology</p>
+                  <p>To unsubscribe or change settings, please contact your administrator</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
       </body>
       </html>
     `
@@ -151,9 +121,7 @@ ${summary.top10Summary}
 WHY THIS MATTERS:
 Synthetic biology is revolutionizing how we understand and manipulate living systems. Today's discoveries bring us closer to solving some of humanity's biggest challenges, from sustainable energy to medical breakthroughs.
 
-
 As a student interested in biology, these developments show you the exciting future of science and the incredible potential of genetic engineering.
-
 
 ---
 This digest is automatically generated by AgentBioSummary
@@ -270,7 +238,6 @@ If you received this email, it means:
 
 What's Next?
 The system will now automatically send you daily synthetic biology summaries at the scheduled time. You can manage your preferences in the AgentBioSummary dashboard.
-
 
 ---
 This is a test email from AgentBioSummary
