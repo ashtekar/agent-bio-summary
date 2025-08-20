@@ -218,7 +218,7 @@ export class EmailService {
     return `
 Synthetic Biology Daily Digest - ${summary.date}
 
-Hello ${recipientName},
+<!-- Hello ${recipientName}, -->
 
 TOP 10 ARTICLES SUMMARY:
 ${summary.top10Summary}
