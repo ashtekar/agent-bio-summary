@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const recipientId = searchParams.get('recipientId')
     const summaryId = searchParams.get('summaryId')
     const articleId = searchParams.get('articleId')
-    const feedbackType = searchParams.get('feedbackType') // 'summary' or 'article'
+    const feedbackType = searchParams.get('feedbackType') // 'summary', 'article', or 'top10'
     const feedbackValue = searchParams.get('feedbackValue') // 'up' or 'down'
 
     console.log('Feedback API called with:', {
@@ -23,25 +23,33 @@ export async function GET(request: NextRequest) {
       return new NextResponse('Missing required params', { status: 400 })
     }
 
+    // Handle 'top10' feedback type by treating it as 'summary' type
+    const dbFeedbackType = feedbackType === 'top10' ? 'summary' : feedbackType
+    
+    // Handle null values properly - convert string "null" to actual null
+    const cleanArticleId = articleId === 'null' ? null : articleId
+    const cleanSummaryId = summaryId === 'null' ? null : summaryId
+
     // Only allow one feedback per recipient per summary/article per type
     const { data: existing, error: selectError } = await supabaseAdmin
       .from('feedback')
       .select('id')
       .eq('recipient_id', recipientId)
-      .eq(feedbackType === 'summary' ? 'summary_id' : 'article_id', feedbackType === 'summary' ? summaryId : articleId)
-      .eq('feedback_type', feedbackType)
+      .eq(dbFeedbackType === 'summary' ? 'summary_id' : 'article_id', dbFeedbackType === 'summary' ? cleanSummaryId : cleanArticleId)
+      .eq('feedback_type', dbFeedbackType)
       .single()
 
-    if (selectError) {
+    if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows found
       console.error('Feedback API: select error', selectError)
+      return new NextResponse('DB select error', { status: 500 })
     }
 
     if (!existing) {
       const { error: insertError } = await supabaseAdmin.from('feedback').insert({
         recipient_id: recipientId,
-        summary_id: summaryId,
-        article_id: articleId,
-        feedback_type: feedbackType,
+        summary_id: cleanSummaryId,
+        article_id: cleanArticleId,
+        feedback_type: dbFeedbackType,
         feedback_value: feedbackValue
       })
       if (insertError) {
