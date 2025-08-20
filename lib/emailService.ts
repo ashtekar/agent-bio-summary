@@ -194,7 +194,7 @@ export class EmailService {
           <div class="section">
             <h2>🏆 Top 10 Articles Summary</h2>
             <div class="highlight">
-              ${top10SummaryHtml}
+              <!-- ${top10SummaryHtml} -->
             </div>
             ${top10Feedback}
           </div>

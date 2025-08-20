@@ -82,7 +82,7 @@ export class SummaryGenerator {
     try {
       const top10Articles = articles.slice(0, 10)
       const articlesText = top10Articles.map((article, index) => 
-        `${index + 1}. ${article.title}\n   ${article.summary}\n   Source: ${article.source}\n`
+        `${index + 1}. ${article.title}\n   ${article.summary}\n   Source: ${article.source}\n   URL: ${article.url}\n`
       ).join('\n')
 
       const prompt = `You are an expert science educator writing for ${this.targetAudience}.
@@ -91,12 +91,11 @@ export class SummaryGenerator {
       
       1. Highlights the key findings from each article
       2. Explains why these discoveries are important
-      3. Uses simple language that a college sophomore can understand
       4. Connects the articles to show broader trends in synthetic biology
       5. Add a few sentences on how the discovery or novel approach mentioned in the article was achieved. Student is looking for key inisghts that led to the discovery.
-      6. Content of your response will be used in an email newsletter. Get to the article summary and avoid any pre-amble
-      7. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown. Make sure that the background is not set and can take the backround of the overall email
-      8. Add source of the article in the summary. Also add a link to the article.
+      6. Content of your response will be used in an email newsletter. Avoid any pre-amble. We just want the summary of the article.
+      7. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown. 
+      8. Add source of the article in the summary. Also add a link to the article using the provided URL.
       
       Top 10 Articles:
       ${articlesText}
