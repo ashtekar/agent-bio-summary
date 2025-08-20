@@ -187,16 +187,16 @@ export class EmailService {
         <div class="header">
           <h1>🧬 Synthetic Biology Daily Digest</h1>
           <p>Your daily summary of the latest developments in synthetic biology</p>
-          <!-- <p><strong>${summary.date}</strong></p> -->
+          <p><strong>${summary.date}</strong></p>
         </div>
         <div class="content">
-          <!-- <p>Hello ${recipientName},</p> -->
+          <p>Hello ${recipientName},</p>
           <div class="section">
             <h2>🏆 Top 10 Articles Summary</h2>
             <div class="highlight">
-              <!-- ${top10SummaryHtml} -->
+              ${top10SummaryHtml}
             </div>
-            <!-- ${top10Feedback} -->
+            ${top10Feedback}
           </div>
           <div class="section">
             <h2>🎯 Why This Matters</h2>
@@ -218,7 +218,7 @@ export class EmailService {
     return `
 Synthetic Biology Daily Digest - ${summary.date}
 
-<!-- Hello ${recipientName}, -->
+Hello ${recipientName}, 
 
 TOP 10 ARTICLES SUMMARY:
 ${summary.top10Summary}
