@@ -59,8 +59,8 @@ export class EmailService {
         <title>Synthetic Biology Daily Digest</title>
         <style>
           body { 
-            background: #0a0a0a; 
-            color: #e0e0e0; 
+            background: #0a0a0a !important; 
+            color: #ffffff !important; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
             line-height: 1.6; 
             max-width: 600px; 
@@ -68,8 +68,8 @@ export class EmailService {
             padding: 20px; 
           }
           .header { 
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); 
-            color: #ffffff; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important; 
+            color: #ffffff !important; 
             padding: 35px; 
             border-radius: 12px; 
             text-align: center; 
@@ -77,18 +77,20 @@ export class EmailService {
             border: 1px solid #2a2a3e;
           }
           .content { 
-            background: #1a1a1a; 
+            background: #1a1a1a !important; 
             padding: 35px; 
             border-radius: 12px; 
             margin-top: 25px; 
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             border: 1px solid #2a2a2a;
+            color: #ffffff !important;
           }
           .section { 
             margin-bottom: 35px; 
+            color: #ffffff !important;
           }
           .section h2 { 
-            color: #ffffff; 
+            color: #ffffff !important; 
             border-bottom: 3px solid #4a9eff; 
             padding-bottom: 12px; 
             font-size: 1.4em;
@@ -99,15 +101,15 @@ export class EmailService {
             text-align: center; 
             margin-top: 35px; 
             padding: 25px; 
-            color: #888; 
+            color: #cccccc !important; 
             font-size: 13px; 
-            background: #1a1a1a;
+            background: #1a1a1a !important;
             border-radius: 8px;
             border: 1px solid #2a2a2a;
           }
           .highlight { 
-            background: linear-gradient(135deg, #1e2a3a 0%, #2a3a4a 100%); 
-            color: #e8f4fd; 
+            background: linear-gradient(135deg, #1e2a3a 0%, #2a3a4a 100%) !important; 
+            color: #ffffff !important; 
             padding: 20px; 
             border-radius: 8px; 
             border-left: 4px solid #4a9eff; 
@@ -116,7 +118,7 @@ export class EmailService {
           }
           /* Inline markdown styles */
           h1, h2, h3, h4, h5, h6 { 
-            color: #ffffff; 
+            color: #ffffff !important; 
             margin-top: 1.2em; 
             margin-bottom: 0.6em; 
             font-weight: 600;
@@ -126,40 +128,41 @@ export class EmailService {
           h3 { font-size: 1.3em; }
           ul, ol { 
             margin: 0 0 1em 1.8em; 
+            color: #ffffff !important;
           }
           li { 
             margin-bottom: 0.6em; 
-            color: #e0e0e0; 
+            color: #ffffff !important; 
           }
           strong { 
-            color: #ffffff; 
+            color: #ffffff !important; 
             font-weight: 600;
           }
           em { 
-            color: #b0b0b0; 
+            color: #e0e0e0 !important; 
             font-style: italic;
           }
           a { 
-            color: #4a9eff; 
+            color: #4a9eff !important; 
             text-decoration: none; 
             border-bottom: 1px solid #4a9eff;
             transition: color 0.2s ease;
           }
           a:hover {
-            color: #6bb6ff;
+            color: #6bb6ff !important;
           }
           blockquote { 
             border-left: 4px solid #4a9eff; 
             margin: 1.2em 0; 
             padding: 0.8em 1.2em; 
-            color: #b0b0b0; 
-            background: #1e2a3a; 
+            color: #e0e0e0 !important; 
+            background: #1e2a3a !important; 
             border-radius: 0 6px 6px 0;
             font-style: italic;
           }
           code { 
-            background: #2a2a2a; 
-            color: #e0e0e0; 
+            background: #2a2a2a !important; 
+            color: #ffffff !important; 
             padding: 3px 6px; 
             border-radius: 4px; 
             font-size: 90%; 
@@ -168,11 +171,19 @@ export class EmailService {
           }
           p {
             margin-bottom: 1em;
-            color: #e0e0e0;
+            color: #ffffff !important;
+          }
+          /* Force dark mode for email clients */
+          * {
+            background-color: inherit !important;
+          }
+          .email-container {
+            background: #0a0a0a !important;
+            color: #ffffff !important;
           }
         </style>
       </head>
-      <body>
+      <body class="email-container">
         <div class="header">
           <h1>🧬 Synthetic Biology Daily Digest</h1>
           <p>Your daily summary of the latest developments in synthetic biology</p>
