@@ -50,24 +50,16 @@ export class EmailService {
     const summaryFeedback = `
       <div style="margin-top:10px;">
         <span style="font-size:14px;">Was this summary helpful?</span>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px;" target="_blank">
-          <img src='${thumbsUpSvg}' alt="Thumbs Up" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px;" target="_blank">
-          <img src='${thumbsDownSvg}' alt="Thumbs Down" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px; font-size:20px; text-decoration:none;" target="_blank">👍</a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px; font-size:20px; text-decoration:none;" target="_blank">👎</a>
       </div>
     `
     // Feedback links for Top 10 Articles Summary
     const top10Feedback = `
       <div style="margin-top:10px;">
         <span style="font-size:14px;">Was the Top 10 Articles Summary helpful?</span>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=up" style="margin-left:10px;" target="_blank">
-          <img src='${thumbsUpSvg}' alt="Thumbs Up" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=down" style="margin-left:5px;" target="_blank">
-          <img src='${thumbsDownSvg}' alt="Thumbs Down" width="20" height="20" style="vertical-align:middle;"/>
-        </a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=up" style="margin-left:10px; font-size:20px; text-decoration:none;" target="_blank">👍</a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=down" style="margin-left:5px; font-size:20px; text-decoration:none;" target="_blank">👎</a>
       </div>
     `
     return `
