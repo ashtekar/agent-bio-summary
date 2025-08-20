@@ -16,15 +16,11 @@ export async function POST(request: NextRequest) {
 
     const summaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY)
 
-    // Generate both types of summaries
-    const [dailySummary, top10Summary] = await Promise.all([
-      summaryGenerator.generateDailySummary(articles),
-      summaryGenerator.generateTop10Summary(articles)
-    ])
+    // Generate only Top 10 summary
+    const top10Summary = await summaryGenerator.generateTop10Summary(articles)
 
     return NextResponse.json({
       success: true,
-      dailySummary,
       top10Summary,
       generatedAt: new Date().toISOString()
     })

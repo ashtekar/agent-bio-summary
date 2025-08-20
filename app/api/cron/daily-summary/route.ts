@@ -112,22 +112,16 @@ export async function GET(request: NextRequest) {
     
     const summaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY, selectedModel)
     
-    let dailySummary: string
     let top10Summary: string
     
     try {
-      [dailySummary, top10Summary] = await Promise.all([
-        summaryGenerator.generateDailySummary(articles),
-        summaryGenerator.generateTop10Summary(articles)
-      ])
+      top10Summary = await summaryGenerator.generateTop10Summary(articles)
 
-      console.log('Summaries generated successfully')
-      console.log('Daily summary length:', dailySummary.length)
-      console.log('Daily summary preview:', dailySummary.substring(0, 100))
+      console.log('Top 10 summary generated successfully')
       console.log('Top 10 summary length:', top10Summary.length)
       console.log('Top 10 summary preview:', top10Summary.substring(0, 100))
     } catch (summaryError) {
-      console.error('Error generating summaries:', summaryError)
+      console.error('Error generating top 10 summary:', summaryError)
       throw new Error(`Summary generation failed: ${summaryError instanceof Error ? summaryError.message : 'Unknown error'}`)
     }
 
@@ -161,7 +155,6 @@ export async function GET(request: NextRequest) {
       .upsert([
         {
           date: today,
-          daily_overview: dailySummary,
           top_10_summary: top10Summary,
           featured_articles: articles.slice(0, 10).map(a => a.title)
         }
@@ -186,7 +179,7 @@ export async function GET(request: NextRequest) {
       date: today,
       title: `Daily Summary - ${today}`,
       articles: [], // No per-article summaries in email
-      dailySummary,
+      dailySummary: '', // No daily summary in email
       top10Summary,
       emailSent: false,
       createdAt: new Date().toISOString(),
