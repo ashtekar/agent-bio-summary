@@ -28,14 +28,11 @@ export class SummaryGenerator {
       Below are the top 10 synthetic biology articles from the past 24 hours. Create a comprehensive daily summary that:
       
       1. Explains the major themes and breakthroughs in simple terms
-      2. Uses basic biology terminology that a college sophomore would understand
-      3. Highlights the most important discoveries and their potential impact
-      4. Add a few sentences on how the discovery or novel approach mentioned in the article was achieved. Student is looking for key inisghts that led to the discovery.
-      5. Makes complex concepts accessible and engaging
-      6. Is written in clear, concise language
-      7. Content of your response will be used in an email newsletter
-      8. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.
-      9. Add source of the article in the summary.
+      2. Highlights the most important discoveries and their potential impact
+      3. Add a few sentences on how the discovery or novel approach mentioned in the article was achieved. Student is looking for key inisghts that led to the discovery.
+      4. Content of your response will be used in an email newsletter
+      5. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.
+      6. Add source of the article in the summary. Include the URL provided in the article object.
       
       Articles:
       ${articlesText}
@@ -47,7 +44,7 @@ export class SummaryGenerator {
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who specializes in making complex synthetic biology concepts accessible to college students. Write in clear, engaging language that builds excitement for science. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.'
+            content: 'You are a science educator who specializes in making complex synthetic biology concepts accessible to college students.'
           },
           {
             role: 'user',
@@ -107,7 +104,7 @@ export class SummaryGenerator {
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who makes synthetic biology exciting and accessible to high school students. Focus on the wonder and potential of these discoveries. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.'
+            content: 'You are a science educator who makes synthetic biology exciting and accessible to college students.'
           },
           {
             role: 'user',

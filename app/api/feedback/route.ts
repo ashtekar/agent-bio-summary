@@ -23,9 +23,6 @@ export async function GET(request: NextRequest) {
       return new NextResponse('Missing required params', { status: 400 })
     }
 
-    // Handle 'top10' feedback type by treating it as 'summary' type
-    const dbFeedbackType = feedbackType === 'top10' ? 'summary' : feedbackType
-    
     // Handle null values properly - convert string "null" to actual null
     const cleanArticleId = articleId === 'null' ? null : articleId
     const cleanSummaryId = summaryId === 'null' ? null : summaryId
@@ -35,8 +32,8 @@ export async function GET(request: NextRequest) {
       .from('feedback')
       .select('id')
       .eq('recipient_id', recipientId)
-      .eq(dbFeedbackType === 'summary' ? 'summary_id' : 'article_id', dbFeedbackType === 'summary' ? cleanSummaryId : cleanArticleId)
-      .eq('feedback_type', dbFeedbackType)
+      .eq(feedbackType === 'summary' || feedbackType === 'top10' ? 'summary_id' : 'article_id', feedbackType === 'summary' || feedbackType === 'top10' ? cleanSummaryId : cleanArticleId)
+      .eq('feedback_type', feedbackType)
       .single()
 
     if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows found
@@ -49,7 +46,7 @@ export async function GET(request: NextRequest) {
         recipient_id: recipientId,
         summary_id: cleanSummaryId,
         article_id: cleanArticleId,
-        feedback_type: dbFeedbackType,
+        feedback_type: feedbackType,
         feedback_value: feedbackValue
       })
       if (insertError) {

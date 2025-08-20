@@ -58,15 +58,17 @@ CREATE TABLE IF NOT EXISTS daily_summaries (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Feedback Table (30-day retention, no auto-cleanup)
+-- Feedback Table (30-day retention, linked to summaries/articles)
 CREATE TABLE IF NOT EXISTS feedback (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    recipient_id UUID REFERENCES email_recipients(id) ON DELETE CASCADE,
-    summary_id UUID REFERENCES daily_summaries(id) ON DELETE CASCADE,
-    article_id UUID REFERENCES articles(id) ON DELETE CASCADE,
-    feedback_type TEXT CHECK (feedback_type IN ('summary', 'article')) NOT NULL,
-    feedback_value TEXT CHECK (feedback_value IN ('up', 'down')) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    recipient_id UUID REFERENCES email_recipients(id) ON DELETE CASCADE NOT NULL,
+    summary_id UUID REFERENCES daily_summaries(id) ON DELETE CASCADE, -- Nullable if per-article
+    article_id UUID REFERENCES articles(id) ON DELETE CASCADE,       -- Nullable if per-summary
+    feedback_type TEXT NOT NULL CHECK (feedback_type IN ('summary', 'article', 'top10')),
+    feedback_value TEXT NOT NULL CHECK (feedback_value IN ('up', 'down')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    -- Ensure unique feedback per recipient per summary/article
+    UNIQUE (recipient_id, summary_id, article_id, feedback_type)
 );
 
 -- Indexes for performance
