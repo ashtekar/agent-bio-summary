@@ -58,22 +58,118 @@ export class EmailService {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Synthetic Biology Daily Digest</title>
         <style>
-          body { background: #000; color: #fff; font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #222 0%, #333 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; }
-          .content { background: #111; padding: 30px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-          .section { margin-bottom: 30px; }
-          .section h2 { color: #fff; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-          .footer { text-align: center; margin-top: 30px; padding: 20px; color: #aaa; font-size: 12px; }
-          .highlight { background: #222; color: #fff; padding: 15px; border-radius: 5px; border-left: 4px solid #3498db; margin: 15px 0; }
+          body { 
+            background: #0a0a0a; 
+            color: #e0e0e0; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
+            line-height: 1.6; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+          }
+          .header { 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); 
+            color: #ffffff; 
+            padding: 35px; 
+            border-radius: 12px; 
+            text-align: center; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 1px solid #2a2a3e;
+          }
+          .content { 
+            background: #1a1a1a; 
+            padding: 35px; 
+            border-radius: 12px; 
+            margin-top: 25px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border: 1px solid #2a2a2a;
+          }
+          .section { 
+            margin-bottom: 35px; 
+          }
+          .section h2 { 
+            color: #ffffff; 
+            border-bottom: 3px solid #4a9eff; 
+            padding-bottom: 12px; 
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+          }
+          .footer { 
+            text-align: center; 
+            margin-top: 35px; 
+            padding: 25px; 
+            color: #888; 
+            font-size: 13px; 
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+          }
+          .highlight { 
+            background: linear-gradient(135deg, #1e2a3a 0%, #2a3a4a 100%); 
+            color: #e8f4fd; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #4a9eff; 
+            margin: 20px 0; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+          }
           /* Inline markdown styles */
-          h1, h2, h3, h4, h5, h6 { color: #fff; margin-top: 1em; margin-bottom: 0.5em; }
-          ul, ol { margin: 0 0 1em 1.5em; }
-          li { margin-bottom: 0.5em; color: #fff; }
-          strong { color: #fff; }
-          em { color: #ccc; }
-          a { color: #4fa3ff; text-decoration: underline; }
-          blockquote { border-left: 4px solid #3498db; margin: 1em 0; padding: 0.5em 1em; color: #ccc; background: #181818; }
-          code { background: #181818; color: #fff; padding: 2px 4px; border-radius: 3px; font-size: 90%; }
+          h1, h2, h3, h4, h5, h6 { 
+            color: #ffffff; 
+            margin-top: 1.2em; 
+            margin-bottom: 0.6em; 
+            font-weight: 600;
+          }
+          h1 { font-size: 1.8em; }
+          h2 { font-size: 1.5em; }
+          h3 { font-size: 1.3em; }
+          ul, ol { 
+            margin: 0 0 1em 1.8em; 
+          }
+          li { 
+            margin-bottom: 0.6em; 
+            color: #e0e0e0; 
+          }
+          strong { 
+            color: #ffffff; 
+            font-weight: 600;
+          }
+          em { 
+            color: #b0b0b0; 
+            font-style: italic;
+          }
+          a { 
+            color: #4a9eff; 
+            text-decoration: none; 
+            border-bottom: 1px solid #4a9eff;
+            transition: color 0.2s ease;
+          }
+          a:hover {
+            color: #6bb6ff;
+          }
+          blockquote { 
+            border-left: 4px solid #4a9eff; 
+            margin: 1.2em 0; 
+            padding: 0.8em 1.2em; 
+            color: #b0b0b0; 
+            background: #1e2a3a; 
+            border-radius: 0 6px 6px 0;
+            font-style: italic;
+          }
+          code { 
+            background: #2a2a2a; 
+            color: #e0e0e0; 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-size: 90%; 
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            border: 1px solid #3a3a3a;
+          }
+          p {
+            margin-bottom: 1em;
+            color: #e0e0e0;
+          }
         </style>
       </head>
       <body>

@@ -95,8 +95,8 @@ export class SummaryGenerator {
       4. Connects the articles to show broader trends in synthetic biology
       5. Add a few sentences on how the discovery or novel approach mentioned in the article was achieved. Student is looking for key inisghts that led to the discovery.
       6. Content of your response will be used in an email newsletter. Get to the article summary and avoid any pre-amble
-      7. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.
-      8. Add source of the article in the summary.
+      7. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown. Make sure that the background is not set and can take the backround of the overall email
+      8. Add source of the article in the summary. Also add a link to the article.
       
       Top 10 Articles:
       ${articlesText}
