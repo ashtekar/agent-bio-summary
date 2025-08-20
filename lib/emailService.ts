@@ -187,7 +187,7 @@ export class EmailService {
         <div class="header">
           <h1>🧬 Synthetic Biology Daily Digest</h1>
           <p>Your daily summary of the latest developments in synthetic biology</p>
-          <p><strong>${summary.date}</strong></p>
+          <!-- <p><strong>${summary.date}</strong></p> -->
         </div>
         <div class="content">
           <!-- <p>Hello ${recipientName},</p> -->
