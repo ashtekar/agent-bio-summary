@@ -41,19 +41,7 @@ export class EmailService {
 
   private generateEmailHTML(summary: DailySummary, recipientName: string, recipientId?: string): string {
     // Use OpenAI's HTML output directly
-    const dailySummaryHtml = summary.dailySummary || ''
     const top10SummaryHtml = summary.top10Summary || ''
-    // Inline SVGs for thumbs up/down
-    const thumbsUpSvg = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDBhM2IwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTkgMjEuNzVWMTRIM0M0LjUgMTQgNSAxMi41IDUgMTF2LTJjMC0xLjUgMS41LTUuNSA1LjUtNS41aDQuNzNsLS4zMy0uMzNDOS4yNSAxMy4yNSA5IDIxLjc1IDkgMjEuNzV6bTExLjI1LTguNzVjMC0xLjEtLjktMi0yLTJoLTQuNXYtNWMwLTEuMS0uOS0yLTItMi0uNTUgMC0xLjA1LjI1LTEuNDEuNjdsLTYuNTggNi41OEMyLjI1IDExLjUgMiAxMi4wNSAyIDEyLjV2Mi4wNWMwIC41LjI1IDEuMDUuNjcgMS40MWw2LjU4IDYuNThjLjM2LjM2Ljg2LjU5IDEuNDEuNTloNS41YzEuMSAwIDItLjkgMi0ydi0yYzAtLjU1LS4yNS0xLjA1LS42Ny0xLjQxbC02LjU4LTYuNThjLS4zNi0uMzYtLjg2LS41OS0xLjQxLS41OXoiLz48L3N2Zz4='
-    const thumbsDownSvg = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZDMwMDAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTkgMi4yNVYxMGgtNmMwIDEuNSAxLjUgNSA1IDVoNC43M2wtLjMzLjMzQzkuMjUgMTAuNzUgOSAyLjI1IDkgMi4yNXptMTEuMjUgOC43NWMwIDEuMS0uOSAyLTJIMTQuNXY1YzAgMS4xLS45IDItMiAyLS41NSAwLTEuMDUtLjI1LTEuNDEtLjY3bC02LjU4LTYuNThDMy4yNSAxMi41IDMgMTEuOTUgMyAxMS41di0yLjA1YzAtLjU1LjI1LTEuMDUuNjctMS40MWw2LjU4LTYuNThjLjM2LS4zNi44Ni0uNTkgMS40MS0uNTloNS41YzEuMSAwIDIgLjkgMiAydjJjMCAuNTUtLjI1IDEuMDUtLjY3IDEuNDFsLTYuNTggNi41OGMtLjM2LjM2LS44Ni41OS0xLjQxLjU5eiIvPjwvc3ZnPg=='
-    // Feedback links for summary
-    const summaryFeedback = `
-      <div style="margin-top:10px;">
-        <span style="font-size:14px;">Was this summary helpful?</span>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=up" style="margin-left:10px; font-size:20px; text-decoration:none;" target="_blank">👍</a>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=summary&feedbackValue=down" style="margin-left:5px; font-size:20px; text-decoration:none;" target="_blank">👎</a>
-      </div>
-    `
     // Feedback links for Top 10 Articles Summary
     const top10Feedback = `
       <div style="margin-top:10px;">
@@ -97,13 +85,6 @@ export class EmailService {
         <div class="content">
           <p>Hello ${recipientName},</p>
           <div class="section">
-            <h2>📊 Daily Overview</h2>
-            <div class="highlight">
-              ${dailySummaryHtml}
-            </div>
-            ${summaryFeedback}
-          </div>
-          <div class="section">
             <h2>🏆 Top 10 Articles Summary</h2>
             <div class="highlight">
               ${top10SummaryHtml}
@@ -131,9 +112,6 @@ export class EmailService {
 Synthetic Biology Daily Digest - ${summary.date}
 
 Hello ${recipientName},
-
-DAILY OVERVIEW:
-${summary.dailySummary}
 
 TOP 10 ARTICLES SUMMARY:
 ${summary.top10Summary}
