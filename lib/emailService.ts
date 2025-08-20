@@ -40,9 +40,9 @@ export class EmailService {
   }
 
   private generateEmailHTML(summary: DailySummary, recipientName: string, recipientId?: string): string {
-    // Convert markdown to HTML for summaries
-    const dailySummaryHtml = marked.parse(summary.dailySummary || '')
-    const top10SummaryHtml = marked.parse(summary.top10Summary || '')
+    // Use OpenAI's HTML output directly
+    const dailySummaryHtml = summary.dailySummary || ''
+    const top10SummaryHtml = summary.top10Summary || ''
     // Inline SVGs for thumbs up/down
     const thumbsUpSvg = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDBhM2IwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTkgMjEuNzVWMTRIM0M0LjUgMTQgNSAxMi41IDUgMTF2LTJjMC0xLjUgMS41LTUuNSA1LjUtNS41aDQuNzNsLS4zMy0uMzNDOS4yNSAxMy4yNSA5IDIxLjc1IDkgMjEuNzV6bTExLjI1LTguNzVjMC0xLjEtLjktMi0yLTJoLTQuNXYtNWMwLTEuMS0uOS0yLTItMi0uNTUgMC0xLjA1LjI1LTEuNDEuNjdsLTYuNTggNi41OEMyLjI1IDExLjUgMiAxMi4wNSAyIDEyLjV2Mi4wNWMwIC41LjI1IDEuMDUuNjcgMS40MWw2LjU4IDYuNThjLjM2LjM2Ljg2LjU5IDEuNDEuNTloNS41YzEuMSAwIDItLjkgMi0ydi0yYzAtLjU1LS4yNS0xLjA1LS42Ny0xLjQxbC02LjU4LTYuNThjLS4zNi0uMzYtLjg2LS41OS0xLjQxLS41OXoiLz48L3N2Zz4='
     const thumbsDownSvg = 'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZDMwMDAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTkgMi4yNVYxMGgtNmMwIDEuNSAxLjUgNSA1IDVoNC43M2wtLjMzLjMzQzkuMjUgMTAuNzUgOSAyLjI1IDkgMi4yNXptMTEuMjUgOC43NWMwIDEuMS0uOSAyLTJIMTQuNXY1YzAgMS4xLS45IDItMiAyLS41NSAwLTEuMDUtLjI1LTEuNDEtLjY3bC02LjU4LTYuNThDMy4yNSAxMi41IDMgMTEuOTUgMyAxMS41di0yLjA1YzAtLjU1LjI1LTEuMDUuNjctMS40MWw2LjU4LTYuNThjLjM2LS4zNi44Ni0uNTkgMS40MS0uNTloNS41YzEuMSAwIDIgLjkgMiAydjJjMCAuNTUtLjI1IDEuMDUtLjY3IDEuNDFsLTYuNTggNi41OGMtLjM2LjM2LS44Ni41OS0xLjQxLjU5eiIvPjwvc3ZnPg=='

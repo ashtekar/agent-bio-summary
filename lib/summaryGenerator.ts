@@ -34,6 +34,7 @@ export class SummaryGenerator {
       5. Makes complex concepts accessible and engaging
       6. Is written in clear, concise language
       7. Content of your response will be used in an email newsletter
+      8. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.
       
       Articles:
       ${articlesText}
@@ -45,7 +46,7 @@ export class SummaryGenerator {
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who specializes in making complex synthetic biology concepts accessible to college students. Write in clear, engaging language that builds excitement for science.'
+            content: 'You are a science educator who specializes in making complex synthetic biology concepts accessible to college students. Write in clear, engaging language that builds excitement for science. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.'
           },
           {
             role: 'user',
@@ -159,7 +160,7 @@ export class SummaryGenerator {
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who specializes in making complex scientific concepts accessible to college students. Write clearly and engagingly.'
+            content: 'You are a science educator who specializes in making complex scientific concepts accessible to college students. Write clearly and engagingly. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.'
           },
           {
             role: 'user',
