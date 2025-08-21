@@ -52,9 +52,10 @@ CREATE TABLE IF NOT EXISTS articles (
 CREATE TABLE IF NOT EXISTS daily_summaries (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     date DATE UNIQUE NOT NULL,
-    daily_overview TEXT NOT NULL,
+    daily_overview TEXT,
     top_10_summary TEXT NOT NULL,
     featured_articles TEXT[] NOT NULL,
+    article_ids UUID[],
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -66,6 +67,7 @@ CREATE TABLE IF NOT EXISTS feedback (
     article_id UUID REFERENCES articles(id) ON DELETE CASCADE,       -- Nullable if per-summary
     feedback_type TEXT NOT NULL CHECK (feedback_type IN ('summary', 'article', 'top10')),
     feedback_value TEXT NOT NULL CHECK (feedback_value IN ('up', 'down')),
+    summary_article_ids UUID[], -- Array of article UUIDs used in the summary for analytics
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     -- Ensure unique feedback per recipient per summary/article
     UNIQUE (recipient_id, summary_id, article_id, feedback_type)

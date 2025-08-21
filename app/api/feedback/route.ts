@@ -42,12 +42,28 @@ export async function GET(request: NextRequest) {
     }
 
     if (!existing) {
+      // Get the article_ids from the summary for analytics
+      let summaryArticleIds: string[] | null = null
+      if (summaryId) {
+        const { data: summaryData, error: summaryError } = await supabaseAdmin
+          .from('daily_summaries')
+          .select('article_ids')
+          .eq('id', summaryId)
+          .single()
+        
+        if (!summaryError && summaryData) {
+          summaryArticleIds = summaryData.article_ids
+        }
+      }
+
       const { error: insertError } = await supabaseAdmin.from('feedback').insert({
         recipient_id: recipientId,
         summary_id: cleanSummaryId,
         article_id: cleanArticleId,
         feedback_type: feedbackType,
-        feedback_value: feedbackValue
+        feedback_value: feedbackValue,
+        // Store the article_ids from the summary for analytics
+        summary_article_ids: summaryArticleIds
       })
       if (insertError) {
         console.error('Feedback API: insert error', insertError)

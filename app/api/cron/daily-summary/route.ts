@@ -156,7 +156,8 @@ export async function GET(request: NextRequest) {
         {
           date: today,
           top_10_summary: top10Summary,
-          featured_articles: articles.slice(0, 10).map(a => a.title)
+          featured_articles: articles.slice(0, 10).map(a => a.title),
+          article_ids: articles.slice(0, 10).map(a => a.id)
         }
       ], {
         onConflict: 'date',
