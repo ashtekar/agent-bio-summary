@@ -58,6 +58,25 @@ export class EmailService {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Synthetic Biology Daily Digest</title>
         <style>
+          /* Dark mode styles */
+          @media (prefers-color-scheme: dark) {
+            body {
+              background: #000000;  /* dark mode background */
+              color: #cccccc;       /* dark mode text color */
+            }
+            /* Adjust other elements too */
+            a {
+              color: #91ADD4;       /* a lighter link color for dark mode */
+            }
+            /* Hide or show images for dark mode */
+            .lightimg {
+              display: none !important;
+            }
+            .darkimg {
+              display: block !important;
+              width: auto !important;
+            }
+          }
           body { 
             background: #0a0a0a !important; 
             color: #ffffff !important; 
