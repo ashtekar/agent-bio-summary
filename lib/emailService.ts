@@ -77,7 +77,7 @@ export class EmailService {
               width: auto !important;
             }
           }
-          body { 
+          /*body { 
             background: #0a0a0a !important; 
             color: #ffffff !important; 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
@@ -85,7 +85,7 @@ export class EmailService {
             max-width: 600px; 
             margin: 0 auto; 
             padding: 20px; 
-          }
+          }*/
           .header { 
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important; 
             color: #ffffff !important; 
