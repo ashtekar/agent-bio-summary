@@ -148,6 +148,36 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Step 3.5: Fetch the real article UUIDs for the top 10 articles
+    const top10Articles = articles.slice(0, 10)
+    const top10Urls = top10Articles.map(a => a.url)
+    
+    const { data: storedArticles, error: fetchArticlesError } = await supabaseAdmin
+      .from('articles')
+      .select('id, url')
+      .in('url', top10Urls)
+    
+    if (fetchArticlesError) {
+      console.error('Error fetching stored article UUIDs:', fetchArticlesError)
+    } else {
+      console.log(`Successfully fetched ${storedArticles?.length || 0} article UUIDs`)
+    }
+
+    // Create a map of URL to UUID for easy lookup
+    const urlToUuidMap = new Map()
+    if (storedArticles) {
+      storedArticles.forEach(article => {
+        urlToUuidMap.set(article.url, article.id)
+      })
+    }
+
+    // Get the real UUIDs for the top 10 articles in the same order
+    const top10ArticleIds = top10Articles
+      .map(article => urlToUuidMap.get(article.url))
+      .filter(id => id) // Remove any undefined values
+
+    console.log(`Mapped ${top10ArticleIds.length} article UUIDs for summary`)
+
     // Step 4: Create and store daily summary
     // Upsert summary in database (get real UUID)
     await supabaseAdmin
@@ -157,7 +187,7 @@ export async function GET(request: NextRequest) {
           date: today,
           top_10_summary: top10Summary,
           featured_articles: articles.slice(0, 10).map(a => a.title),
-          article_ids: articles.slice(0, 10).map(a => a.id)
+          article_ids: top10ArticleIds
         }
       ], {
         onConflict: 'date',
