@@ -1,6 +1,27 @@
 # AgentBioSummary
 
+**Version:** 1.2.0 | **Latest Release:** August 23, 2025
+
 An automated agent system that performs daily web searches for synthetic biology content, creates educational summaries for high school students, and sends them via email.
+
+## 🎉 What's New in v1.2
+
+### 🔧 **Critical Bug Fixes**
+- **Fixed Google Custom Search API integration** - Restored full web search functionality
+- **Resolved email HTML rendering issues** - Clean HTML formatting without markdown artifacts  
+- **Fixed email summary truncation** - Complete coverage of all 10 articles
+
+### 🛠 **Technical Improvements**
+- **Enhanced AI prompts** for consistent HTML generation
+- **Improved environment variable management** with comprehensive validation
+- **Added extensive testing infrastructure** for better reliability
+
+### 🔍 **Better Monitoring & Debugging**
+- **Enhanced logging** for easier troubleshooting
+- **Improved error handling** with graceful fallbacks
+- **Better user feedback** and system visibility
+
+[📋 Full Release Notes](RELEASE_NOTES_V1.2.md)
 
 ## 🎯 Project Overview
 
@@ -22,7 +43,8 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 
 ### Backend
 - **Vercel Edge Functions** for serverless processing
-- **OpenAI GPT-5-nano-2025-08-07** for intelligent summarization
+- **OpenAI GPT-4o-mini** for intelligent summarization
+- **Google Custom Search API** for reliable web search
 - **Resend** for email delivery
 - **Web scraping** with Cheerio and Axios
 - **Feedback API** for silent human feedback collection
@@ -38,6 +60,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 - Node.js 18+ 
 - npm or yarn
 - OpenAI API key
+- Google Custom Search API key (optional for enhanced search)
 - Resend API key (optional for email functionality)
 
 ### Installation
@@ -57,6 +80,8 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
    Create a `.env.local` file:
    ```env
    OPENAI_API_KEY=your_openai_api_key_here
+   GOOGLE_CUSTOM_SEARCH_API_KEY=your_google_search_api_key_here
+   GOOGLE_CUSTOM_SEARCH_ENGINE_ID=your_search_engine_id_here
    RESEND_API_KEY=your_resend_api_key_here
    DEFAULT_RECIPIENT_EMAIL=student@school.edu
    ADMIN_EMAIL=admin@school.edu
@@ -75,7 +100,7 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 
 ### API Quota Management
 
-**Important**: The system uses OpenAI's GPT-5-nano-2025-08-07 model for summarization. If you encounter quota exceeded errors:
+**Important**: The system uses OpenAI's GPT-4o-mini model for summarization. If you encounter quota exceeded errors:
 
 1. **Check your OpenAI billing** at https://platform.openai.com/account/billing
 2. **Upgrade your plan** if needed for higher usage limits
@@ -84,11 +109,23 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 
 The system gracefully handles quota errors and will display appropriate messages to users.
 
+### Google Custom Search API Setup
+
+For enhanced search functionality:
+
+1. **Enable Google Custom Search API** at https://console.cloud.google.com/apis/library/customsearch.googleapis.com
+2. **Create API credentials** and get your API key
+3. **Set up a Custom Search Engine** at https://cse.google.com/
+4. **Configure the search engine** to search the entire web or specific sites
+5. **Add credentials** to your environment variables
+
 ### Environment Variables
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `OPENAI_API_KEY` | OpenAI API key for GPT-4/5 access | Yes |
+| `OPENAI_API_KEY` | OpenAI API key for GPT-4o-mini access | Yes |
+| `GOOGLE_CUSTOM_SEARCH_API_KEY` | Google Custom Search API key | No |
+| `GOOGLE_CUSTOM_SEARCH_ENGINE_ID` | Google Custom Search Engine ID | No |
 | `RESEND_API_KEY` | Resend API key for email delivery | No |
 | `DEFAULT_RECIPIENT_EMAIL` | Default email for testing | No |
 | `ADMIN_EMAIL` | Admin email for error notifications | No |
@@ -105,11 +142,12 @@ The system searches for articles with these default keywords:
 Sources include:
 - PubMed
 - arXiv
-- Science Daily
+- Phys.org
 - Nature
-- Science
-- Cell
-- PNAS
+- MIT News
+- Academic OUP
+- Wired
+- And more via configurable search sites
 
 ## 📧 Email Configuration
 
@@ -138,6 +176,14 @@ Use the dashboard to trigger manual searches and test the system.
 
 ### Test Email
 Send test emails to verify email configuration.
+
+### Automated Testing
+Run the test suite to verify functionality:
+```bash
+npm test                    # Run all tests
+npm test -- --watch        # Run tests in watch mode
+npm test -- --coverage     # Run tests with coverage report
+```
 
 ### API Endpoints
 
@@ -190,6 +236,8 @@ Send test emails to verify email configuration.
 
 Add these to your Vercel project settings:
 - `OPENAI_API_KEY`
+- `GOOGLE_CUSTOM_SEARCH_API_KEY` (optional)
+- `GOOGLE_CUSTOM_SEARCH_ENGINE_ID` (optional)
 - `RESEND_API_KEY`
 - `DEFAULT_RECIPIENT_EMAIL`
 - `ADMIN_EMAIL`
@@ -208,6 +256,8 @@ Add these to your Vercel project settings:
 - **Rate limiting** on API endpoints
 - **Input validation** on all endpoints
 - **Error handling** with proper logging
+- **Content sanitization** with DOMPurify for XSS prevention
+- **Secure test environment** with mock credentials
 
 ## 🛠️ Development
 
@@ -231,10 +281,11 @@ Agent-BioSummary/
 
 ### Adding New Features
 
-1. **New Search Sources**: Add to `WebSearchModule` in `lib/webSearch.ts`
+1. **New Search Sources**: Add to `WebSearchModule` in `lib/webSearch.ts` or configure via settings
 2. **Email Templates**: Modify `EmailService` in `lib/emailService.ts`
 3. **UI Components**: Add to `components/` directory
 4. **API Endpoints**: Create new routes in `app/api/`
+5. **Tests**: Add corresponding test files in `__tests__/` directory
 
 ## 🤝 Contributing
 
@@ -251,9 +302,19 @@ This project is licensed under the MIT License.
 ## 🆘 Support
 
 For issues and questions:
-1. Check the documentation
-2. Review the code comments
-3. Open an issue on GitHub
+1. Check the documentation and release notes
+2. Review the debug logs for detailed error information
+3. Verify environment variable configuration
+4. Run the test suite to check system health
+5. Open an issue on GitHub with detailed information
+
+### Troubleshooting
+
+**Common Issues:**
+- **Search not working**: Check Google Custom Search API credentials
+- **Email formatting issues**: Verify HTML content cleaning is working
+- **Summary truncation**: Check OpenAI token limits and API quota
+- **Environment variables**: Ensure all required variables are set in Vercel
 
 ## 🎓 Educational Impact
 
