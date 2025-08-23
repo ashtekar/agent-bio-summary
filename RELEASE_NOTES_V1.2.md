@@ -121,16 +121,10 @@
 ## 🔮 **Future Roadmap**
 
 ### **Planned for v1.3**
-- Enhanced search result filtering
-- Improved email template customization
-- Additional search site integrations
-- Performance optimizations
+- Capture preference feedback to enable DPO based fine tuning 
 
 ### **Long-term Goals**
-- Advanced analytics dashboard
-- User preference management
-- Mobile app development
-- API rate limiting improvements
+- Bio summaries that are tuned to a users preferences
 
 ## 📋 **Migration Notes**
 
