@@ -84,20 +84,22 @@ export class SummaryGenerator {
 
       const prompt = `You are an expert science educator writing for ${this.targetAudience}.
       
-      Below are the top 10 synthetic biology articles from today. Create a concise summary that:
+      Below are the top 10 synthetic biology articles from today. Create a comprehensive summary that covers ALL 10 articles:
       
-      1. Highlights the key findings from each article
-      2. Explains why these discoveries are important
-      4. Connects the articles to show broader trends in synthetic biology
-      5. Add a few sentences on how the discovery or novel approach mentioned in the article was achieved. Student is looking for key inisghts that led to the discovery.
-      6. Content of your response will be used in an email newsletter. Avoid any pre-amble. We just want the summary of the article.
-      7. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown. 
-      8. Add source of the article in the summary. Also add a link to the article using the provided URL.
+      1. For each article, provide a brief but complete summary (2-3 sentences)
+      2. Highlight the key scientific findings and their significance
+      3. Explain the methodology or approach used in each discovery
+      4. Connect the articles to show broader trends in synthetic biology
+      5. Use well-structured HTML with clear article separations
+      6. Include source attribution and links for each article
+      7. Make it engaging and educational for college students
+      
+      IMPORTANT: Ensure you cover ALL 10 articles completely. Do not truncate or skip any articles.
       
       Top 10 Articles:
       ${articlesText}
       
-      Please provide a compelling summary of these top 10 articles that would interest and educate a college sophomore.`
+      Please provide a comprehensive summary of ALL 10 articles that would interest and educate a college sophomore.`
 
       const params: any = {
         model: this.model,
@@ -113,10 +115,10 @@ export class SummaryGenerator {
         ]
       }
       if (isGpt5Model(this.model)) {
-        params.max_completion_tokens = 800
+        params.max_completion_tokens = 2000
         // Do not set temperature for GPT-5 models
       } else {
-        params.max_tokens = 800
+        params.max_tokens = 2000
         params.temperature = 0.7
       }
 
@@ -125,6 +127,20 @@ export class SummaryGenerator {
       const content = response.choices[0]?.message?.content
       console.log('OpenAI top 10 response content length:', content?.length || 0)
       console.log('OpenAI top 10 response content preview:', content?.substring(0, 100) || 'No content')
+      
+      // Debug: Check if all 10 articles are mentioned
+      if (content) {
+        const articleNumbers = content.match(/\d+\./g) || []
+        console.log('Found article numbers in response:', articleNumbers)
+        console.log('Number of articles covered:', articleNumbers.length)
+        
+        if (articleNumbers.length < 10) {
+          console.warn('⚠️ WARNING: Only', articleNumbers.length, 'articles covered out of 10')
+        } else {
+          console.log('✅ SUCCESS: All 10 articles covered')
+        }
+      }
+      
       return content || 'Unable to generate top 10 summary'
     } catch (error) {
       console.error('Error generating top 10 summary:', error)
