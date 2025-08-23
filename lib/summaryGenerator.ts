@@ -82,17 +82,16 @@ export class SummaryGenerator {
         `${index + 1}. ${article.title}\n   ${article.summary}\n   Source: ${article.source}\n   URL: ${article.url}\n`
       ).join('\n')
 
-      const prompt = `You are an expert science educator writing for ${this.targetAudience}.
+      const prompt = `You are an expert science educator writing engaging contentfor ${this.targetAudience}.
       
       Below are the top 10 synthetic biology articles from today. Create a comprehensive summary that covers ALL 10 articles:
       
       1. For each article, provide a brief but complete summary (2-3 sentences)
       2. Highlight the key scientific findings and their significance
-      3. Explain the methodology or approach used in each discovery
+      3. Explain the methodology or approach used in each discovery. Students are very interested in the HOW of the discovery.
       4. Connect the articles to show broader trends in synthetic biology
       5. Use well-structured HTML with clear article separations
       6. Include source attribution and links for each article
-      7. Make it engaging and educational for college students
       
       CRITICAL: Respond with pure HTML only. Do NOT use markdown, do NOT wrap in code blocks, do NOT use \`\`\`html or \`\`\` markers.
       Start directly with HTML tags like <h2>, <p>, <ul>, etc.
