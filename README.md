@@ -2,7 +2,7 @@
 
 **Version:** 1.2.0 | **Latest Release:** August 23, 2025
 
-An automated agent system that performs daily web searches for synthetic biology content, creates educational summaries for high school students, and sends them via email.
+An automated agent system that performs daily web searches for synthetic biology content, creates educational summaries for high school students, and sends them via email. The system captures end user feedback on the summaries and use this feedback to fine tune a model.
 
 ## 🎉 What's New in v1.2
 
