@@ -101,49 +101,49 @@ export class WebSearchModule {
     const articles: Article[] = []
     
     try {
-      // Use Google Custom Search API or similar for generic search
-      // For now, we'll implement a basic web scraping approach
-      const keywords = this.settings.keywords.join(' ')
-      const searchUrl = `https://www.google.com/search?q=site:${domain}+${encodeURIComponent(keywords)}`
+      // Google Custom Search API credentials
+      const API_KEY = 'AIzaSyDY6ZmOvx7uqPtqc-bhQ7LELHW7ikcc-RI'
+      const SEARCH_ENGINE_ID = 'a455f7dec024043f9'
       
-      const response = await axios.get(searchUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      // Construct search query with site restriction
+      const searchQuery = `${this.settings.keywords.join(' ')} site:${domain}`
+      
+      console.log(`Searching Google Custom Search API for: ${searchQuery}`)
+      
+      const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+        params: {
+          key: API_KEY,
+          cx: SEARCH_ENGINE_ID,
+          q: searchQuery,
+          num: 10 // Number of results
         },
         timeout: 15000
       })
-
-      const $ = cheerio.load(response.data)
       
-      // Extract search results (this is a basic implementation)
-      $('.g').each((index, element) => {
-        if (index >= 10) return // Limit results
-        
-        const titleElement = $(element).find('h3')
-        const linkElement = $(element).find('a')
-        const snippetElement = $(element).find('.VwiC3b')
-        
-        const title = titleElement.text().trim()
-        const url = linkElement.attr('href')
-        const snippet = snippetElement.text().trim()
-        
-        if (title && url && snippet) {
-          articles.push({
-            id: `${domain}-${Date.now()}-${index}`,
-            title,
-            url,
+      if (response.data.items && response.data.items.length > 0) {
+        response.data.items.forEach((item: any, index: number) => {
+          const article: Article = {
+            id: `google-api-${domain}-${index}`,
+            title: item.title || '',
+            url: item.link || '',
             source: displayName,
-            publishedDate: new Date().toISOString(),
-            content: snippet,
-            summary: snippet.substring(0, 200) + '...',
-            relevanceScore: this.calculateRelevanceScore(title, snippet),
-            keywords: this.extractKeywords(title + ' ' + snippet)
-          })
-        }
-      })
-
+            publishedDate: new Date().toISOString(), // Google API doesn't always provide dates
+            content: item.snippet || '',
+            summary: item.snippet || '',
+            relevanceScore: this.calculateRelevanceScore(item.title, item.snippet),
+            keywords: this.extractKeywords(item.title + ' ' + item.snippet)
+          }
+          
+          articles.push(article)
+        })
+        
+        console.log(`Found ${articles.length} articles from ${displayName}`)
+      } else {
+        console.log(`No results found for ${displayName}`)
+      }
+      
     } catch (error) {
-      console.error(`Error in generic search for ${domain}:`, error)
+      console.error(`Error in Google Custom Search API for ${domain}:`, error)
     }
 
     return articles
