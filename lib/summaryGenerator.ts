@@ -94,6 +94,9 @@ export class SummaryGenerator {
       6. Include source attribution and links for each article
       7. Make it engaging and educational for college students
       
+      CRITICAL: Respond with pure HTML only. Do NOT use markdown, do NOT wrap in code blocks, do NOT use \`\`\`html or \`\`\` markers.
+      Start directly with HTML tags like <h2>, <p>, <ul>, etc.
+      
       IMPORTANT: Ensure you cover ALL 10 articles completely. Do not truncate or skip any articles.
       
       Top 10 Articles:
@@ -106,7 +109,7 @@ export class SummaryGenerator {
         messages: [
           {
             role: 'system',
-            content: 'You are a science educator who makes synthetic biology exciting and accessible to college students.'
+            content: 'You are a science educator who makes synthetic biology exciting and accessible to college students. Always respond with pure HTML only - no markdown, no code blocks, no ```html markers. Start directly with HTML tags.'
           },
           {
             role: 'user',

@@ -40,8 +40,8 @@ export class EmailService {
   }
 
   private generateEmailHTML(summary: DailySummary, recipientName: string, recipientId?: string): string {
-    // Use OpenAI's HTML output directly
-    const top10SummaryHtml = summary.top10Summary || ''
+    // Clean up the HTML content to remove any markdown artifacts
+    const top10SummaryHtml = this.cleanHtmlContent(summary.top10Summary || '')
     // Feedback links for Top 10 Articles Summary
     const top10Feedback = `
       <div style="margin-top:10px;">
@@ -212,6 +212,31 @@ export class EmailService {
       </body>
       </html>
     `
+  }
+
+  private cleanHtmlContent(content: string): string {
+    if (!content) return ''
+    
+    // Remove markdown code block markers
+    let cleaned = content
+      .replace(/^\s*```html\s*/i, '') // Remove opening ```html with optional leading whitespace
+      .replace(/^\s*```\s*/i, '') // Remove opening ``` with optional leading whitespace
+      .replace(/\s*```\s*$/i, '') // Remove closing ``` with optional whitespace
+      .replace(/^\s*```html\s*$/i, '') // Remove standalone ```html
+      .replace(/^\s*```\s*$/i, '') // Remove standalone ```
+      .trim()
+    
+    // Remove any leading/trailing whitespace
+    cleaned = cleaned.trim()
+    
+    // Debug logging
+    console.log('🔍 HTML Content Cleaning:')
+    console.log('Original length:', content.length)
+    console.log('Cleaned length:', cleaned.length)
+    console.log('Original preview:', content.substring(0, 100))
+    console.log('Cleaned preview:', cleaned.substring(0, 100))
+    
+    return cleaned
   }
 
   private generateEmailText(summary: DailySummary, recipientName: string): string {
