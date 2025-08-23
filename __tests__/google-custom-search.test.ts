@@ -3,7 +3,7 @@ import axios from 'axios'
 describe('Google Custom Search API Test', () => {
   const API_KEY = process.env.GOOGLE_CUSTOM_SEARCH_API_KEY || 'test-key'
   
-  // Your actual Search Engine ID
+  // Search Engine ID
   const SEARCH_ENGINE_ID = process.env.GOOGLE_CUSTOM_SEARCH_ENGINE_ID || 'test-engine-id'
   
   it('should demonstrate Google Custom Search API functionality', async () => {
