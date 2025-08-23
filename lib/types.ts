@@ -74,3 +74,21 @@ export interface EmailRequest {
   summary: DailySummary
   template: string
 }
+
+export interface SearchSite {
+  id: string
+  domain: string
+  display_name: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface SearchSiteRequest {
+  domain: string
+  display_name: string
+}
+
+export interface SearchSiteUpdateRequest {
+  is_active: boolean
+}

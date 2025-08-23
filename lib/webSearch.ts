@@ -13,12 +13,42 @@ export class WebSearchModule {
     let articles: Article[] = []
     
     try {
-      // Search multiple sources
-      const searchPromises = [
-        this.searchPubMed(),
-        this.searchArxiv(),
-        this.searchNewsSources()
-      ]
+      // Determine which sources to search based on settings
+      const searchPromises: Promise<Article[]>[] = []
+      
+      // Check if PubMed is in the sources list
+      if (this.settings.sources.some(source => 
+        source.toLowerCase().includes('pubmed') || 
+        source.toLowerCase().includes('pubmed.ncbi.nlm.nih.gov')
+      )) {
+        searchPromises.push(this.searchPubMed())
+      }
+      
+      // Check if arXiv is in the sources list
+      if (this.settings.sources.some(source => 
+        source.toLowerCase().includes('arxiv') || 
+        source.toLowerCase().includes('arxiv.org')
+      )) {
+        searchPromises.push(this.searchArxiv())
+      }
+      
+      // Check if Science Daily is in the sources list
+      if (this.settings.sources.some(source => 
+        source.toLowerCase().includes('sciencedaily') || 
+        source.toLowerCase().includes('sciencedaily.com')
+      )) {
+        searchPromises.push(this.searchNewsSources())
+      }
+
+      // If no specific sources match, search all (fallback)
+      if (searchPromises.length === 0) {
+        console.log('No specific sources matched, searching all sources')
+        searchPromises.push(
+          this.searchPubMed(),
+          this.searchArxiv(),
+          this.searchNewsSources()
+        )
+      }
 
       const results = await Promise.allSettled(searchPromises)
       

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { SearchSiteSelector } from './SearchSiteSelector'
 
 interface EmailRecipient {
   id: string
@@ -250,6 +251,15 @@ export function Settings() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Search Sites */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Search Sites</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Configure which websites should be searched for articles. At least one site must be active for search to work.
+        </p>
+        <SearchSiteSelector />
       </div>
 
       {/* Search Settings */}
