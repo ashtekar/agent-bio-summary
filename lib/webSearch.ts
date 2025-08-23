@@ -1,6 +1,12 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
 import { Article, SearchSettings } from './types'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export class WebSearchModule {
   private settings: SearchSettings
@@ -13,48 +19,37 @@ export class WebSearchModule {
     let articles: Article[] = []
     
     try {
-      // Determine which sources to search based on settings
-      const searchPromises: Promise<Article[]>[] = []
-      
-      // Check if PubMed is in the sources list
-      if (this.settings.sources.some(source => 
-        source.toLowerCase().includes('pubmed') || 
-        source.toLowerCase().includes('pubmed.ncbi.nlm.nih.gov')
-      )) {
-        searchPromises.push(this.searchPubMed())
-      }
-      
-      // Check if arXiv is in the sources list
-      if (this.settings.sources.some(source => 
-        source.toLowerCase().includes('arxiv') || 
-        source.toLowerCase().includes('arxiv.org')
-      )) {
-        searchPromises.push(this.searchArxiv())
-      }
-      
-      // Check if Science Daily is in the sources list
-      if (this.settings.sources.some(source => 
-        source.toLowerCase().includes('sciencedaily') || 
-        source.toLowerCase().includes('sciencedaily.com')
-      )) {
-        searchPromises.push(this.searchNewsSources())
+      // Get active search sites from database
+      const { data: activeSites, error: sitesError } = await supabase
+        .from('search_sites')
+        .select('domain, display_name')
+        .eq('is_active', true)
+
+      if (sitesError) {
+        console.error('Error fetching active search sites:', sitesError)
+        return []
       }
 
-      // If no specific sources match, search all (fallback)
-      if (searchPromises.length === 0) {
-        console.log('No specific sources matched, searching all sources')
-        searchPromises.push(
-          this.searchPubMed(),
-          this.searchArxiv(),
-          this.searchNewsSources()
-        )
+      if (!activeSites || activeSites.length === 0) {
+        console.log('No active search sites found')
+        return []
       }
+
+      console.log(`Searching ${activeSites.length} active sites:`, activeSites.map(s => s.domain))
+
+      // Search each active site
+      const searchPromises = activeSites.map(site => 
+        this.searchSite(site.domain, site.display_name)
+      )
 
       const results = await Promise.allSettled(searchPromises)
       
-      results.forEach((result) => {
+      results.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           articles.push(...result.value)
+          console.log(`Found ${result.value.length} articles from ${activeSites[index].domain}`)
+        } else {
+          console.error(`Error searching ${activeSites[index].domain}:`, result.reason)
         }
       })
 
@@ -70,7 +65,88 @@ export class WebSearchModule {
       console.error('Error searching articles:', error)
       return []
     }
+  }
 
+  private async searchSite(domain: string, displayName: string): Promise<Article[]> {
+    const articles: Article[] = []
+    
+    try {
+      // Use site-specific handlers for known sites
+      const siteHandler = this.getSiteHandler(domain)
+      if (siteHandler) {
+        return await siteHandler()
+      }
+
+      // Generic search for unknown sites
+      return await this.searchGenericSite(domain, displayName)
+
+    } catch (error) {
+      console.error(`Error searching ${domain}:`, error)
+      return []
+    }
+  }
+
+  private getSiteHandler(domain: string): (() => Promise<Article[]>) | null {
+    const handlers: Record<string, () => Promise<Article[]>> = {
+      'pubmed.ncbi.nlm.nih.gov': () => this.searchPubMed(),
+      'arxiv.org': () => this.searchArxiv(),
+      'sciencedaily.com': () => this.searchScienceDaily(),
+      'www.sciencedaily.com': () => this.searchScienceDaily(),
+    }
+
+    return handlers[domain] || null
+  }
+
+  private async searchGenericSite(domain: string, displayName: string): Promise<Article[]> {
+    const articles: Article[] = []
+    
+    try {
+      // Use Google Custom Search API or similar for generic search
+      // For now, we'll implement a basic web scraping approach
+      const keywords = this.settings.keywords.join(' ')
+      const searchUrl = `https://www.google.com/search?q=site:${domain}+${encodeURIComponent(keywords)}`
+      
+      const response = await axios.get(searchUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        },
+        timeout: 15000
+      })
+
+      const $ = cheerio.load(response.data)
+      
+      // Extract search results (this is a basic implementation)
+      $('.g').each((index, element) => {
+        if (index >= 10) return // Limit results
+        
+        const titleElement = $(element).find('h3')
+        const linkElement = $(element).find('a')
+        const snippetElement = $(element).find('.VwiC3b')
+        
+        const title = titleElement.text().trim()
+        const url = linkElement.attr('href')
+        const snippet = snippetElement.text().trim()
+        
+        if (title && url && snippet) {
+          articles.push({
+            id: `${domain}-${Date.now()}-${index}`,
+            title,
+            url,
+            source: displayName,
+            publishedDate: new Date().toISOString(),
+            content: snippet,
+            summary: snippet.substring(0, 200) + '...',
+            relevanceScore: this.calculateRelevanceScore(title, snippet),
+            keywords: this.extractKeywords(title + ' ' + snippet)
+          })
+        }
+      })
+
+    } catch (error) {
+      console.error(`Error in generic search for ${domain}:`, error)
+    }
+
+    return articles
   }
 
   private async searchPubMed(): Promise<Article[]> {
@@ -84,13 +160,13 @@ export class WebSearchModule {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       })
 
       const $ = cheerio.load(response.data)
       
       $('.result-item').each((index, element) => {
-        if (index >= 10) return // Limit to first 10 results
+        if (index >= 10) return
         
         const title = $(element).find('.title').text().trim()
         const url = $(element).find('a').attr('href')
@@ -126,7 +202,7 @@ export class WebSearchModule {
       const url = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(keywords)}&start=0&max_results=20&sortBy=submittedDate&sortOrder=descending`
       
       const response = await axios.get(url, {
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       })
       const $ = cheerio.load(response.data, { xmlMode: true })
       
@@ -158,23 +234,22 @@ export class WebSearchModule {
     return articles
   }
 
-  private async searchNewsSources(): Promise<Article[]> {
+  private async searchScienceDaily(): Promise<Article[]> {
     const articles: Article[] = []
     
     try {
-      // Search Science Daily
       const scienceDailyUrl = `https://www.sciencedaily.com/news/top/technology/`
       const response = await axios.get(scienceDailyUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       })
 
       const $ = cheerio.load(response.data)
       
       $('.latest-head').each((index, element) => {
-        if (index >= 5) return // Limit to first 5 results
+        if (index >= 5) return
         
         const title = $(element).find('a').text().trim()
         const url = $(element).find('a').attr('href')
@@ -196,7 +271,7 @@ export class WebSearchModule {
       })
 
     } catch (error) {
-      console.error('Error searching news sources:', error)
+      console.error('Error searching Science Daily:', error)
     }
 
     return articles

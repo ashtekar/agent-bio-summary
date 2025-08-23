@@ -34,7 +34,7 @@ export interface EmailRecipient {
 
 export interface SearchSettings {
   timeWindow: number
-  sources: string[]
+  sources?: string[] // Optional since we now get sites from database
   keywords: string[]
   maxArticles: number
   relevance_threshold?: number

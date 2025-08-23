@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     const searchSettings: SearchSettings = {
       timeWindow: timeWindow || 24,
-      sources: activeSites.map(site => site.display_name),
+      sources: [], // No longer needed since we get sites from database
       keywords: keywords || ['synthetic biology', 'CRISPR', 'gene editing'],
       maxArticles: maxArticles || 50
     }
