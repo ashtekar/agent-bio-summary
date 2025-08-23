@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 describe('Google Custom Search API Detailed Test', () => {
-  const API_KEY = 'AIzaSyDY6ZmOvx7uqPtqc-bhQ7LELHW7ikcc-RI'
-  const SEARCH_ENGINE_ID = 'a455f7dec024043f9'
+  const API_KEY = process.env.GOOGLE_CUSTOM_SEARCH_API_KEY || 'test-key'
+  const SEARCH_ENGINE_ID = process.env.GOOGLE_CUSTOM_SEARCH_ENGINE_ID || 'test-engine-id'
   
   it('should debug API response in detail', async () => {
     const queries = [
