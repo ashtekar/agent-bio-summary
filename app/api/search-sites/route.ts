@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { SearchSite, SearchSiteRequest, SearchSiteUpdateRequest } from '@/lib/types'
+import { isValidDomain } from '@/lib/utils'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -41,11 +42,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Basic domain validation
-    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/
-    if (!domainRegex.test(domain)) {
+    // Enhanced domain validation - supports subdomains
+    if (!isValidDomain(domain)) {
       return NextResponse.json(
-        { error: 'Invalid domain format' },
+        { error: 'Invalid domain format. Please use a valid domain like "example.com" or "news.mit.edu"' },
         { status: 400 }
       )
     }

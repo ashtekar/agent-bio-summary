@@ -56,3 +56,33 @@ export function formatLastRun(dateString: string): string {
     return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`
   }
 }
+
+/**
+ * Validates if a domain string is in a valid format
+ * Supports subdomains like news.mit.edu, www.example.com, etc.
+ */
+export function isValidDomain(domain: string): boolean {
+  // Enhanced domain validation regex that supports subdomains
+  const domainRegex = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/
+  return domainRegex.test(domain)
+}
+
+/**
+ * Test cases for domain validation
+ * Uncomment to test:
+ * 
+ * Valid domains:
+ * - example.com
+ * - news.mit.edu
+ * - www.google.com
+ * - sub.domain.example.co.uk
+ * - api-v1.example.com
+ * 
+ * Invalid domains:
+ * - .example.com (starts with dot)
+ * - example. (ends with dot)
+ * - example (no TLD)
+ * - example..com (double dots)
+ * - -example.com (starts with hyphen)
+ * - example-.com (ends with hyphen)
+ */

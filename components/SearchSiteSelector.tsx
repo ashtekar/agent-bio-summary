@@ -149,7 +149,7 @@ export function SearchSiteSelector({ onSitesChange }: SearchSiteSelectorProps) {
         />
         <input
           type="text"
-          placeholder="Domain (e.g., linkedin.com)"
+          placeholder="Domain (e.g., news.mit.edu, linkedin.com)"
           value={newDomain}
           onChange={(e) => setNewDomain(e.target.value)}
           className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
