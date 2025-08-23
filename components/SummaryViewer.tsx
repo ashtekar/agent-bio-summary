@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { SmartContentRenderer } from './SmartContentRenderer'
 
 interface Article {
   id: string
@@ -139,12 +140,20 @@ export function SummaryViewer() {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">Daily Overview</h3>
-              <p className="text-gray-700 leading-relaxed">{selectedSummary.dailySummary}</p>
+              <SmartContentRenderer 
+                content={selectedSummary.dailySummary || ''} 
+                showFormatToggle={true}
+                className="text-gray-700"
+              />
             </div>
 
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">Top 10 Articles Summary</h3>
-              <p className="text-gray-700 leading-relaxed">{selectedSummary.top10Summary}</p>
+              <SmartContentRenderer 
+                content={selectedSummary.top10Summary || ''} 
+                showFormatToggle={true}
+                className="text-gray-700"
+              />
             </div>
 
             {/* Articles List */}
@@ -159,7 +168,13 @@ export function SummaryViewer() {
                         Score: {article.relevanceScore}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">{article.summary}</p>
+                    <div className="text-sm text-gray-600 mb-2">
+                      <SmartContentRenderer 
+                        content={article.summary || ''} 
+                        showFormatToggle={false}
+                        className="text-sm"
+                      />
+                    </div>
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <span>{article.source}</span>
                       <span>{article.publishedDate}</span>
