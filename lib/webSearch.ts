@@ -103,12 +103,19 @@ export class WebSearchModule {
     try {
       // Google Custom Search API credentials from environment variables
       const API_KEY = process.env.GOOGLE_CUSTOM_SEARCH_API_KEY
-      const SEARCH_ENGINE_ID = process.env.GOOGLE_CUSTOM_SEARCH_ENGINE_ID
+      const SEARCH_ENGINE_ID = process.env.GOOGLE_CUSTOM_SEARCH_ENGINE_ID?.trim()
       
       if (!API_KEY || !SEARCH_ENGINE_ID) {
         console.error('Google Custom Search API credentials not configured')
         return articles
       }
+      
+      // Debug: Log the credentials (masked for security)
+      console.log('🔍 Google Custom Search API Debug:')
+      console.log('API Key present:', !!API_KEY)
+      console.log('Search Engine ID present:', !!SEARCH_ENGINE_ID)
+      console.log('Search Engine ID length:', SEARCH_ENGINE_ID?.length)
+      console.log('Search Engine ID (first 10 chars):', SEARCH_ENGINE_ID?.substring(0, 10))
       
       // Construct search query with site restriction
       const searchQuery = `${this.settings.keywords.join(' ')} site:${domain}`
