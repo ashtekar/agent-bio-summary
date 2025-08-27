@@ -46,7 +46,7 @@ export class ComparisonService {
       console.error('Error fetching system settings:', settingsError)
       // Use defaults if settings fetch fails
       const defaultSettings = {
-        comparison_model: 'gpt-4o',
+        comparison_model: 'gpt-5',
         comparison_temperature: 0.5,
         comparison_max_tokens: 300,
         openai_model: 'gpt-4o-mini'
@@ -57,17 +57,14 @@ export class ComparisonService {
     }
     
     const settings = systemSettings || {
-      comparison_model: 'gpt-4o',
+      comparison_model: 'gpt-5',
       comparison_temperature: 0.5,
       comparison_max_tokens: 300,
       openai_model: 'gpt-4o-mini'
     }
     
-    // Convert gpt-5 to gpt-4o since gpt-5 is not working properly
-    if (settings.comparison_model === 'gpt-5') {
-      console.log('Converting gpt-5 to gpt-4o due to GPT-5 issues')
-      settings.comparison_model = 'gpt-4o'
-    }
+    // Use the model from database settings (GPT-5 is now working correctly)
+    console.log(`Using comparison model from settings: ${settings.comparison_model}`)
     
     // Get summary and articles data
     console.log(`Fetching summary data for summaryId: ${summaryId}`)
@@ -410,13 +407,7 @@ export class ComparisonService {
    */
   private async generateAdvancedSummary(articleId: string, model: string, temperature?: number, maxTokens?: number): Promise<string> {
     try {
-      // Convert gpt-5 to gpt-4o since gpt-5 is not working properly
-      const actualModel = model === 'gpt-5' ? 'gpt-4o' : model
-      if (model === 'gpt-5') {
-        console.log(`Converting gpt-5 to gpt-4o for article ${articleId}`)
-      }
-      
-      console.log(`Generating advanced summary for article ${articleId} using model: ${actualModel}`)
+      console.log(`Generating advanced summary for article ${articleId} using model: ${model}`)
       
       // Get article content
       const { data: article, error } = await supabaseAdmin!
@@ -432,7 +423,7 @@ export class ComparisonService {
       console.log(`Found article: ${article.title}`)
       
       // Create a new SummaryGenerator instance with the specified model and settings
-      const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', actualModel)
+      const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
       
       // Map database article to Article interface format
       const mappedArticle = {
