@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
         if (previousSummaries && previousSummaries.length > 0) {
           for (const summary of previousSummaries) {
             if (summary.article_ids) {
-              summary.article_ids.forEach(id => previouslySummarizedIds.add(id))
+              summary.article_ids.forEach((id: string) => previouslySummarizedIds.add(id))
             }
           }
         }
