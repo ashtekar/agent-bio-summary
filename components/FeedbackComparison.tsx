@@ -179,9 +179,10 @@ export default function FeedbackComparison({
                 </span>
               </div>
               <div className="prose prose-sm max-w-none mb-4">
-                <p className="text-gray-700 leading-relaxed">
-                  {currentComparison.summary_a.content}
-                </p>
+                <div 
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: currentComparison.summary_a.content }}
+                />
               </div>
               <button
                 onClick={() => handlePreferenceSelect('A')}
@@ -203,9 +204,10 @@ export default function FeedbackComparison({
                 </span>
               </div>
               <div className="prose prose-sm max-w-none mb-4">
-                <p className="text-gray-700 leading-relaxed">
-                  {currentComparison.summary_b.content}
-                </p>
+                <div 
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: currentComparison.summary_b.content }}
+                />
               </div>
               <button
                 onClick={() => handlePreferenceSelect('B')}

@@ -298,8 +298,11 @@ export class ComparisonService {
       throw new Error('Article not found')
     }
     
+    // Create a new SummaryGenerator instance with the specified model
+    const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
+    
     // Generate advanced summary using specified model
-    const advancedSummary = await this.summaryGenerator.generateDailySummary([article])
+    const advancedSummary = await advancedSummaryGenerator.generateArticleSummary(article)
     
     return advancedSummary
   }
