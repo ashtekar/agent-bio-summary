@@ -22,25 +22,65 @@ export class ComparisonService {
    * Creates a new comparison session and returns the first comparison data
    */
   async createSession(recipientId: string, summaryId: string): Promise<ComparisonSession> {
+    console.log(`Starting createSession for recipientId: ${recipientId}, summaryId: ${summaryId}`)
+    
     if (!supabaseAdmin) {
+      console.error('Supabase admin not configured')
       throw new Error('Supabase admin not configured')
     }
     
     // Generate session ID
     const sessionId = crypto.randomUUID()
+    console.log(`Generated session ID: ${sessionId}`)
+    
+    // Get system settings for comparison models
+    console.log('Fetching system settings for comparison models')
+    const { data: systemSettings, error: settingsError } = await supabaseAdmin
+      .from('system_settings')
+      .select('comparison_model, comparison_temperature, comparison_max_tokens, openai_model')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+    
+    if (settingsError) {
+      console.error('Error fetching system settings:', settingsError)
+      // Use defaults if settings fetch fails
+      const defaultSettings = {
+        comparison_model: 'gpt-4o',
+        comparison_temperature: 0.5,
+        comparison_max_tokens: 300,
+        openai_model: 'gpt-4o-mini'
+      }
+      console.log('Using default settings:', defaultSettings)
+    } else {
+      console.log('Using system settings:', systemSettings)
+    }
+    
+    const settings = systemSettings || {
+      comparison_model: 'gpt-4o',
+      comparison_temperature: 0.5,
+      comparison_max_tokens: 300,
+      openai_model: 'gpt-4o-mini'
+    }
     
     // Get summary and articles data
+    console.log(`Fetching summary data for summaryId: ${summaryId}`)
     const { data: summaryData, error: summaryError } = await supabaseAdmin
-      .from('daily_summaries')
+      .from('top_10_summary')
       .select('*')
       .eq('id', summaryId)
       .single()
     
     if (summaryError || !summaryData) {
+      console.error('Summary fetch error:', summaryError)
+      console.error('Summary data:', summaryData)
       throw new Error('Summary not found')
     }
     
+    console.log(`Found summary data: ${summaryData.title || 'No title'}`)
+    
     // Get articles for this summary
+    console.log(`Fetching articles for article_ids: ${JSON.stringify(summaryData.article_ids || [])}`)
     const { data: articles, error: articlesError } = await supabaseAdmin
       .from('articles')
       .select('*')
@@ -49,8 +89,12 @@ export class ComparisonService {
       .limit(10)
     
     if (articlesError || !articles) {
+      console.error('Articles fetch error:', articlesError)
+      console.error('Articles data:', articles)
       throw new Error('Articles not found')
     }
+    
+    console.log(`Found ${articles.length} articles`)
     
     // Try to extract summaries from daily summary first (cost-efficient)
     let articleSummaries: ArticleSummary[] = []
@@ -86,13 +130,18 @@ export class ComparisonService {
     
     // Use all available articles (1-3) for comparison
     const articlesToCompare = articleSummaries.slice(0, Math.min(articleSummaries.length, 3))
+    console.log(`Generating comparisons for ${articlesToCompare.length} articles`)
+    
     const comparisonPromises = articlesToCompare.map(async (articleSummary, index) => {
       const order = index + 1
+      console.log(`Generating comparison ${order} for article: ${articleSummary.title}`)
       
       // Generate advanced model summary for comparison
       const advancedSummary = await this.generateAdvancedSummary(
         articleSummary.article_id,
-        'gpt-4o' // Use gpt-4o as fallback if gpt-5 is not available
+        settings.comparison_model, // Use model from database settings
+        settings.comparison_temperature, // Use temperature from settings
+        settings.comparison_max_tokens // Use max tokens from settings
       )
       
       return {
@@ -102,14 +151,16 @@ export class ComparisonService {
         article_id: articleSummary.article_id,
         current_summary: articleSummary.summary,
         advanced_summary: advancedSummary,
-        current_model: 'gpt-4o-mini', // Current model
-        advanced_model: 'gpt-4o', // Advanced model
+        current_model: settings.openai_model, // Current model from settings
+        advanced_model: settings.comparison_model, // Advanced model from settings
         comparison_order: order,
         extraction_method: extractionMethod
       }
     })
     
+    console.log('Waiting for all comparison promises to resolve...')
     const comparisonRecords = await Promise.all(comparisonPromises)
+    console.log(`All comparison promises resolved. Created ${comparisonRecords.length} records`)
     
     console.log(`Creating ${comparisonRecords.length} comparison records for session ${sessionId}`)
     console.log('Comparison records to insert:', JSON.stringify(comparisonRecords, null, 2))
@@ -134,6 +185,7 @@ export class ComparisonService {
     console.log(`Successfully inserted ${insertData?.length || 0} comparison records`)
     console.log('Inserted records:', JSON.stringify(insertData, null, 2))
     
+    console.log('Session creation completed successfully')
     return {
       session_id: sessionId,
       recipient_id: recipientId,
@@ -142,6 +194,10 @@ export class ComparisonService {
       completed_comparisons: 0,
       created_at: new Date().toISOString()
     }
+  } catch (error: any) {
+    console.error('Error in createSession:', error)
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    throw error
   }
   
   /**
@@ -332,7 +388,7 @@ export class ComparisonService {
   /**
    * Generates advanced model summary for comparison
    */
-  private async generateAdvancedSummary(articleId: string, model: string): Promise<string> {
+  private async generateAdvancedSummary(articleId: string, model: string, temperature?: number, maxTokens?: number): Promise<string> {
     try {
       console.log(`Generating advanced summary for article ${articleId} using model: ${model}`)
       
@@ -349,7 +405,7 @@ export class ComparisonService {
       
       console.log(`Found article: ${article.title}`)
       
-      // Create a new SummaryGenerator instance with the specified model
+      // Create a new SummaryGenerator instance with the specified model and settings
       const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
       
       // Map database article to Article interface format
