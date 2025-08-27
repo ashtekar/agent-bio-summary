@@ -75,17 +75,18 @@ export class ComparisonService {
       extractionMethod = 'generated'
       
       // Fallback: Generate individual summaries
-      const topArticles = articles.slice(0, 3) // Use top 3 articles
+      const topArticles = articles.slice(0, Math.min(articles.length, 3)) // Use available articles (1-3)
       articleSummaries = await this.generateIndividualSummaries(topArticles)
     }
     
-    // Ensure we have at least 3 articles for comparison
-    if (articleSummaries.length < 3) {
+    // Ensure we have at least 1 article for comparison
+    if (articleSummaries.length < 1) {
       throw new Error('Insufficient articles for comparison')
     }
     
-    // Create comparison records for the first 3 articles
-    const comparisonPromises = articleSummaries.slice(0, 3).map(async (articleSummary, index) => {
+    // Use all available articles (1-3) for comparison
+    const articlesToCompare = articleSummaries.slice(0, Math.min(articleSummaries.length, 3))
+    const comparisonPromises = articlesToCompare.map(async (articleSummary, index) => {
       const order = index + 1
       
       // Generate advanced model summary for comparison
@@ -123,7 +124,7 @@ export class ComparisonService {
       session_id: sessionId,
       recipient_id: recipientId,
       summary_id: summaryId,
-      total_comparisons: 3,
+      total_comparisons: articlesToCompare.length,
       completed_comparisons: 0,
       created_at: new Date().toISOString()
     }
