@@ -301,8 +301,21 @@ export class ComparisonService {
     // Create a new SummaryGenerator instance with the specified model
     const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
     
+    // Map database article to Article interface format
+    const mappedArticle = {
+      id: article.id,
+      title: article.title,
+      url: article.url,
+      source: article.source,
+      publishedDate: article.published_date,
+      content: article.content,
+      summary: article.content?.substring(0, 200) + '...' || '',
+      relevanceScore: article.relevance_score,
+      keywords: [] // Default empty array since database doesn't store keywords
+    }
+    
     // Generate advanced summary using specified model
-    const advancedSummary = await advancedSummaryGenerator.generateArticleSummary(article)
+    const advancedSummary = await advancedSummaryGenerator.generateArticleSummary(mappedArticle)
     
     return advancedSummary
   }
