@@ -10,7 +10,9 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "debug:gpt5": "node debug-gpt5.js",
+    "debug:gpt5-simple": "node debug-gpt5-simple.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.55.0",
