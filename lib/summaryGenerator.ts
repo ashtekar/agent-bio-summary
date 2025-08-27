@@ -205,6 +205,60 @@ export class SummaryGenerator {
     }
   }
 
+  async generateArticleSummary(article: Article): Promise<string> {
+    try {
+      const prompt = `You are an expert science educator writing for ${this.targetAudience}.
+      
+      Create a concise summary of this synthetic biology article:
+      
+      Title: ${article.title}
+      Source: ${article.source}
+      URL: ${article.url}
+      Content: ${article.content}
+      
+      Requirements:
+      1. Use simple, clear language
+      2. Explain complex terms when they appear
+      3. Focus on the main findings and their importance
+      4. Make it engaging and interesting
+      5. Keep it concise (2-3 paragraphs)
+      6. Content of your response will be used in an email newsletter
+
+      Please provide a simplified explanation that maintains scientific accuracy while being accessible to a college sophomore.`
+
+      const params: any = {
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a science educator who specializes in making complex scientific concepts accessible to college students. Write clearly and engagingly. Respond with well-structured HTML suitable for direct use in an email. Do not use markdown.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      }
+      if (isGpt5Model(this.model)) {
+        params.max_completion_tokens = 500
+        // Do not set temperature for GPT-5 models
+      } else {
+        params.max_tokens = 500
+        params.temperature = 0.7
+      }
+
+      const response = await this.openai.chat.completions.create(params)
+
+      return response.choices[0]?.message?.content || article.summary
+    } catch (error) {
+      console.error('Error generating article summary:', error)
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
+        return 'OpenAI API quota exceeded. Using original summary.'
+      }
+      return article.summary
+    }
+  }
+
   async generateEducationalContext(articles: Article[]): Promise<string> {
     try {
       const keywords = new Set<string>()

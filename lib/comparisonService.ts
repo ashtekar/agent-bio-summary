@@ -57,13 +57,18 @@ export class ComparisonService {
     let extractionMethod: 'extracted' | 'generated' = 'extracted'
     
     try {
-      const extractedSummaries = await this.extractor.extractSummaries(summaryData.daily_overview || '')
-      
-      if (this.extractor.validateExtraction(extractedSummaries)) {
-        articleSummaries = this.extractor.mapToArticles(extractedSummaries, articles)
-        console.log(`Successfully extracted ${articleSummaries.length} summaries`)
+      // Check if we have a daily_overview to extract from
+      if (summaryData.daily_overview && summaryData.daily_overview.trim().length > 0) {
+        const extractedSummaries = await this.extractor.extractSummaries(summaryData.daily_overview)
+        
+        if (this.extractor.validateExtraction(extractedSummaries)) {
+          articleSummaries = this.extractor.mapToArticles(extractedSummaries, articles)
+          console.log(`Successfully extracted ${articleSummaries.length} summaries`)
+        } else {
+          throw new Error('Extraction validation failed')
+        }
       } else {
-        throw new Error('Extraction validation failed')
+        throw new Error('No daily_overview available for extraction')
       }
     } catch (error) {
       console.log('Extraction failed, falling back to generation:', error)
@@ -259,7 +264,8 @@ export class ComparisonService {
     
     for (const article of articles) {
       try {
-        const summary = await this.summaryGenerator.generateDailySummary([article])
+        // Generate individual summary for this article
+        const summary = await this.summaryGenerator.generateArticleSummary(article)
         
         summaries.push({
           article_id: article.id,
