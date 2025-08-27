@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '.env.local' })
 const OpenAI = require('openai')
 
 // Initialize OpenAI client

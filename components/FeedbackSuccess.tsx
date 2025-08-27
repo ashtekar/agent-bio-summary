@@ -97,21 +97,12 @@ export default function FeedbackSuccess({ summary, onClose }: FeedbackSuccessPro
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex justify-center">
             <button
               onClick={onClose}
-              className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Back to Dashboard
-            </button>
-            <button
-              onClick={() => {
-                // Could add functionality to share results or provide additional feedback
-                console.log('Share results clicked')
-              }}
-              className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Share Results
             </button>
           </div>
         </div>

@@ -252,8 +252,9 @@ export class SummaryGenerator {
         ]
       }
       if (isGpt5Model(this.model)) {
-        params.max_completion_tokens = 500
-        // Do not set temperature for GPT-5 models
+        // For GPT-5, don't set max_completion_tokens as it causes reasoning-only mode
+        // Let GPT-5 generate naturally without token limits
+        console.log('Using GPT-5 without max_completion_tokens to avoid reasoning-only mode')
       } else {
         params.max_tokens = 500
         params.temperature = 0.7
@@ -343,8 +344,9 @@ export class SummaryGenerator {
         ]
       }
       if (isGpt5Model(this.model)) {
-        params.max_completion_tokens = 400
-        // Do not set temperature for GPT-5 models
+        // For GPT-5, don't set max_completion_tokens as it causes reasoning-only mode
+        // Let GPT-5 generate naturally without token limits
+        console.log('Using GPT-5 without max_completion_tokens to avoid reasoning-only mode')
       } else {
         params.max_tokens = 400
         params.temperature = 0.7

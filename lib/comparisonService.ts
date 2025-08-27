@@ -63,6 +63,12 @@ export class ComparisonService {
       openai_model: 'gpt-4o-mini'
     }
     
+    // Convert gpt-5 to gpt-4o since gpt-5 is not working properly
+    if (settings.comparison_model === 'gpt-5') {
+      console.log('Converting gpt-5 to gpt-4o due to GPT-5 issues')
+      settings.comparison_model = 'gpt-4o'
+    }
+    
     // Get summary and articles data
     console.log(`Fetching summary data for summaryId: ${summaryId}`)
     const { data: summaryData, error: summaryError } = await supabaseAdmin
@@ -404,7 +410,13 @@ export class ComparisonService {
    */
   private async generateAdvancedSummary(articleId: string, model: string, temperature?: number, maxTokens?: number): Promise<string> {
     try {
-      console.log(`Generating advanced summary for article ${articleId} using model: ${model}`)
+      // Convert gpt-5 to gpt-4o since gpt-5 is not working properly
+      const actualModel = model === 'gpt-5' ? 'gpt-4o' : model
+      if (model === 'gpt-5') {
+        console.log(`Converting gpt-5 to gpt-4o for article ${articleId}`)
+      }
+      
+      console.log(`Generating advanced summary for article ${articleId} using model: ${actualModel}`)
       
       // Get article content
       const { data: article, error } = await supabaseAdmin!
@@ -420,7 +432,7 @@ export class ComparisonService {
       console.log(`Found article: ${article.title}`)
       
       // Create a new SummaryGenerator instance with the specified model and settings
-      const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
+      const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', actualModel)
       
       // Map database article to Article interface format
       const mappedArticle = {
