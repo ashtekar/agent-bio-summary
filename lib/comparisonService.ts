@@ -66,7 +66,7 @@ export class ComparisonService {
     // Get summary and articles data
     console.log(`Fetching summary data for summaryId: ${summaryId}`)
     const { data: summaryData, error: summaryError } = await supabaseAdmin
-      .from('top_10_summary')
+      .from('daily_summaries')
       .select('*')
       .eq('id', summaryId)
       .single()
