@@ -87,36 +87,11 @@ export default function FeedbackPage() {
     initializeFeedback()
   }, [searchParams])
 
-  const handleStartComparison = async () => {
+  const handleStartComparison = async (sessionId: string) => {
     try {
-      if (!feedbackRecipientId || !feedbackSummaryId) {
-        throw new Error('Missing required data for comparison')
-      }
-
-      const response = await fetch('/api/feedback/start-comparison', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          recipientId: feedbackRecipientId,
-          summaryId: feedbackSummaryId,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to start comparison')
-      }
-
-      const result = await response.json()
-      
-      if (result.success) {
-        setFeedbackSessionId(result.session_id)
-        setShowThankYou(false)
-        setShowComparison(true)
-      } else {
-        throw new Error('Failed to start comparison')
-      }
+      setFeedbackSessionId(sessionId)
+      setShowThankYou(false)
+      setShowComparison(true)
     } catch (err) {
       console.error('Error starting comparison:', err)
       toast.error('Failed to start comparison')
@@ -193,8 +168,10 @@ export default function FeedbackPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {showThankYou && (
+        {showThankYou && feedbackRecipientId && feedbackSummaryId && (
           <FeedbackThankYou
+            recipientId={feedbackRecipientId}
+            summaryId={feedbackSummaryId}
             onStartComparison={handleStartComparison}
             onClose={() => setShowThankYou(false)}
           />
