@@ -8,9 +8,12 @@ export async function GET(
   try {
     const { sessionId } = params
     
+    console.log(`Getting session summary for sessionId: ${sessionId}`)
+    
     if (!sessionId) {
+      console.error('Missing sessionId parameter')
       return NextResponse.json(
-        { error: 'Missing required parameter: sessionId' },
+        { success: false, error: 'Missing required parameter: sessionId' },
         { status: 400 }
       )
     }
@@ -18,12 +21,21 @@ export async function GET(
     const comparisonService = new ComparisonService()
     const sessionSummary = await comparisonService.getSessionSummary(sessionId)
     
-    return NextResponse.json(sessionSummary)
+    console.log(`Session summary retrieved successfully:`, {
+      session_id: sessionSummary.session_id,
+      total_comparisons: sessionSummary.total_comparisons,
+      completed_comparisons: sessionSummary.completed_comparisons
+    })
+    
+    return NextResponse.json({ success: true, data: sessionSummary })
     
   } catch (error) {
     console.error('Get session summary error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to get session summary' },
+      { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to get session summary' 
+      },
       { status: 500 }
     )
   }

@@ -207,6 +207,18 @@ export class SummaryGenerator {
 
   async generateArticleSummary(article: Article): Promise<string> {
     try {
+      console.log(`Generating article summary for model: ${this.model}`)
+      console.log(`Article title: ${article.title}`)
+      console.log(`Article content length: ${article.content?.length || 0}`)
+      
+      // Truncate content if it's too long for GPT-5
+      const maxContentLength = isGpt5Model(this.model) ? 8000 : 4000
+      const truncatedContent = article.content?.length > maxContentLength 
+        ? article.content.substring(0, maxContentLength) + '...'
+        : article.content
+      
+      console.log(`Using content length: ${truncatedContent?.length || 0}`)
+      
       const prompt = `You are an expert science educator writing for ${this.targetAudience}.
       
       Create a concise summary of this synthetic biology article:
@@ -214,7 +226,7 @@ export class SummaryGenerator {
       Title: ${article.title}
       Source: ${article.source}
       URL: ${article.url}
-      Content: ${article.content}
+      Content: ${truncatedContent}
       
       Requirements:
       1. Use simple, clear language
@@ -247,15 +259,52 @@ export class SummaryGenerator {
         params.temperature = 0.7
       }
 
+      console.log(`Sending request to OpenAI with model: ${this.model}`)
+      console.log(`Request params:`, {
+        model: params.model,
+        max_completion_tokens: params.max_completion_tokens,
+        max_tokens: params.max_tokens,
+        temperature: params.temperature,
+        messages_count: params.messages.length
+      })
+      
       const response = await this.openai.chat.completions.create(params)
+      
+      const content = response.choices[0]?.message?.content
+      console.log(`OpenAI response for ${this.model}:`, {
+        content_length: content?.length || 0,
+        content_preview: content?.substring(0, 100) || 'No content',
+        usage: response.usage
+      })
 
-      return response.choices[0]?.message?.content || article.summary
+      return content || article.summary
     } catch (error) {
       console.error('Error generating article summary:', error)
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'insufficient_quota') {
-        return 'OpenAI API quota exceeded. Using original summary.'
+      
+      // Log detailed error information
+      if (error && typeof error === 'object') {
+        console.error('Error details:', {
+          code: (error as any).code,
+          message: (error as any).message,
+          status: (error as any).status,
+          model: this.model
+        })
       }
-      return article.summary
+      
+      if (error && typeof error === 'object' && 'code' in error) {
+        const errorCode = (error as any).code
+        if (errorCode === 'insufficient_quota') {
+          return 'OpenAI API quota exceeded. Using original summary.'
+        } else if (errorCode === 'model_not_found') {
+          return `Model ${this.model} not found or not available. Using original summary.`
+        } else if (errorCode === 'invalid_api_key') {
+          return 'Invalid OpenAI API key. Using original summary.'
+        } else if (errorCode === 'billing_not_active') {
+          return 'OpenAI billing not active. Using original summary.'
+        }
+      }
+      
+      return `Summary generation failed: ${error instanceof Error ? error.message : 'Unknown error'}. Using original summary.`
     }
   }
 

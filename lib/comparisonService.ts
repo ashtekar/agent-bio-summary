@@ -324,10 +324,13 @@ export class ComparisonService {
    * Gets summary of all comparisons in a session
    */
   async getSessionSummary(sessionId: string): Promise<SessionSummary> {
+    console.log(`Getting session summary for sessionId: ${sessionId}`)
+    
     if (!supabaseAdmin) {
       throw new Error('Supabase admin not configured')
     }
     
+    console.log(`Querying feedback_comparisons for session: ${sessionId}`)
     const { data: comparisons, error } = await supabaseAdmin
       .from('feedback_comparisons')
       .select(`
@@ -337,8 +340,19 @@ export class ComparisonService {
       .eq('session_id', sessionId)
       .order('comparison_order')
     
-    if (error || !comparisons) {
-      throw new Error('Failed to fetch session summary')
+    console.log(`Query result:`, {
+      comparisons_count: comparisons?.length || 0,
+      error: error?.message || null
+    })
+    
+    if (error) {
+      console.error('Database error in getSessionSummary:', error)
+      throw new Error(`Failed to fetch session summary: ${error.message}`)
+    }
+    
+    if (!comparisons || comparisons.length === 0) {
+      console.error(`No comparisons found for session: ${sessionId}`)
+      throw new Error('No comparisons found for this session')
     }
     
     const completedComparisons = comparisons.filter(c => c.user_preference)
