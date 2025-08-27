@@ -31,7 +31,7 @@ export class ComparisonService {
     
     // Get summary and articles data
     const { data: summaryData, error: summaryError } = await supabaseAdmin
-      .from('top_10_summary')
+      .from('daily_summaries')
       .select('*')
       .eq('id', summaryId)
       .single()
@@ -57,9 +57,9 @@ export class ComparisonService {
     let extractionMethod: 'extracted' | 'generated' = 'extracted'
     
     try {
-      // Check if we have a daily_overview to extract from
-      if (summaryData.daily_overview && summaryData.daily_overview.trim().length > 0) {
-        const extractedSummaries = await this.extractor.extractSummaries(summaryData.daily_overview)
+      // Check if we have a top_10_summary to extract from
+      if (summaryData.top_10_summary && summaryData.top_10_summary.trim().length > 0) {
+        const extractedSummaries = await this.extractor.extractSummaries(summaryData.top_10_summary)
         
         if (this.extractor.validateExtraction(extractedSummaries)) {
           articleSummaries = this.extractor.mapToArticles(extractedSummaries, articles)
@@ -68,7 +68,7 @@ export class ComparisonService {
           throw new Error('Extraction validation failed')
         }
       } else {
-        throw new Error('No daily_overview available for extraction')
+        throw new Error('No top_10_summary available for extraction')
       }
     } catch (error) {
       console.log('Extraction failed, falling back to generation:', error)
