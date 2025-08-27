@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { SmartContentRenderer } from './SmartContentRenderer'
+import FeedbackThankYou from './FeedbackThankYou'
+import FeedbackComparison from './FeedbackComparison'
+import FeedbackSuccess from './FeedbackSuccess'
+import { SessionSummary } from '@/lib/types'
+import { toast } from 'react-hot-toast'
 
 interface Article {
   id: string
@@ -27,6 +32,15 @@ export function SummaryViewer() {
   const [summaries, setSummaries] = useState<DailySummary[]>([])
   const [selectedSummary, setSelectedSummary] = useState<DailySummary | null>(null)
   const [loading, setLoading] = useState(true)
+  
+  // Feedback comparison state
+  const [showThankYou, setShowThankYou] = useState(false)
+  const [showComparison, setShowComparison] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [feedbackSessionId, setFeedbackSessionId] = useState<string>('')
+  const [feedbackRecipientId, setFeedbackRecipientId] = useState<string>('')
+  const [feedbackSummaryId, setFeedbackSummaryId] = useState<string>('')
+  const [sessionSummary, setSessionSummary] = useState<SessionSummary | null>(null)
 
   useEffect(() => {
     const fetchSummaries = async () => {
@@ -57,6 +71,61 @@ export function SummaryViewer() {
 
     fetchSummaries()
   }, [])
+
+  const handleFeedback = async (feedbackType: 'summary' | 'article' | 'top10', feedbackValue: 'up' | 'down', articleId?: string) => {
+    if (!selectedSummary) return
+
+    try {
+      const params = new URLSearchParams({
+        recipientId: 'default', // You might want to get this from user context
+        summaryId: selectedSummary.id,
+        feedbackType,
+        feedbackValue,
+        articleId: articleId || 'null'
+      })
+
+      const response = await fetch(`/api/feedback?${params}`)
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        toast.success('Feedback recorded!')
+        
+        // Show comparison flow if applicable
+        if (result.showComparison) {
+          setFeedbackRecipientId(result.recipientId)
+          setFeedbackSummaryId(result.summaryId)
+          setShowThankYou(true)
+        }
+      } else {
+        toast.error('Failed to record feedback')
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error)
+      toast.error('Failed to record feedback')
+    }
+  }
+
+  const handleStartComparison = (sessionId: string) => {
+    setFeedbackSessionId(sessionId)
+    setShowThankYou(false)
+    setShowComparison(true)
+  }
+
+  const handleComparisonComplete = (summary: SessionSummary) => {
+    setSessionSummary(summary)
+    setShowComparison(false)
+    setShowSuccess(true)
+  }
+
+  const handleCloseFeedback = () => {
+    setShowThankYou(false)
+    setShowComparison(false)
+    setShowSuccess(false)
+    setFeedbackSessionId('')
+    setFeedbackRecipientId('')
+    setFeedbackSummaryId('')
+    setSessionSummary(null)
+  }
 
   if (loading) {
     return (
@@ -139,7 +208,25 @@ export function SummaryViewer() {
           {/* Summary Content */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Daily Overview</h3>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-medium text-gray-900">Daily Overview</h3>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleFeedback('summary', 'up')}
+                    className="text-green-600 hover:text-green-700 p-1"
+                    title="Thumbs up"
+                  >
+                    👍
+                  </button>
+                  <button
+                    onClick={() => handleFeedback('summary', 'down')}
+                    className="text-red-600 hover:text-red-700 p-1"
+                    title="Thumbs down"
+                  >
+                    👎
+                  </button>
+                </div>
+              </div>
               <SmartContentRenderer 
                 content={selectedSummary.dailySummary || ''} 
                 showFormatToggle={true}
@@ -148,7 +235,25 @@ export function SummaryViewer() {
             </div>
 
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Top 10 Articles Summary</h3>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-medium text-gray-900">Top 10 Articles Summary</h3>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleFeedback('top10', 'up')}
+                    className="text-green-600 hover:text-green-700 p-1"
+                    title="Thumbs up"
+                  >
+                    👍
+                  </button>
+                  <button
+                    onClick={() => handleFeedback('top10', 'down')}
+                    className="text-red-600 hover:text-red-700 p-1"
+                    title="Thumbs down"
+                  >
+                    👎
+                  </button>
+                </div>
+              </div>
               <SmartContentRenderer 
                 content={selectedSummary.top10Summary || ''} 
                 showFormatToggle={true}
@@ -164,9 +269,27 @@ export function SummaryViewer() {
                   <div key={article.id} className="border rounded-lg p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-medium text-gray-900">{article.title}</h4>
-                      <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                        Score: {article.relevanceScore}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          Score: {article.relevanceScore}
+                        </span>
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => handleFeedback('article', 'up', article.id)}
+                            className="text-green-600 hover:text-green-700 p-1"
+                            title="Thumbs up"
+                          >
+                            👍
+                          </button>
+                          <button
+                            onClick={() => handleFeedback('article', 'down', article.id)}
+                            className="text-red-600 hover:text-red-700 p-1"
+                            title="Thumbs down"
+                          >
+                            👎
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div className="text-sm text-gray-600 mb-2">
                       <SmartContentRenderer 
@@ -193,6 +316,33 @@ export function SummaryViewer() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Feedback Modals */}
+      {showThankYou && (
+        <FeedbackThankYou
+          recipientId={feedbackRecipientId}
+          summaryId={feedbackSummaryId}
+          onStartComparison={handleStartComparison}
+          onClose={handleCloseFeedback}
+        />
+      )}
+
+      {showComparison && (
+        <FeedbackComparison
+          sessionId={feedbackSessionId}
+          recipientId={feedbackRecipientId}
+          summaryId={feedbackSummaryId}
+          onComplete={handleComparisonComplete}
+          onClose={handleCloseFeedback}
+        />
+      )}
+
+      {showSuccess && sessionSummary && (
+        <FeedbackSuccess
+          summary={sessionSummary}
+          onClose={handleCloseFeedback}
+        />
       )}
     </div>
   )

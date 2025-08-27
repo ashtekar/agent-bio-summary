@@ -23,6 +23,9 @@ interface SystemSettings {
   summary_length: 'short' | 'medium' | 'long'
   include_images: boolean
   openai_model: string
+  comparison_model: string
+  comparison_temperature: number
+  comparison_max_tokens: number
 }
 
 export function Settings() {
@@ -38,7 +41,10 @@ export function Settings() {
     schedule_time: '08:00',
     summary_length: 'medium',
     include_images: false,
-    openai_model: 'gpt-4o-mini'
+    openai_model: 'gpt-4o-mini',
+    comparison_model: 'gpt-5',
+    comparison_temperature: 0.5,
+    comparison_max_tokens: 300
   })
   const [newEmail, setNewEmail] = useState('')
   const [newName, setNewName] = useState('')
@@ -371,6 +377,92 @@ export function Settings() {
             />
             <span className="ml-2 text-sm text-gray-700">Include images in email summaries</span>
           </label>
+        </div>
+      </div>
+
+      {/* A/B Comparison Settings */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">🔬 A/B Comparison Settings</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Configure the advanced model used for A/B comparison testing. These settings affect the quality and cost of comparison summaries.
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Advanced Model for Comparison
+            </label>
+            <select
+              value={systemSettings.comparison_model}
+              onChange={(e) => setSystemSettings({...systemSettings, comparison_model: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            >
+              <option value="gpt-5">GPT-5 (Latest & Most Capable)</option>
+              <option value="gpt-5o">GPT-5o (Fast & Efficient)</option>
+              <option value="gpt-4o">GPT-4o (High Quality)</option>
+              <option value="gpt-4-turbo">GPT-4 Turbo (Balanced)</option>
+              <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Alternative)</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Google)</option>
+            </select>
+            <p className="text-sm text-gray-500 mt-1">
+              Select the advanced model to compare against the current model in A/B tests.
+            </p>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Max Tokens per Summary
+            </label>
+            <input
+              type="number"
+              value={systemSettings.comparison_max_tokens}
+              onChange={(e) => setSystemSettings({...systemSettings, comparison_max_tokens: parseInt(e.target.value)})}
+              min="100"
+              max="1000"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Maximum length of comparison summaries (100-1000 tokens).
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Temperature: {systemSettings.comparison_temperature}
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={systemSettings.comparison_temperature}
+            onChange={(e) => setSystemSettings({...systemSettings, comparison_temperature: parseFloat(e.target.value)})}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>Focused (0.0)</span>
+            <span>Balanced (0.5)</span>
+            <span>Creative (1.0)</span>
+          </div>
+          <p className="text-sm text-gray-500 mt-2">
+            Lower values produce more focused, consistent summaries. Higher values add more creativity and variety.
+          </p>
+        </div>
+
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <div className="flex items-start">
+            <span className="text-blue-600 text-lg mr-2">💰</span>
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-1">Cost Estimation</h4>
+              <p className="text-sm text-blue-800">
+                Estimated cost per comparison session: $0.02-0.04 USD
+              </p>
+              <p className="text-xs text-blue-700 mt-1">
+                Based on 3 comparisons with {systemSettings.comparison_max_tokens} tokens each using {systemSettings.comparison_model}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

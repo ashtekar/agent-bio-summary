@@ -154,6 +154,53 @@ export interface Database {
           created_at?: string
         }
       }
+      feedback_comparisons: {
+        Row: {
+          id: string
+          session_id: string
+          recipient_id: string
+          summary_id: string
+          article_id: string
+          current_summary: string
+          advanced_summary: string
+          current_model: string
+          advanced_model: string
+          user_preference: string
+          comparison_order: number
+          extraction_method: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          session_id: string
+          recipient_id: string
+          summary_id: string
+          article_id: string
+          current_summary: string
+          advanced_summary: string
+          current_model: string
+          advanced_model: string
+          user_preference: string
+          comparison_order: number
+          extraction_method: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          session_id?: string
+          recipient_id?: string
+          summary_id?: string
+          article_id?: string
+          current_summary?: string
+          advanced_summary?: string
+          current_model?: string
+          advanced_model?: string
+          user_preference?: string
+          comparison_order?: number
+          extraction_method?: string
+          created_at?: string
+        }
+      }
     }
   }
 }

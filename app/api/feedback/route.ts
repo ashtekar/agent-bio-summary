@@ -74,8 +74,18 @@ export async function GET(request: NextRequest) {
     } else {
       console.log('Feedback API: feedback already exists')
     }
-    // Always return 204 No Content for silent feedback
-    return new NextResponse(null, { status: 204 })
+    
+    // Return success with flag to show comparison flow
+    // Only show comparison for summary feedback and if we have a summaryId
+    const shouldShowComparison = feedbackType === 'summary' && cleanSummaryId
+    
+    return NextResponse.json({
+      success: true,
+      showComparison: shouldShowComparison,
+      recipientId,
+      summaryId: cleanSummaryId
+    })
+    
   } catch (error) {
     console.error('Feedback API: unexpected error', error)
     return new NextResponse('Unexpected error', { status: 500 })

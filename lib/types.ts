@@ -45,6 +45,9 @@ export interface SystemSettings {
   emailTemplate: string
   summaryLength: 'short' | 'medium' | 'long'
   includeImages: boolean
+  comparisonModel?: string
+  comparisonTemperature?: number
+  comparisonMaxTokens?: number
 }
 
 export interface SystemStatus {
@@ -91,4 +94,75 @@ export interface SearchSiteRequest {
 
 export interface SearchSiteUpdateRequest {
   is_active: boolean
+}
+
+// Feedback Comparison System Types
+export interface FeedbackComparison {
+  id: string
+  session_id: string
+  recipient_id: string
+  summary_id: string
+  article_id: string
+  current_summary: string
+  advanced_summary: string
+  current_model: string
+  advanced_model: string
+  user_preference: 'A' | 'B'
+  comparison_order: number
+  extraction_method: 'extracted' | 'generated'
+  created_at: string
+}
+
+export interface ComparisonSession {
+  session_id: string
+  recipient_id: string
+  summary_id: string
+  total_comparisons: number
+  completed_comparisons: number
+  created_at: string
+}
+
+export interface ComparisonData {
+  session_id: string
+  comparison_order: number
+  article: {
+    id: string
+    title: string
+    source: string
+    published_date: string
+  }
+  summary_a: {
+    content: string
+    model: string
+    label: string
+  }
+  summary_b: {
+    content: string
+    model: string
+    label: string
+  }
+  is_complete: boolean
+}
+
+export interface SessionSummary {
+  session_id: string
+  recipient_id: string
+  summary_id: string
+  comparisons: Array<{
+    comparison_order: number
+    article_title: string
+    user_preference: 'A' | 'B'
+    selected_model: string
+  }>
+  total_comparisons: number
+  completed_comparisons: number
+  created_at: string
+}
+
+export interface ArticleSummary {
+  article_id: string
+  title: string
+  source: string
+  published_date: string
+  summary: string
 }
