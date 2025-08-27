@@ -92,7 +92,7 @@ export class ComparisonService {
       // Generate advanced model summary for comparison
       const advancedSummary = await this.generateAdvancedSummary(
         articleSummary.article_id,
-        'gpt-5' // Default advanced model
+        'gpt-4o' // Use gpt-4o as fallback if gpt-5 is not available
       )
       
       return {
@@ -103,7 +103,7 @@ export class ComparisonService {
         current_summary: articleSummary.summary,
         advanced_summary: advancedSummary,
         current_model: 'gpt-4o-mini', // Current model
-        advanced_model: 'gpt-5', // Advanced model
+        advanced_model: 'gpt-4o', // Advanced model
         comparison_order: order,
         extraction_method: extractionMethod
       }
@@ -111,14 +111,28 @@ export class ComparisonService {
     
     const comparisonRecords = await Promise.all(comparisonPromises)
     
+    console.log(`Creating ${comparisonRecords.length} comparison records for session ${sessionId}`)
+    console.log('Comparison records to insert:', JSON.stringify(comparisonRecords, null, 2))
+    
     // Insert all comparison records
-    const { error: insertError } = await supabaseAdmin
+    const { data: insertData, error: insertError } = await supabaseAdmin
       .from('feedback_comparisons')
       .insert(comparisonRecords)
+      .select()
     
     if (insertError) {
+      console.error('Failed to insert comparison records:', insertError)
+      console.error('Error details:', {
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint
+      })
       throw new Error(`Failed to create comparison records: ${insertError.message}`)
     }
+    
+    console.log(`Successfully inserted ${insertData?.length || 0} comparison records`)
+    console.log('Inserted records:', JSON.stringify(insertData, null, 2))
     
     return {
       session_id: sessionId,
@@ -138,6 +152,8 @@ export class ComparisonService {
       throw new Error('Supabase admin not configured')
     }
     
+    console.log(`Getting comparison data for session ${sessionId}, order ${order}`)
+    
     const { data: comparison, error } = await supabaseAdmin
       .from('feedback_comparisons')
       .select(`
@@ -149,8 +165,25 @@ export class ComparisonService {
       .single()
     
     if (error || !comparison) {
+      console.error('Failed to get comparison data:', error)
+      console.error('Comparison error details:', {
+        code: error?.code,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint
+      })
       throw new Error('Comparison not found')
     }
+    
+    console.log(`Found comparison data for session ${sessionId}, order ${order}`)
+    console.log('Comparison data:', JSON.stringify({
+      session_id: comparison.session_id,
+      comparison_order: comparison.comparison_order,
+      article_id: comparison.article_id,
+      user_preference: comparison.user_preference,
+      current_summary_length: comparison.current_summary?.length || 0,
+      advanced_summary_length: comparison.advanced_summary?.length || 0
+    }, null, 2))
     
     // Check if this is the last comparison
     const { count } = await supabaseAdmin
@@ -191,16 +224,29 @@ export class ComparisonService {
       throw new Error('Supabase admin not configured')
     }
     
+    console.log(`Recording preference for session ${sessionId}, order ${order}, preference: ${preference}`)
+    
     // Update the comparison record with user preference
-    const { error: updateError } = await supabaseAdmin
+    const { data: updateData, error: updateError } = await supabaseAdmin
       .from('feedback_comparisons')
       .update({ user_preference: preference })
       .eq('session_id', sessionId)
       .eq('comparison_order', order)
+      .select()
     
     if (updateError) {
+      console.error('Failed to update preference:', updateError)
+      console.error('Update error details:', {
+        code: updateError.code,
+        message: updateError.message,
+        details: updateError.details,
+        hint: updateError.hint
+      })
       throw new Error(`Failed to record preference: ${updateError.message}`)
     }
+    
+    console.log(`Successfully updated preference for ${updateData?.length || 0} records`)
+    console.log('Updated records:', JSON.stringify(updateData, null, 2))
     
     // Check if there are more comparisons
     const { count } = await supabaseAdmin
@@ -287,36 +333,55 @@ export class ComparisonService {
    * Generates advanced model summary for comparison
    */
   private async generateAdvancedSummary(articleId: string, model: string): Promise<string> {
-    // Get article content
-    const { data: article, error } = await supabaseAdmin!
-      .from('articles')
-      .select('*')
-      .eq('id', articleId)
-      .single()
-    
-    if (error || !article) {
-      throw new Error('Article not found')
+    try {
+      console.log(`Generating advanced summary for article ${articleId} using model: ${model}`)
+      
+      // Get article content
+      const { data: article, error } = await supabaseAdmin!
+        .from('articles')
+        .select('*')
+        .eq('id', articleId)
+        .single()
+      
+      if (error || !article) {
+        throw new Error('Article not found')
+      }
+      
+      console.log(`Found article: ${article.title}`)
+      
+      // Create a new SummaryGenerator instance with the specified model
+      const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
+      
+      // Map database article to Article interface format
+      const mappedArticle = {
+        id: article.id,
+        title: article.title,
+        url: article.url,
+        source: article.source,
+        publishedDate: article.published_date,
+        content: article.content,
+        summary: article.content?.substring(0, 200) + '...' || '',
+        relevanceScore: article.relevance_score,
+        keywords: [] // Default empty array since database doesn't store keywords
+      }
+      
+      console.log(`Mapped article content length: ${mappedArticle.content?.length || 0}`)
+      
+      // Generate advanced summary using specified model
+      const advancedSummary = await advancedSummaryGenerator.generateArticleSummary(mappedArticle)
+      
+      console.log(`Generated advanced summary length: ${advancedSummary?.length || 0}`)
+      
+      if (!advancedSummary || advancedSummary.trim().length === 0) {
+        throw new Error('Generated summary is empty')
+      }
+      
+      return advancedSummary
+    } catch (error) {
+      console.error(`Error generating advanced summary for article ${articleId}:`, error)
+      
+      // Return a fallback summary if generation fails
+      return `Summary generation failed for this article. Error: ${error instanceof Error ? error.message : 'Unknown error'}`
     }
-    
-    // Create a new SummaryGenerator instance with the specified model
-    const advancedSummaryGenerator = new SummaryGenerator(process.env.OPENAI_API_KEY || '', model)
-    
-    // Map database article to Article interface format
-    const mappedArticle = {
-      id: article.id,
-      title: article.title,
-      url: article.url,
-      source: article.source,
-      publishedDate: article.published_date,
-      content: article.content,
-      summary: article.content?.substring(0, 200) + '...' || '',
-      relevanceScore: article.relevance_score,
-      keywords: [] // Default empty array since database doesn't store keywords
-    }
-    
-    // Generate advanced summary using specified model
-    const advancedSummary = await advancedSummaryGenerator.generateArticleSummary(mappedArticle)
-    
-    return advancedSummary
   }
 }
