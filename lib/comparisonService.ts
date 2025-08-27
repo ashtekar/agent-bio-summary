@@ -31,7 +31,7 @@ export class ComparisonService {
     
     // Get summary and articles data
     const { data: summaryData, error: summaryError } = await supabaseAdmin
-      .from('daily_summaries')
+      .from('top_10_summary')
       .select('*')
       .eq('id', summaryId)
       .single()
