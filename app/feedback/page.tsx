@@ -189,7 +189,7 @@ export default function FeedbackPage() {
 
         {showSuccess && sessionSummary && (
           <FeedbackSuccess
-            sessionSummary={sessionSummary}
+            summary={sessionSummary}
             onClose={() => setShowSuccess(false)}
           />
         )}
