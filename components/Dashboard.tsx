@@ -18,7 +18,11 @@ interface RecentSummary {
   status: 'completed' | 'processing' | 'failed'
 }
 
-export function Dashboard() {
+interface DashboardProps {
+  onTabChange: (tab: string) => void
+}
+
+export function Dashboard({ onTabChange }: DashboardProps) {
   const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null)
   const [recentSummaries, setRecentSummaries] = useState<RecentSummary[]>([])
   const [loading, setLoading] = useState(true)
@@ -141,7 +145,7 @@ export function Dashboard() {
                   {summary.status}
                 </span>
                 <button 
-                  onClick={() => window.location.href = '/summaries'}
+                  onClick={() => onTabChange('summaries')}
                   className="text-primary-600 hover:text-primary-700 text-sm font-medium"
                 >
                   View

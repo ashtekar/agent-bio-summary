@@ -38,7 +38,7 @@ export default function Home() {
 
       {/* Tab Content */}
       <div className="mt-6">
-        {activeTab === 'dashboard' && <Dashboard />}
+        {activeTab === 'dashboard' && <Dashboard onTabChange={setActiveTab} />}
         {activeTab === 'summaries' && <SummaryViewer />}
         {activeTab === 'settings' && <Settings />}
       </div>
