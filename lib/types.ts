@@ -107,7 +107,7 @@ export interface FeedbackComparison {
   advanced_summary: string
   current_model: string
   advanced_model: string
-  user_preference: 'A' | 'B'
+  user_preference: 'A' | 'B' | null
   comparison_order: number
   extraction_method: 'extracted' | 'generated'
   created_at: string

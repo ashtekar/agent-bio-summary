@@ -61,8 +61,8 @@ export class DailySummaryExtractor implements SummaryExtractor {
   validateExtraction(summaries: ArticleSummary[]): boolean {
     if (summaries.length === 0) return false
     
-    // Check if we have at least 3 summaries for comparison
-    if (summaries.length < 3) return false
+    // Check if we have at least 1 summary for comparison
+    if (summaries.length < 1) return false
     
     // Validate each summary has sufficient content
     const validSummaries = summaries.filter(summary => 
