@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { FeedbackThankYou } from '@/components/FeedbackThankYou'
-import { FeedbackComparison } from '@/components/FeedbackComparison'
-import { FeedbackSuccess } from '@/components/FeedbackSuccess'
+import FeedbackThankYou from '@/components/FeedbackThankYou'
+import FeedbackComparison from '@/components/FeedbackComparison'
+import FeedbackSuccess from '@/components/FeedbackSuccess'
 import toast from 'react-hot-toast'
 
 interface FeedbackData {
