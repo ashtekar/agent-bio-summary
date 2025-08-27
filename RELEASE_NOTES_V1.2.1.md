@@ -6,7 +6,7 @@ This minor release focuses on bug fixes and user experience improvements, addres
 ## Bug Fixes
 
 ### UI/UX Improvements
-- **Fixed Dashboard "View" button**: The "View" button in the Dashboard now properly navigates to the summaries page instead of being non-functional
+- **Fixed Dashboard "View" button**: The "View" button in the Dashboard now properly switches to the "Daily Summaries" tab instead of trying to navigate to a non-existent route
 - **Removed redundant test email button**: Cleaned up the Settings page by removing the test email button for a more streamlined interface
 - **Improved action button layout**: Settings page now has a cleaner layout with only the essential "Save Settings" button
 
@@ -30,9 +30,14 @@ This minor release focuses on bug fixes and user experience improvements, addres
   - Fixed TypeScript compilation error in forEach callback
 
 - **File**: `components/Dashboard.tsx`
-  - Fixed "View" button navigation
+  - Fixed "View" button to use tab navigation instead of invalid route
+  - Added `onTabChange` prop to enable proper tab switching
   - Removed redundant test email functionality
   - Cleaned up component state management
+
+- **File**: `app/page.tsx`
+  - Added `onTabChange` prop to Dashboard component
+  - Enabled proper tab switching functionality
 
 - **File**: `components/Settings.tsx`
   - Removed test email button and related functionality
