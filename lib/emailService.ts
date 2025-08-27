@@ -46,10 +46,12 @@ export class EmailService {
     const top10Feedback = `
       <div style="margin-top:10px;">
         <span style="font-size:14px;">Was the Top 10 Articles Summary helpful?</span>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=up" style="margin-left:10px; font-size:20px; text-decoration:none;" target="_blank">👍</a>
-        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=down" style="margin-left:5px; font-size:20px; text-decoration:none;" target="_blank">👎</a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=up" style="margin-left:10px; font-size:20px; text-decoration:none;" target="_blank">👍</a>
+        <a href="${process.env.NEXT_PUBLIC_BASE_URL || ''}/feedback?recipientId=${recipientId || ''}&summaryId=${summary.id}&feedbackType=top10&feedbackValue=down" style="margin-left:5px; font-size:20px; text-decoration:none;" target="_blank">👎</a>
       </div>
     `
+    
+
     return `
       <!DOCTYPE html>
       <html>
@@ -191,6 +193,7 @@ export class EmailService {
         </div>
         <div class="content">
           <p>Hello ${recipientName},</p>
+
           <div class="section">
             <h2>🏆 Top 10 Articles Summary</h2>
             <div class="highlight">
