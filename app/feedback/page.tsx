@@ -177,9 +177,11 @@ export default function FeedbackPage() {
           />
         )}
 
-        {showComparison && feedbackSessionId && (
+        {showComparison && feedbackSessionId && feedbackRecipientId && feedbackSummaryId && (
           <FeedbackComparison
             sessionId={feedbackSessionId}
+            recipientId={feedbackRecipientId}
+            summaryId={feedbackSummaryId}
             onComplete={handleComparisonComplete}
             onClose={() => setShowComparison(false)}
           />
