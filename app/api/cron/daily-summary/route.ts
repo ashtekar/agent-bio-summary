@@ -75,10 +75,61 @@ export async function GET(request: NextRequest) {
 
     console.log(`Found ${articles.length} articles`)
 
+    // Filter out articles that have already been summarized in previous summaries
+    if (articles.length > 0) {
+      // Get all article URLs that have been included in previous summaries
+      const { data: previousSummaries, error: summariesError } = await supabaseAdmin
+        .from('daily_summaries')
+        .select('article_ids')
+        .not('article_ids', 'is', null)
+
+      if (summariesError) {
+        console.error('Error fetching previous summaries:', summariesError)
+      } else {
+        // Get all previously summarized article URLs
+        const previouslySummarizedIds = new Set<string>()
+        if (previousSummaries && previousSummaries.length > 0) {
+          for (const summary of previousSummaries) {
+            if (summary.article_ids) {
+              summary.article_ids.forEach(id => previouslySummarizedIds.add(id))
+            }
+          }
+        }
+
+        // Get URLs of previously summarized articles
+        const { data: previouslySummarizedArticles, error: articlesError } = await supabaseAdmin
+          .from('articles')
+          .select('url')
+          .in('id', Array.from(previouslySummarizedIds))
+
+        if (articlesError) {
+          console.error('Error fetching previously summarized articles:', articlesError)
+        } else {
+          // Create a set of previously summarized URLs
+          const previouslySummarizedUrls = new Set<string>()
+          if (previouslySummarizedArticles) {
+            previouslySummarizedArticles.forEach(article => {
+              previouslySummarizedUrls.add(article.url)
+            })
+          }
+
+          // Filter out articles that have already been summarized
+          const newArticles = articles.filter(article => !previouslySummarizedUrls.has(article.url))
+          
+          console.log(`Filtered out ${articles.length - newArticles.length} previously summarized articles`)
+          console.log(`Remaining new articles: ${newArticles.length}`)
+          
+          // Replace articles array with filtered articles
+          articles.length = 0
+          articles.push(...newArticles)
+        }
+      }
+    }
+
     if (articles.length === 0) {
       return NextResponse.json({
         success: true,
-        message: 'No articles found for today'
+        message: 'No new articles found for today (all articles have already been summarized)'
       })
     }
 

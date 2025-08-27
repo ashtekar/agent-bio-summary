@@ -44,8 +44,6 @@ export function Settings() {
   const [newName, setNewName] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [testingEmail, setTestingEmail] = useState(false)
-
   useEffect(() => {
     loadSettings()
   }, [])
@@ -163,30 +161,7 @@ export function Settings() {
     }
   }
 
-  const handleTestEmail = async () => {
-    try {
-      setTestingEmail(true)
-      
-      const response = await fetch('/api/test-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ testType: 'basic' })
-      })
-      
-      const result = await response.json()
-      
-      if (response.ok) {
-        alert(`✅ ${result.message}`)
-      } else {
-        alert(`❌ ${result.error}`)
-      }
-    } catch (error) {
-      console.error('Error testing email:', error)
-      alert('❌ Failed to send test email. Please check the console for details.')
-    } finally {
-      setTestingEmail(false)
-    }
-  }
+
 
   if (loading) {
     return (
@@ -400,15 +375,7 @@ export function Settings() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-between items-center">
-        <button
-          onClick={handleTestEmail}
-          disabled={testingEmail || emailRecipients.length === 0}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {testingEmail ? 'Sending Test Email...' : 'Send Test Email'}
-        </button>
-        
+      <div className="flex justify-end">
         <button
           onClick={saveSettings}
           disabled={saving}
