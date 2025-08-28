@@ -1,6 +1,6 @@
 # AgentBioSummary
 
-**Version:** 1.3.0 | **Latest Release:** January 2025
+**Version:** 1.3.0 | **Latest Release:** August 2025
 
 An automated agent system that performs daily web searches for synthetic biology content, creates educational summaries for high school students, and sends them via email. The system captures end user feedback on the summaries and uses this feedback to fine tune a model.
 
