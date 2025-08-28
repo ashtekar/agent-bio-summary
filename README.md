@@ -1,27 +1,35 @@
 # AgentBioSummary
 
-**Version:** 1.2.0 | **Latest Release:** August 23, 2025
+**Version:** 1.3.0 | **Latest Release:** January 2025
 
 An automated agent system that performs daily web searches for synthetic biology content, creates educational summaries for high school students, and sends them via email. The system captures end user feedback on the summaries and uses this feedback to fine tune a model.
 
-## 🎉 What's New in v1.2
+## 🎉 What's New in v1.3
 
-### 🔧 **Critical Bug Fixes**
-- **Fixed Google Custom Search API integration** - Restored full web search functionality
-- **Resolved email HTML rendering issues** - Clean HTML formatting without markdown artifacts  
-- **Fixed email summary truncation** - Complete coverage of all 10 articles
+### 🚀 **Enhanced Feedback System with A/B Comparisons**
+- **A/B Comparison Interface** - Users can now compare two different AI-generated summaries side-by-side
+- **Direct Preference Optimization (DPO)** - Collect structured preference data for model fine-tuning
+- **Flexible Article Comparison** - Support for 1-3 articles per feedback session
+- **Dedicated Feedback Page** - Seamless feedback flow from email links
 
-### 🛠 **Technical Improvements**
-- **Enhanced AI prompts** for consistent HTML generation
-- **Improved environment variable management** with comprehensive validation
-- **Added extensive testing infrastructure** for better reliability
+### 🤖 **GPT-5 Integration & Optimization**
+- **Fixed GPT-5 API Usage** - Resolved empty response issues with proper parameter handling
+- **Database-Driven Model Selection** - Configurable comparison models via system settings
+- **Enhanced Content Processing** - Better HTML rendering and content mapping
+- **Improved Error Handling** - Comprehensive OpenAI API error management
 
-### 🔍 **Better Monitoring & Debugging**
-- **Enhanced logging** for easier troubleshooting
-- **Improved error handling** with graceful fallbacks
-- **Better user feedback** and system visibility
+### 🧪 **Testing Framework Migration**
+- **Jest to Vitest Migration** - Better compatibility with modern React components
+- **Comprehensive Debug Scripts** - Tools for GPT-5 testing and troubleshooting
+- **Enhanced Test Coverage** - Better testing infrastructure for new features
 
-[📋 Full Release Notes](RELEASE_NOTES_V1.2.md)
+### 🔧 **Technical Improvements**
+- **Enhanced Logging & Debugging** - Comprehensive console logging throughout the system
+- **Database Optimizations** - New `feedback_comparisons` table with proper indexing
+- **Better Error Handling** - Graceful fallbacks and specific error messages
+- **Improved Security** - Enhanced input validation and configuration management
+
+[📋 Full Release Notes](RELEASE_NOTES_V1.3.md)
 
 ## 🎯 Project Overview
 
@@ -31,7 +39,8 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 2. **Analyzes** and ranks articles based on relevance, impact, and novelty
 3. **Generates** educational summaries written for 15-year-old high school students
 4. **Emails** daily digests to specified recipients
-5. **Collects human feedback** on summaries and articles via thumbs up/down links in emails for future model fine-tuning
+5. **Collects human feedback** on summaries and articles via thumbs up/down links in emails
+6. **🆕 A/B Comparison System** - Users can compare different AI-generated summaries side-by-side for Direct Preference Optimization (DPO) fine-tuning
 
 ## 🏗️ Architecture
 
@@ -43,11 +52,11 @@ AgentBioSummary is designed to bridge the gap between cutting-edge synthetic bio
 
 ### Backend
 - **Vercel Edge Functions** for serverless processing
-- **OpenAI GPT-4o-mini** for intelligent summarization
+- **OpenAI GPT-4o-mini & GPT-5** for intelligent summarization and A/B comparisons
 - **Google Custom Search API** for reliable web search
 - **Resend** for email delivery
 - **Web scraping** with Cheerio and Axios
-- **Feedback API** for silent human feedback collection
+- **Enhanced Feedback API** for A/B comparison and preference collection
 
 ### Infrastructure
 - **Vercel** for hosting and deployment
@@ -149,9 +158,45 @@ Sources include:
 - Wired
 - And more via configurable search sites
 
-## 📧 Email Configuration
+## 🔄 A/B Comparison System
 
-### Resend Setup
+### **Direct Preference Optimization (DPO)**
+The system now supports A/B comparison of AI-generated summaries to collect structured preference data for model fine-tuning:
+
+#### **How It Works**
+1. **Email Trigger** - Users click feedback links in emails
+2. **Comparison Session** - System creates a comparison session with 1-3 articles
+3. **A/B Interface** - Users see two summaries side-by-side (current vs. advanced model)
+4. **Preference Collection** - Users select their preferred summary
+5. **Data Storage** - Preferences are stored for DPO training
+
+#### **New API Endpoints**
+- `POST /api/feedback/start-comparison` - Initialize comparison session
+- `GET /api/feedback/comparison/[sessionId]/[order]` - Get comparison data
+- `POST /api/feedback/submit-comparison` - Record user preferences
+- `GET /api/feedback/session/[sessionId]/summary` - Get session summary
+
+#### **Database Schema**
+```sql
+-- New feedback_comparisons table
+CREATE TABLE feedback_comparisons (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID NOT NULL,
+  recipient_id UUID NOT NULL,
+  summary_id UUID NOT NULL,
+  article_id UUID NOT NULL,
+  current_summary TEXT NOT NULL,
+  advanced_summary TEXT NOT NULL,
+  user_preference VARCHAR(1) CHECK (user_preference IN ('A', 'B')),
+  current_model VARCHAR(50) NOT NULL,
+  advanced_model VARCHAR(50) NOT NULL,
+  comparison_order INTEGER NOT NULL,
+  extraction_method VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+## 📧 Email Configuration
 1. Sign up at [resend.com](https://resend.com)
 2. Get your API key
 3. Add it to your environment variables
@@ -185,6 +230,12 @@ npm test -- --watch        # Run tests in watch mode
 npm test -- --coverage     # Run tests with coverage report
 ```
 
+#### **🆕 Debug Scripts**
+```bash
+npm run debug:gpt5          # Test GPT-5 integration
+npm run debug:gpt5-simple   # Basic GPT-5 API testing
+```
+
 ### API Endpoints
 
 - `POST /api/search` - Manual article search
@@ -193,12 +244,19 @@ npm test -- --coverage     # Run tests with coverage report
 - `GET /api/cron/daily-summary` - Daily cron job
 - `GET /api/feedback` - **Silent feedback endpoint for thumbs up/down links in emails. Records recipient, summary/article, and feedback value. Returns 204 No Content.**
 
+#### **🆕 A/B Comparison Endpoints**
+- `POST /api/feedback/start-comparison` - Initialize A/B comparison session
+- `GET /api/feedback/comparison/[sessionId]/[order]` - Retrieve comparison data
+- `POST /api/feedback/submit-comparison` - Record user preferences
+- `GET /api/feedback/session/[sessionId]/summary` - Get session summary
+
 ## 🗄️ Database & Data Retention
 
 ### Schema
 - **Articles**: Retained for 30 days
 - **Daily Summaries**: Retained for 30 days
 - **Feedback**: Linked to recipient, summary, and article. Retained for at least 30 days for model fine-tuning.
+- **🆕 Feedback Comparisons**: A/B comparison data for DPO training. Retained for model fine-tuning.
 - **Recipients, Settings, etc.**: Permanent
 
 ### Feedback Table
