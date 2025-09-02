@@ -2,7 +2,7 @@
 
 **Version:** 1.3.0 | **Latest Release:** August 2025
 
-An automated agent system that performs daily web searches for synthetic biology content, creates educational summaries for high school students, and sends them via email. The system captures end user feedback on the summaries and uses this feedback to fine tune a model.
+An automated agent system that performs daily web searches for synthetic biology content, creates easy to understand summaries using OpenAI models, and sends this summary via email. The system then uses human evals as feedback to fine tune the OpenAI model to generate better summaries in the future.
 
 ## 🎉 What's New in v1.3
 
@@ -33,7 +33,7 @@ An automated agent system that performs daily web searches for synthetic biology
 
 ## 🎯 Project Overview
 
-AgentBioSummary is designed to bridge the gap between cutting-edge synthetic biology research and high school students. It automatically:
+AgentBioSummary is designed to inform & educate high school students on cutting-edge synthetic biology research. It automatically:
 
 1. **Searches** for the most relevant synthetic biology articles from the past 24 hours
 2. **Analyzes** and ranks articles based on relevance, impact, and novelty
