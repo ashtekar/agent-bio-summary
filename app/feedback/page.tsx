@@ -50,8 +50,8 @@ export default function FeedbackPage() {
           feedbackValue
         })
 
-        // Submit the initial feedback
-        const response = await fetch(`/api/feedback?recipientId=${recipientId}&summaryId=${summaryId}&feedbackType=${feedbackType}&feedbackValue=${feedbackValue}`)
+        // Submit the initial feedback using the email feedback API
+        const response = await fetch(`/api/feedback/email?recipientId=${recipientId}&summaryId=${summaryId}&feedbackType=${feedbackType}&feedbackValue=${feedbackValue}`)
         
         if (!response.ok) {
           throw new Error('Failed to submit feedback')

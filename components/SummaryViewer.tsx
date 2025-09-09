@@ -152,6 +152,7 @@ export function SummaryViewer() {
 
   const handleUserIdentificationSuccess = async () => {
     if (pendingFeedback) {
+      // Submit the feedback and handle the response
       await submitFeedback(
         pendingFeedback.type,
         pendingFeedback.value,
