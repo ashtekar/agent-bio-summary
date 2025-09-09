@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { MagicLinkService } from '@/lib/magicLinkService'
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,20 +8,46 @@ export async function GET(request: NextRequest) {
       console.log('Feedback API: supabaseAdmin not configured')
       return new NextResponse('Supabase not configured', { status: 500 })
     }
+    
     const { searchParams } = new URL(request.url)
-    const recipientId = searchParams.get('recipientId')
+    const sessionToken = searchParams.get('sessionToken')
     const summaryId = searchParams.get('summaryId')
     const articleId = searchParams.get('articleId')
     const feedbackType = searchParams.get('feedbackType') // 'summary', 'article', or 'top10'
     const feedbackValue = searchParams.get('feedbackValue') // 'up' or 'down'
 
     console.log('Feedback API called with:', {
-      recipientId, summaryId, articleId, feedbackType, feedbackValue
+      sessionToken, summaryId, articleId, feedbackType, feedbackValue
     })
 
-    if (!recipientId || !feedbackType || !feedbackValue || (!summaryId && !articleId)) {
+    // Validate session token and get recipient ID
+    if (!sessionToken) {
+      console.log('Feedback API: missing session token')
+      return NextResponse.json(
+        { error: 'Authentication required. Please identify yourself to provide feedback.' },
+        { status: 401 }
+      )
+    }
+
+    const magicLinkService = new MagicLinkService()
+    const sessionResult = await magicLinkService.validateSession(sessionToken)
+    
+    if (!sessionResult.valid || !sessionResult.recipientId) {
+      console.log('Feedback API: invalid session')
+      return NextResponse.json(
+        { error: 'Invalid session. Please identify yourself again.' },
+        { status: 401 }
+      )
+    }
+
+    const recipientId = sessionResult.recipientId
+
+    if (!feedbackType || !feedbackValue || (!summaryId && !articleId)) {
       console.log('Feedback API: missing required params')
-      return new NextResponse('Missing required params', { status: 400 })
+      return NextResponse.json(
+        { error: 'Missing required parameters' },
+        { status: 400 }
+      )
     }
 
     // Handle null values properly - convert string "null" to actual null
@@ -83,7 +110,8 @@ export async function GET(request: NextRequest) {
       success: true,
       showComparison: shouldShowComparison,
       recipientId,
-      summaryId: cleanSummaryId
+      summaryId: cleanSummaryId,
+      message: 'Feedback recorded successfully'
     })
     
   } catch (error) {

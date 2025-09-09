@@ -5,7 +5,9 @@ import { SmartContentRenderer } from './SmartContentRenderer'
 import FeedbackThankYou from './FeedbackThankYou'
 import FeedbackComparison from './FeedbackComparison'
 import FeedbackSuccess from './FeedbackSuccess'
+import UserIdentificationModal from './UserIdentificationModal'
 import { SessionSummary } from '@/lib/types'
+import { useUserSession } from '@/lib/contexts/UserSessionContext'
 import { toast } from 'react-hot-toast'
 
 interface Article {
@@ -29,6 +31,7 @@ interface DailySummary {
 }
 
 export function SummaryViewer() {
+  const { session, validateSession } = useUserSession()
   const [summaries, setSummaries] = useState<DailySummary[]>([])
   const [selectedSummary, setSelectedSummary] = useState<DailySummary | null>(null)
   const [loading, setLoading] = useState(true)
@@ -41,6 +44,15 @@ export function SummaryViewer() {
   const [feedbackRecipientId, setFeedbackRecipientId] = useState<string>('')
   const [feedbackSummaryId, setFeedbackSummaryId] = useState<string>('')
   const [sessionSummary, setSessionSummary] = useState<SessionSummary | null>(null)
+  
+  // User identification modal state
+  const [showUserIdentification, setShowUserIdentification] = useState(false)
+  const [pendingFeedback, setPendingFeedback] = useState<{
+    type: 'summary' | 'article' | 'top10'
+    value: 'up' | 'down'
+    summaryId?: string
+    articleId?: string
+  } | null>(null)
 
   useEffect(() => {
     const fetchSummaries = async () => {
@@ -75,10 +87,43 @@ export function SummaryViewer() {
   const handleFeedback = async (feedbackType: 'summary' | 'article' | 'top10', feedbackValue: 'up' | 'down', articleId?: string) => {
     if (!selectedSummary) return
 
+    // Check if user is authenticated
+    if (!session?.sessionToken) {
+      // Store pending feedback and show identification modal
+      setPendingFeedback({
+        type: feedbackType,
+        value: feedbackValue,
+        summaryId: selectedSummary.id,
+        articleId
+      })
+      setShowUserIdentification(true)
+      return
+    }
+
+    // Validate session before submitting feedback
+    const isValidSession = await validateSession()
+    if (!isValidSession) {
+      // Session invalid, show identification modal
+      setPendingFeedback({
+        type: feedbackType,
+        value: feedbackValue,
+        summaryId: selectedSummary.id,
+        articleId
+      })
+      setShowUserIdentification(true)
+      return
+    }
+
+    await submitFeedback(feedbackType, feedbackValue, selectedSummary.id, articleId)
+  }
+
+  const submitFeedback = async (feedbackType: 'summary' | 'article' | 'top10', feedbackValue: 'up' | 'down', summaryId: string, articleId?: string) => {
+    if (!session?.sessionToken) return
+
     try {
       const params = new URLSearchParams({
-        recipientId: 'default', // You might want to get this from user context
-        summaryId: selectedSummary.id,
+        sessionToken: session.sessionToken,
+        summaryId,
         feedbackType,
         feedbackValue,
         articleId: articleId || 'null'
@@ -97,11 +142,23 @@ export function SummaryViewer() {
           setShowThankYou(true)
         }
       } else {
-        toast.error('Failed to record feedback')
+        toast.error(result.error || 'Failed to record feedback')
       }
     } catch (error) {
       console.error('Error submitting feedback:', error)
       toast.error('Failed to record feedback')
+    }
+  }
+
+  const handleUserIdentificationSuccess = async () => {
+    if (pendingFeedback) {
+      await submitFeedback(
+        pendingFeedback.type,
+        pendingFeedback.value,
+        pendingFeedback.summaryId || '',
+        pendingFeedback.articleId
+      )
+      setPendingFeedback(null)
     }
   }
 
@@ -344,6 +401,17 @@ export function SummaryViewer() {
           onClose={handleCloseFeedback}
         />
       )}
+
+      {/* User Identification Modal */}
+      <UserIdentificationModal
+        isOpen={showUserIdentification}
+        onClose={() => {
+          setShowUserIdentification(false)
+          setPendingFeedback(null)
+        }}
+        onSuccess={handleUserIdentificationSuccess}
+        feedbackContext={pendingFeedback || undefined}
+      />
     </div>
   )
 }
