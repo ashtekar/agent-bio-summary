@@ -1,16 +1,24 @@
 # AgentBioSummary
 
-**Version:** 1.3.0 | **Latest Release:** August 2025
+**Version:** 1.3.1 | **Latest Release:** January 2025
 
 An automated agent system that performs daily web searches for synthetic biology content, creates easy to understand summaries using OpenAI models, and sends this summary via email. The system then uses human evals as feedback to fine tune the OpenAI model to generate better summaries in the future.
 
-## 🎉 What's New in v1.3
+## 🎉 What's New in v1.3.1
+
+### 🔐 **Improved Feedback Tracking with User Authentication**
+- **Magic Link Authentication** - Passwordless user identification for feedback attribution
+- **Session Management** - Persistent user sessions across visits
+- **User Identification Modal** - Seamless onboarding for both existing and new users
+- **Enhanced Security** - All feedback now properly attributed to specific users
+- **Dual User Paths** - Support for both existing subscribers and new users
 
 ### 🚀 **Enhanced Feedback System with A/B Comparisons**
 - **A/B Comparison Interface** - Users can now compare two different AI-generated summaries side-by-side
 - **Direct Preference Optimization (DPO)** - Collect structured preference data for model fine-tuning
 - **Flexible Article Comparison** - Support for 1-3 articles per feedback session
 - **Dedicated Feedback Page** - Seamless feedback flow from email links
+- **Auto-triggering Comparison Flow** - A/B comparisons now trigger automatically after user authentication
 
 ### 🤖 **GPT-5 Integration & Optimization**
 - **Fixed GPT-5 API Usage** - Resolved empty response issues with proper parameter handling
@@ -25,11 +33,17 @@ An automated agent system that performs daily web searches for synthetic biology
 
 ### 🔧 **Technical Improvements**
 - **Enhanced Logging & Debugging** - Comprehensive console logging throughout the system
-- **Database Optimizations** - New `feedback_comparisons` table with proper indexing
+- **Database Optimizations** - New `feedback_comparisons`, `magic_link_tokens`, and `user_sessions` tables
 - **Better Error Handling** - Graceful fallbacks and specific error messages
 - **Improved Security** - Enhanced input validation and configuration management
+- **Backward Compatibility** - Email feedback system maintains compatibility with existing links
 
-[📋 Full Release Notes](RELEASE_NOTES_V1.3.md)
+### 🐛 **Bug Fixes**
+- **Fixed User Re-click Issue** - Users no longer need to re-click thumbs up/down after session creation
+- **Fixed A/B Comparison Flow** - Comparison flow now triggers automatically after authentication
+- **Fixed Email Feedback** - Email feedback links now work correctly with the new session-based system
+
+[📋 Full Release Notes](RELEASE_NOTES_V1.3.md) | [📋 v1.3.1 Release Notes](RELEASE_NOTES_V1.3.1.md)
 
 ## 🎯 Project Overview
 
@@ -41,6 +55,7 @@ AgentBioSummary is designed to inform & educate high school students on cutting-
 4. **Emails** daily digests to specified recipients
 5. **Collects human feedback** on summaries and articles via thumbs up/down links in emails
 6. **🆕 A/B Comparison System** - Users can compare different AI-generated summaries side-by-side for Direct Preference Optimization (DPO) fine-tuning
+7. **🔐 User Authentication** - Magic link authentication ensures all feedback is properly attributed to specific users
 
 ## 🏗️ Architecture
 
@@ -54,9 +69,11 @@ AgentBioSummary is designed to inform & educate high school students on cutting-
 - **Vercel Edge Functions** for serverless processing
 - **OpenAI GPT-4o-mini & GPT-5** for intelligent summarization and A/B comparisons
 - **Google Custom Search API** for reliable web search
-- **Resend** for email delivery
+- **Resend** for email delivery and magic link authentication
 - **Web scraping** with Cheerio and Axios
 - **Enhanced Feedback API** for A/B comparison and preference collection
+- **Magic Link Authentication** for passwordless user identification
+- **Session Management** for persistent user authentication
 
 ### Infrastructure
 - **Vercel** for hosting and deployment
@@ -95,6 +112,10 @@ AgentBioSummary is designed to inform & educate high school students on cutting-
    DEFAULT_RECIPIENT_EMAIL=student@school.edu
    ADMIN_EMAIL=admin@school.edu
    NEXT_PUBLIC_BASE_URL=https://your-production-url.vercel.app
+   NEXT_PUBLIC_APP_URL=https://your-production-url.vercel.app
+   SUPABASE_URL=your_supabase_url_here
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
    ```
 
 4. **Run the development server**
@@ -135,10 +156,14 @@ For enhanced search functionality:
 | `OPENAI_API_KEY` | OpenAI API key for GPT-4o-mini access | Yes |
 | `GOOGLE_CUSTOM_SEARCH_API_KEY` | Google Custom Search API key | No |
 | `GOOGLE_CUSTOM_SEARCH_ENGINE_ID` | Google Custom Search Engine ID | No |
-| `RESEND_API_KEY` | Resend API key for email delivery | No |
+| `RESEND_API_KEY` | Resend API key for email delivery and magic links | Yes |
 | `DEFAULT_RECIPIENT_EMAIL` | Default email for testing | No |
 | `ADMIN_EMAIL` | Admin email for error notifications | No |
 | `NEXT_PUBLIC_BASE_URL` | Base URL for feedback links in emails | Yes |
+| `NEXT_PUBLIC_APP_URL` | Base URL for magic link authentication | Yes |
+| `SUPABASE_URL` | Supabase project URL | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server-side operations | Yes |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL for client-side operations | Yes |
 
 ### Search Settings
 
@@ -157,6 +182,52 @@ Sources include:
 - Academic OUP
 - Wired
 - And more via configurable search sites
+
+## 🔐 User Authentication System
+
+### **Magic Link Authentication**
+The system now uses passwordless authentication to ensure all feedback is properly attributed to specific users:
+
+#### **How It Works**
+1. **User Identification** - When users click feedback buttons without a session, they're prompted to enter their email
+2. **Magic Link Generation** - System generates a secure, time-limited magic link
+3. **Email Delivery** - Magic link is sent to the user's email via Resend
+4. **Session Creation** - Upon clicking the magic link, a persistent session is created
+5. **Automatic Feedback** - The original feedback action is automatically completed
+
+#### **User Flows**
+- **Existing Users** - Recognized by email, immediate session creation
+- **New Users** - Automatically added to the system with welcome email
+- **Session Persistence** - Users stay logged in across visits for 30 days
+
+#### **New API Endpoints**
+- `POST /api/auth/send-magic-link` - Send magic link to user email
+- `GET /api/auth/verify` - Verify magic link and create session
+- `GET /api/auth/session` - Validate and refresh user session
+- `GET /api/auth/lookup-user` - Check if user exists in system
+
+#### **Database Schema**
+```sql
+-- Magic Link Tokens Table
+CREATE TABLE magic_link_tokens (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT NOT NULL,
+  token TEXT UNIQUE NOT NULL,
+  expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  used_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- User Sessions Table
+CREATE TABLE user_sessions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  recipient_id UUID REFERENCES email_recipients(id) ON DELETE CASCADE,
+  session_token TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  expires_at TIMESTAMP WITH TIME ZONE,
+  last_activity TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
 ## 🔄 A/B Comparison System
 
@@ -242,7 +313,14 @@ npm run debug:gpt5-simple   # Basic GPT-5 API testing
 - `POST /api/summarize` - Generate summaries
 - `POST /api/email` - Send emails
 - `GET /api/cron/daily-summary` - Daily cron job
-- `GET /api/feedback` - **Silent feedback endpoint for thumbs up/down links in emails. Records recipient, summary/article, and feedback value. Returns 204 No Content.**
+- `GET /api/feedback` - **Session-based feedback endpoint for thumbs up/down links. Requires sessionToken for authentication.**
+- `GET /api/feedback/email` - **Email feedback endpoint for backward compatibility with existing email links.**
+
+#### **🔐 Authentication Endpoints**
+- `POST /api/auth/send-magic-link` - Send magic link to user email
+- `GET /api/auth/verify` - Verify magic link and create session
+- `GET /api/auth/session` - Validate and refresh user session
+- `GET /api/auth/lookup-user` - Check if user exists in system
 
 #### **🆕 A/B Comparison Endpoints**
 - `POST /api/feedback/start-comparison` - Initialize A/B comparison session
@@ -257,6 +335,8 @@ npm run debug:gpt5-simple   # Basic GPT-5 API testing
 - **Daily Summaries**: Retained for 30 days
 - **Feedback**: Linked to recipient, summary, and article. Retained for at least 30 days for model fine-tuning.
 - **🆕 Feedback Comparisons**: A/B comparison data for DPO training. Retained for model fine-tuning.
+- **🔐 Magic Link Tokens**: Temporary tokens for authentication. Auto-cleanup after expiration.
+- **🔐 User Sessions**: Persistent user sessions. Retained for 30 days with activity tracking.
 - **Recipients, Settings, etc.**: Permanent
 
 ### Feedback Table
@@ -300,6 +380,10 @@ Add these to your Vercel project settings:
 - `DEFAULT_RECIPIENT_EMAIL`
 - `ADMIN_EMAIL`
 - `NEXT_PUBLIC_BASE_URL`
+- `NEXT_PUBLIC_APP_URL`
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL`
 
 ## 📊 Monitoring
 
@@ -373,6 +457,9 @@ For issues and questions:
 - **Email formatting issues**: Verify HTML content cleaning is working
 - **Summary truncation**: Check OpenAI token limits and API quota
 - **Environment variables**: Ensure all required variables are set in Vercel
+- **Authentication issues**: Verify Supabase credentials and magic link email delivery
+- **Session problems**: Check user session expiration and database connectivity
+- **Feedback not working**: Ensure both session-based and email feedback APIs are accessible
 
 ## 🎓 Educational Impact
 
