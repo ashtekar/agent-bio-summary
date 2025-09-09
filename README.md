@@ -198,7 +198,7 @@ The system now uses passwordless authentication to ensure all feedback is proper
 #### **User Flows**
 - **Existing Users** - Recognized by email, immediate session creation
 - **New Users** - Automatically added to the system with welcome email
-- **Session Persistence** - Users stay logged in across visits for 30 days
+- **Session Persistence** - Users stay logged in across visits for 90 days
 
 #### **New API Endpoints**
 - `POST /api/auth/send-magic-link` - Send magic link to user email
@@ -331,12 +331,12 @@ npm run debug:gpt5-simple   # Basic GPT-5 API testing
 ## 🗄️ Database & Data Retention
 
 ### Schema
-- **Articles**: Retained for 30 days
-- **Daily Summaries**: Retained for 30 days
-- **Feedback**: Linked to recipient, summary, and article. Retained for at least 30 days for model fine-tuning.
-- **🆕 Feedback Comparisons**: A/B comparison data for DPO training. Retained for model fine-tuning.
+- **Articles**: Retained for 90 days
+- **Daily Summaries**: Retained for 90 days
+- **Feedback**: Linked to recipient, summary, and article. Retained for 90 days for model fine-tuning.
+- **🆕 Feedback Comparisons**: A/B comparison data for DPO training. Retained for 90 days.
 - **🔐 Magic Link Tokens**: Temporary tokens for authentication. Auto-cleanup after expiration.
-- **🔐 User Sessions**: Persistent user sessions. Retained for 30 days with activity tracking.
+- **🔐 User Sessions**: Persistent user sessions. Retained for 90 days with activity tracking.
 - **Recipients, Settings, etc.**: Permanent
 
 ### Feedback Table
@@ -351,8 +351,10 @@ npm run debug:gpt5-simple   # Basic GPT-5 API testing
 | created_at   | TIMESTAMP | Feedback timestamp                        |
 
 ### Data Retention Policy
-- **Articles, summaries, and feedback are retained for 30 days by default.**
-- You can adjust this in the database cleanup functions if needed.
+- **Articles, summaries, and feedback are retained for 90 days by default.**
+- **Magic link tokens** are cleaned up immediately after expiration or use.
+- **User sessions** are retained for 90 days with activity tracking.
+- You can adjust retention periods in the database cleanup functions if needed.
 
 ## 🚀 Deployment
 
