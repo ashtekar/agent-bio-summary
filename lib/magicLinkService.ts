@@ -1,5 +1,5 @@
 import { supabaseAdmin } from './supabase'
-import { EmailService } from './emailService'
+import { Resend } from 'resend'
 import crypto from 'crypto'
 
 export interface MagicLinkToken {
@@ -22,10 +22,10 @@ export interface UserSession {
 }
 
 export class MagicLinkService {
-  private emailService: EmailService
+  private resend: Resend
 
   constructor() {
-    this.emailService = new EmailService()
+    this.resend = new Resend(process.env.RESEND_API_KEY || '')
   }
 
   /**
@@ -93,6 +93,7 @@ export class MagicLinkService {
       const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://agent-bio-summary.vercel.app'}/auth/verify?token=${token}`
       
       const emailContent = {
+        from: 'Agent Bio Summary <noreply@agent-bio-summary.vercel.app>',
         to: email,
         subject: 'Verify your email to provide feedback',
         html: `
@@ -129,7 +130,7 @@ export class MagicLinkService {
         `
       }
 
-      await this.emailService.sendEmail(emailContent)
+      await this.resend.emails.send(emailContent)
       console.log(`Magic link email sent to ${email}`)
     } catch (error) {
       console.error('Error sending magic link email:', error)
@@ -341,6 +342,7 @@ export class MagicLinkService {
   private async sendWelcomeEmail(email: string): Promise<void> {
     try {
       const emailContent = {
+        from: 'Agent Bio Summary <noreply@agent-bio-summary.vercel.app>',
         to: email,
         subject: 'Welcome to Agent Bio Summary feedback!',
         html: `
@@ -372,7 +374,7 @@ export class MagicLinkService {
         `
       }
 
-      await this.emailService.sendEmail(emailContent)
+      await this.resend.emails.send(emailContent)
       console.log(`Welcome email sent to ${email}`)
     } catch (error) {
       console.error('Error sending welcome email:', error)

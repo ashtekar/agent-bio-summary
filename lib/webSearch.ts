@@ -3,10 +3,12 @@ import * as cheerio from 'cheerio'
 import { Article, SearchSettings } from './types'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 export class WebSearchModule {
   private settings: SearchSettings
@@ -20,6 +22,7 @@ export class WebSearchModule {
     
     try {
       // Get active search sites from database
+      const supabase = getSupabaseClient()
       const { data: activeSites, error: sitesError } = await supabase
         .from('search_sites')
         .select('domain, display_name')

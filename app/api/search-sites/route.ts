@@ -3,14 +3,17 @@ import { createClient } from '@supabase/supabase-js'
 import { SearchSite, SearchSiteRequest, SearchSiteUpdateRequest } from '@/lib/types'
 import { isValidDomain } from '@/lib/utils'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 // GET /api/search-sites - Get all search sites
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
     const { data: searchSites, error } = await supabase
       .from('search_sites')
       .select('*')
@@ -31,6 +34,7 @@ export async function GET(request: NextRequest) {
 // POST /api/search-sites - Add new search site
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient()
     const body: SearchSiteRequest = await request.json()
     const { domain, display_name } = body
 
