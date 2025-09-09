@@ -1,6 +1,6 @@
 # AgentBioSummary
 
-**Version:** 1.3.1 | **Latest Release:** January 2025
+**Version:** 1.3.1 | **Latest Release:** September 2025
 
 An automated agent system that performs daily web searches for synthetic biology content, creates easy to understand summaries using OpenAI models, and sends this summary via email. The system then uses human evals as feedback to fine tune the OpenAI model to generate better summaries in the future.
 
