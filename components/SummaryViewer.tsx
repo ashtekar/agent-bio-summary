@@ -43,6 +43,7 @@ export function SummaryViewer() {
   const [feedbackSessionId, setFeedbackSessionId] = useState<string>('')
   const [feedbackRecipientId, setFeedbackRecipientId] = useState<string>('')
   const [feedbackSummaryId, setFeedbackSummaryId] = useState<string>('')
+  const [feedbackArticleId, setFeedbackArticleId] = useState<string>('')
   const [sessionSummary, setSessionSummary] = useState<SessionSummary | null>(null)
   
   // User identification modal state
@@ -139,6 +140,12 @@ export function SummaryViewer() {
         if (result.showComparison) {
           setFeedbackRecipientId(result.recipientId)
           setFeedbackSummaryId(result.summaryId)
+          // Store article ID for article-level comparisons
+          if (feedbackType === 'article' && articleId) {
+            setFeedbackArticleId(articleId)
+          } else {
+            setFeedbackArticleId('')
+          }
           setShowThankYou(true)
         }
       } else {
@@ -182,6 +189,7 @@ export function SummaryViewer() {
     setFeedbackSessionId('')
     setFeedbackRecipientId('')
     setFeedbackSummaryId('')
+    setFeedbackArticleId('')
     setSessionSummary(null)
   }
 
@@ -381,6 +389,7 @@ export function SummaryViewer() {
         <FeedbackThankYou
           recipientId={feedbackRecipientId}
           summaryId={feedbackSummaryId}
+          articleId={feedbackArticleId}
           onStartComparison={handleStartComparison}
           onClose={handleCloseFeedback}
         />

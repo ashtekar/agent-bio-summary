@@ -3,7 +3,7 @@ import { ComparisonService } from '@/lib/comparisonService'
 
 export async function POST(request: NextRequest) {
   try {
-    const { recipientId, summaryId } = await request.json()
+    const { recipientId, summaryId, articleId } = await request.json()
     
     if (!recipientId || !summaryId) {
       return NextResponse.json(
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
     
     const comparisonService = new ComparisonService()
-    const session = await comparisonService.createSession(recipientId, summaryId)
+    const session = await comparisonService.createSession(recipientId, summaryId, articleId)
     
     // Get the first comparison data
     const firstComparison = await comparisonService.getComparisonData(session.session_id, 1)

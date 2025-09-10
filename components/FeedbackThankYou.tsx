@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast'
 interface FeedbackThankYouProps {
   recipientId: string
   summaryId: string
+  articleId?: string
   onStartComparison: (sessionId: string) => void
   onClose: () => void
 }
@@ -13,6 +14,7 @@ interface FeedbackThankYouProps {
 export default function FeedbackThankYou({
   recipientId,
   summaryId,
+  articleId,
   onStartComparison,
   onClose
 }: FeedbackThankYouProps) {
@@ -29,7 +31,8 @@ export default function FeedbackThankYou({
         },
         body: JSON.stringify({
           recipientId,
-          summaryId
+          summaryId,
+          articleId: articleId || null
         })
       })
 

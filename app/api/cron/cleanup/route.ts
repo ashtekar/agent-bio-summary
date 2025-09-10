@@ -19,41 +19,35 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log('Starting data cleanup...')
+    console.log('Starting data cleanup (90-day retention policy)...')
 
-    // Clean up old articles (older than 2 days)
-    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-    const { error: articlesError, count: articlesDeleted } = await supabaseAdmin
-      .from('articles')
-      .delete()
-      .lt('created_at', twoDaysAgo)
-      .select('count')
+    // Use the master cleanup function to clean up all old data
+    const { data: cleanupResults, error: cleanupError } = await supabaseAdmin
+      .rpc('cleanup_all_old_data')
 
-    if (articlesError) {
-      console.error('Error cleaning up articles:', articlesError)
+    if (cleanupError) {
+      console.error('Error running cleanup functions:', cleanupError)
+      return NextResponse.json(
+        { success: false, error: 'Failed to run cleanup functions' },
+        { status: 500 }
+      )
     }
 
-    // Clean up old summaries (older than 7 days)
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    const { error: summariesError, count: summariesDeleted } = await supabaseAdmin
-      .from('daily_summaries')
-      .delete()
-      .lt('created_at', sevenDaysAgo)
-      .select('count')
-
-    if (summariesError) {
-      console.error('Error cleaning up summaries:', summariesError)
+    // Process cleanup results
+    const deletedCounts: Record<string, number> = {}
+    if (cleanupResults) {
+      cleanupResults.forEach((result: { operation: string; deleted_count: number }) => {
+        deletedCounts[result.operation] = result.deleted_count
+      })
     }
 
-    console.log('Data cleanup completed successfully')
+    console.log('Data cleanup completed successfully:', deletedCounts)
 
     return NextResponse.json({
       success: true,
-      message: 'Data cleanup completed',
-      deleted: {
-        articles: articlesDeleted || 0,
-        summaries: summariesDeleted || 0
-      }
+      message: 'Data cleanup completed (90-day retention policy)',
+      deleted: deletedCounts,
+      retention_policy: '90 days'
     })
 
   } catch (error) {

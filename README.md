@@ -1,8 +1,17 @@
 # AgentBioSummary
 
-**Version:** 1.3.1 | **Latest Release:** September 2025
+**Version:** 1.3.2 | **Latest Release:** January 2025
 
 An automated agent system that performs daily web searches for synthetic biology content, creates easy to understand summaries using OpenAI models, and sends this summary via email. The system then uses human evals as feedback to fine tune the OpenAI model to generate better summaries in the future.
+
+## 🎉 What's New in v1.3.2
+
+### 🎯 **Article-Level A/B Comparison Collection**
+- **Targeted Feedback Collection** - When users provide feedback on specific articles, A/B comparisons are now generated for that exact article only
+- **Single Article Focus** - Instead of random 3-article selection, comparisons focus on the article the user actually voted on
+- **Enhanced Model Training** - More precise feedback data collection for better model fine-tuning
+- **Improved User Experience** - Comparisons are more relevant and meaningful to users
+- **Backward Compatibility** - Summary-level comparisons (1-3 random articles) still work as before
 
 ## 🎉 What's New in v1.3.1
 

@@ -68,8 +68,8 @@ export async function GET(request: NextRequest) {
     }
     
     // Return success with flag to show comparison flow
-    // Show comparison for summary and top10 feedback types when we have a summaryId
-    const shouldShowComparison = (feedbackType === 'summary' || feedbackType === 'top10') && cleanSummaryId
+    // Show comparison for summary, top10, and article feedback types when we have a summaryId
+    const shouldShowComparison = (feedbackType === 'summary' || feedbackType === 'top10' || feedbackType === 'article') && cleanSummaryId
     
     return NextResponse.json({
       success: true,

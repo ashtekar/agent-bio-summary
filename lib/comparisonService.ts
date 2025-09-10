@@ -21,7 +21,7 @@ export class ComparisonService {
   /**
    * Creates a new comparison session and returns the first comparison data
    */
-  async createSession(recipientId: string, summaryId: string): Promise<ComparisonSession> {
+  async createSession(recipientId: string, summaryId: string, articleId?: string): Promise<ComparisonSession> {
     console.log(`Starting createSession for recipientId: ${recipientId}, summaryId: ${summaryId}`)
     
     if (!supabaseAdmin) {
@@ -84,12 +84,21 @@ export class ComparisonService {
     
     // Get articles for this summary
     console.log(`Fetching articles for article_ids: ${JSON.stringify(summaryData.article_ids || [])}`)
-    const { data: articles, error: articlesError } = await supabaseAdmin
+    let articlesQuery = supabaseAdmin
       .from('articles')
       .select('*')
       .in('id', summaryData.article_ids || [])
       .order('relevance_score', { ascending: false })
-      .limit(10)
+    
+    // If articleId is provided, filter to only that specific article
+    if (articleId) {
+      console.log(`Article-level comparison requested for article: ${articleId}`)
+      articlesQuery = articlesQuery.eq('id', articleId)
+    } else {
+      articlesQuery = articlesQuery.limit(10)
+    }
+    
+    const { data: articles, error: articlesError } = await articlesQuery
     
     if (articlesError || !articles) {
       console.error('Articles fetch error:', articlesError)
@@ -122,8 +131,10 @@ export class ComparisonService {
       extractionMethod = 'generated'
       
       // Fallback: Generate individual summaries
-      const topArticles = articles.slice(0, Math.min(articles.length, 3)) // Use available articles (1-3)
-      articleSummaries = await this.generateIndividualSummaries(topArticles)
+      // For article-level comparisons, use only the specific article
+      // For summary-level comparisons, use up to 3 articles
+      const articlesToUse = articleId ? articles : articles.slice(0, Math.min(articles.length, 3))
+      articleSummaries = await this.generateIndividualSummaries(articlesToUse)
     }
     
     // Ensure we have at least 1 article for comparison
@@ -131,9 +142,11 @@ export class ComparisonService {
       throw new Error('Insufficient articles for comparison')
     }
     
-    // Use all available articles (1-3) for comparison
-    const articlesToCompare = articleSummaries.slice(0, Math.min(articleSummaries.length, 3))
-    console.log(`Generating comparisons for ${articlesToCompare.length} articles`)
+    // Use all available articles for comparison
+    // For article-level comparisons, use only the specific article
+    // For summary-level comparisons, use up to 3 articles
+    const articlesToCompare = articleId ? articleSummaries : articleSummaries.slice(0, Math.min(articleSummaries.length, 3))
+    console.log(`Generating comparisons for ${articlesToCompare.length} articles${articleId ? ' (article-level)' : ' (summary-level)'}`)
     
     const comparisonPromises = articlesToCompare.map(async (articleSummary, index) => {
       const order = index + 1
