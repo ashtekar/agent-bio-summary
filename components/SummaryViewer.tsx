@@ -157,10 +157,41 @@ export function SummaryViewer() {
     }
   }
 
+  const submitFeedbackDirect = async (feedbackType: 'summary' | 'article' | 'top10', feedbackValue: 'up' | 'down', summaryId: string, articleId?: string) => {
+    if (!selectedSummary) return
+
+    try {
+      const response = await fetch(`/api/feedback?sessionToken=${session?.sessionToken}&feedbackType=${feedbackType}&feedbackValue=${feedbackValue}&summaryId=${summaryId}${articleId ? `&articleId=${articleId}` : ''}`)
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        toast.success('Feedback recorded!')
+        
+        // Show comparison flow if applicable
+        if (result.showComparison) {
+          setFeedbackRecipientId(result.recipientId)
+          setFeedbackSummaryId(result.summaryId)
+          // Store article ID for article-level comparisons
+          if (feedbackType === 'article' && articleId) {
+            setFeedbackArticleId(articleId)
+          } else {
+            setFeedbackArticleId('')
+          }
+          setShowThankYou(true)
+        }
+      } else {
+        toast.error(result.error || 'Failed to record feedback')
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error)
+      toast.error('Failed to record feedback')
+    }
+  }
+
   const handleUserIdentificationSuccess = async () => {
     if (pendingFeedback) {
-      // Submit the feedback and handle the response
-      await submitFeedback(
+      // Submit the feedback directly without session validation since we just authenticated
+      await submitFeedbackDirect(
         pendingFeedback.type,
         pendingFeedback.value,
         pendingFeedback.summaryId || '',

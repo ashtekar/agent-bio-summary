@@ -108,6 +108,32 @@ export class ComparisonService {
     
     console.log(`Found ${articles.length} articles`)
     
+    // If articleId was provided but no articles found, fall back to summary-level comparison
+    if (articleId && articles.length === 0) {
+      console.warn(`Article ${articleId} not found in summary ${summaryId}`)
+      console.warn(`Available article IDs: ${JSON.stringify(summaryData.article_ids || [])}`)
+      console.warn(`Falling back to summary-level comparison`)
+      
+      // Fall back to summary-level comparison by clearing articleId
+      const fallbackQuery = supabaseAdmin
+        .from('articles')
+        .select('*')
+        .in('id', summaryData.article_ids || [])
+        .order('relevance_score', { ascending: false })
+        .limit(3) // Use up to 3 articles for summary-level comparison
+      
+      const { data: fallbackArticles, error: fallbackError } = await fallbackQuery
+      
+      if (fallbackError || !fallbackArticles || fallbackArticles.length === 0) {
+        throw new Error('No articles available for comparison')
+      }
+      
+      // Use fallback articles
+      articles.length = 0
+      articles.push(...fallbackArticles)
+      console.log(`Using ${articles.length} fallback articles for summary-level comparison`)
+    }
+    
     // Try to extract summaries from daily summary first (cost-efficient)
     let articleSummaries: ArticleSummary[] = []
     let extractionMethod: 'extracted' | 'generated' = 'extracted'

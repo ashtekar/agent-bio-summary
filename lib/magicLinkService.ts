@@ -232,16 +232,30 @@ export class MagicLinkService {
     }
 
     try {
-      // Find existing recipient
+      // Find existing recipient (check both active and inactive)
       const { data: recipient, error: recipientError } = await supabaseAdmin
         .from('email_recipients')
-        .select('id')
+        .select('id, is_active')
         .eq('email', email)
-        .eq('is_active', true)
         .single()
 
       if (recipientError || !recipient) {
+        console.log(`User lookup failed for email: ${email}`, recipientError)
         return { success: false, error: 'Email not found in our system' }
+      }
+
+      // If user exists but is inactive, reactivate them
+      if (!recipient.is_active) {
+        console.log(`Reactivating inactive user: ${email}`)
+        const { error: updateError } = await supabaseAdmin
+          .from('email_recipients')
+          .update({ is_active: true })
+          .eq('id', recipient.id)
+        
+        if (updateError) {
+          console.error('Failed to reactivate user:', updateError)
+          return { success: false, error: 'Account activation failed. Please contact support.' }
+        }
       }
 
       // Create user session
