@@ -57,6 +57,24 @@
   @apply bg-white/10;
 }
 
+/* Form Input Black Backgrounds */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+input[type="url"], 
+textarea, 
+select {
+  background-color: #000000 !important;
+}
+
+/* Additional form input targeting */
+input:not([type="checkbox"]):not([type="radio"]), 
+textarea, 
+select {
+  background-color: #000000 !important;
+}
+
 .text-gray-900 {
   @apply text-white;
 }
@@ -111,6 +129,13 @@
 
 .bg-gray-300 {
   @apply bg-white/30;
+}
+
+/* Override form input backgrounds to black */
+input.bg-white\/10, 
+textarea.bg-white\/10, 
+select.bg-white\/10 {
+  background-color: #000000 !important;
 }
 
 .shadow-sm {
