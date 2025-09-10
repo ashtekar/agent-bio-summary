@@ -20,7 +20,7 @@ export function HTMLContentRenderer({ content, className = '' }: HTMLContentRend
 
   return (
     <div 
-      className={`prose prose-sm max-w-none ${className}`}
+      className={`prose prose-sm max-w-none prose-invert ${className}`}
       dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
     />
   )

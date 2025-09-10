@@ -36,36 +36,36 @@ export function SmartContentRenderer({
     <div className="space-y-2">
       {/* Format Controls */}
       {showFormatToggle && (
-        <div className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
+        <div className="flex items-center justify-between bg-white/5 p-2 rounded-lg border border-white/20">
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Format:</span>
+            <span className="text-sm text-white/80">Format:</span>
             <div className="flex space-x-1">
               <button
                 onClick={() => setFormat('auto')}
-                className={`px-2 py-1 text-xs rounded ${
+                className={`px-2 py-1 text-xs rounded transition-all duration-300 ${
                   format === 'auto' 
-                    ? 'bg-primary-600 text-white' 
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white/10 text-white/80 hover:bg-white/20 btn-hover'
                 }`}
               >
                 Auto
               </button>
               <button
                 onClick={() => setFormat('html')}
-                className={`px-2 py-1 text-xs rounded ${
+                className={`px-2 py-1 text-xs rounded transition-all duration-300 ${
                   format === 'html' 
-                    ? 'bg-primary-600 text-white' 
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white/10 text-white/80 hover:bg-white/20 btn-hover'
                 }`}
               >
                 HTML
               </button>
               <button
                 onClick={() => setFormat('text')}
-                className={`px-2 py-1 text-xs rounded ${
+                className={`px-2 py-1 text-xs rounded transition-all duration-300 ${
                   format === 'text' 
-                    ? 'bg-primary-600 text-white' 
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-white/10 text-white/80 hover:bg-white/20 btn-hover'
                 }`}
               >
                 Text
@@ -77,14 +77,14 @@ export function SmartContentRenderer({
           <div className="flex space-x-1">
             <button
               onClick={() => handleCopyContent(true)}
-              className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="px-2 py-1 text-xs bg-white/10 text-white/80 rounded hover:bg-white/20 btn-hover transition-all duration-300"
               title="Copy as HTML"
             >
               Copy HTML
             </button>
             <button
               onClick={() => handleCopyContent(false)}
-              className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              className="px-2 py-1 text-xs bg-white/10 text-white/80 rounded hover:bg-white/20 btn-hover transition-all duration-300"
               title="Copy as Text"
             >
               Copy Text
@@ -96,15 +96,15 @@ export function SmartContentRenderer({
       {/* Format Indicator */}
       {showFormatToggle && (
         <div className="flex items-center space-x-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
             shouldRenderAsHtml 
-              ? 'bg-blue-100 text-blue-800' 
-              : 'bg-gray-100 text-gray-800'
+              ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' 
+              : 'bg-white/10 text-white/80 border-white/20'
           }`}>
             {shouldRenderAsHtml ? 'HTML' : 'Text'}
           </span>
           {format === 'auto' && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-white/60">
               {isHtml ? 'Auto-detected HTML' : 'Auto-detected Text'}
             </span>
           )}

@@ -52,6 +52,136 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Dark Theme Overrides - Convert Light Components to Dark */
+.bg-white {
+  @apply bg-white/10;
+}
+
+.text-gray-900 {
+  @apply text-white;
+}
+
+.text-gray-800 {
+  @apply text-white/95;
+}
+
+.text-gray-700 {
+  @apply text-white/90;
+}
+
+.text-gray-600 {
+  @apply text-white/80;
+}
+
+.text-gray-500 {
+  @apply text-white/70;
+}
+
+.text-gray-400 {
+  @apply text-white/60;
+}
+
+.text-gray-300 {
+  @apply text-white/50;
+}
+
+.border-gray-200 {
+  @apply border-white/20;
+}
+
+.border-gray-300 {
+  @apply border-white/30;
+}
+
+.border-gray-400 {
+  @apply border-white/40;
+}
+
+.bg-gray-50 {
+  @apply bg-white/5;
+}
+
+.bg-gray-100 {
+  @apply bg-white/10;
+}
+
+.bg-gray-200 {
+  @apply bg-white/20;
+}
+
+.bg-gray-300 {
+  @apply bg-white/30;
+}
+
+.shadow-sm {
+  @apply shadow-lg;
+}
+
+/* Form Elements Dark Theme */
+input[type="radio"] {
+  @apply accent-blue-400;
+}
+
+input[type="checkbox"] {
+  @apply accent-blue-400;
+}
+
+/* Placeholder text */
+::placeholder {
+  @apply text-white/50;
+}
+
+/* Selection text */
+::selection {
+  @apply bg-blue-500/30 text-white;
+}
+
+/* Prose (content) dark theme */
+.prose {
+  @apply text-white/90;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  @apply text-white;
+}
+
+.prose p {
+  @apply text-white/90;
+}
+
+.prose a {
+  @apply text-blue-400 hover:text-blue-300;
+}
+
+.prose code {
+  @apply bg-white/10 text-white/90 border border-white/20;
+}
+
+.prose blockquote {
+  @apply border-l-blue-400 bg-white/5 text-white/80;
+}
+
+.prose ul, .prose ol {
+  @apply text-white/90;
+}
+
+.prose li {
+  @apply text-white/90;
+}
+
+/* Additional dark theme utilities */
+.text-primary-600 {
+  @apply text-blue-400;
+}
+
+.bg-primary-600 {
+  @apply bg-blue-600;
+}
+
+.hover\:bg-primary-700:hover {
+  @apply bg-blue-700;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
