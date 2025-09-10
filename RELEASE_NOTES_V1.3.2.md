@@ -1,6 +1,6 @@
 # Release Notes v1.3.2 - Article-Level A/B Comparison Collection
 
-**Release Date:** January 2025  
+**Release Date:** September 2025  
 **Version:** 1.3.2
 
 ## 🎯 Feature Overview
@@ -136,4 +136,4 @@ This release introduces **Article-Level A/B Comparison Collection**, a significa
 
 ---
 
-**Next Release**: v1.3.3 - Enhanced Analytics & Monitoring (Planned)
+

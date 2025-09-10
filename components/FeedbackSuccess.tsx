@@ -31,7 +31,7 @@ export default function FeedbackSuccess({ summary, onClose }: FeedbackSuccessPro
             </h3>
             
             <div className="space-y-3">
-              {summary.comparisons.map((comparison, index) => (
+              {(summary.comparisons || []).map((comparison, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-white rounded border">
                   <div className="flex-1">
                     <div className="font-medium text-gray-900">
@@ -82,8 +82,9 @@ export default function FeedbackSuccess({ summary, onClose }: FeedbackSuccessPro
             </h4>
             <div className="text-sm text-yellow-800">
               {(() => {
-                const modelACount = summary.comparisons.filter(c => c.user_preference === 'A').length
-                const modelBCount = summary.comparisons.filter(c => c.user_preference === 'B').length
+                const comparisons = summary.comparisons || []
+                const modelACount = comparisons.filter(c => c.user_preference === 'A').length
+                const modelBCount = comparisons.filter(c => c.user_preference === 'B').length
                 
                 if (modelACount > modelBCount) {
                   return `You preferred the Current Model (${modelACount} vs ${modelBCount} selections)`

@@ -81,7 +81,8 @@ export default function FeedbackComparison({
         // Get session summary and complete
         const summaryResponse = await fetch(`/api/feedback/session/${sessionId}/summary`)
         if (summaryResponse.ok) {
-          const summary: SessionSummary = await summaryResponse.json()
+          const response = await summaryResponse.json()
+          const summary: SessionSummary = response.data
           setIsComplete(true)
           onComplete(summary)
         }
