@@ -133,8 +133,8 @@ export function SearchSiteSelector({ onSitesChange }: SearchSiteSelectorProps) {
     <div className="space-y-4">
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-red-800 text-sm">{error}</p>
+        <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3">
+          <p className="text-red-300 text-sm">{error}</p>
         </div>
       )}
 
@@ -145,19 +145,19 @@ export function SearchSiteSelector({ onSitesChange }: SearchSiteSelectorProps) {
           placeholder="Display Name (e.g., LinkedIn)"
           value={newDisplayName}
           onChange={(e) => setNewDisplayName(e.target.value)}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+          className="flex-1 px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
         />
         <input
           type="text"
           placeholder="Domain (e.g., news.mit.edu, linkedin.com)"
           value={newDomain}
           onChange={(e) => setNewDomain(e.target.value)}
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+          className="flex-1 px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
         />
         <button
           onClick={addSearchSite}
           disabled={saving || !newDomain || !newDisplayName}
-          className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? 'Adding...' : 'Add'}
         </button>
@@ -166,22 +166,22 @@ export function SearchSiteSelector({ onSitesChange }: SearchSiteSelectorProps) {
       {/* Sites List */}
       <div className="space-y-3">
         {searchSites.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-white/70">
             No search sites configured. Add your first site above.
           </div>
         ) : (
           searchSites.map((site) => (
-            <div key={site.id} className="flex items-center justify-between p-3 border rounded-lg">
+            <div key={site.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300">
               <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
                   checked={site.is_active}
                   onChange={() => toggleSiteActive(site.id)}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-blue-400 focus:ring-blue-400 border-white/30 rounded"
                 />
                 <div>
-                  <p className="font-medium text-gray-900">{site.display_name}</p>
-                  <p className="text-sm text-gray-500">{site.domain}</p>
+                  <p className="font-medium text-white">{site.display_name}</p>
+                  <p className="text-sm text-white/70">{site.domain}</p>
                 </div>
               </div>
               <button
@@ -196,11 +196,11 @@ export function SearchSiteSelector({ onSitesChange }: SearchSiteSelectorProps) {
       </div>
 
       {/* Status Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-        <p className="text-blue-800 text-sm">
+      <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-3">
+        <p className="text-blue-300 text-sm">
           <strong>{activeSitesCount}</strong> of <strong>{searchSites.length}</strong> sites are active.
           {activeSitesCount === 0 && (
-            <span className="block mt-1 text-red-600">
+            <span className="block mt-1 text-red-300">
               ⚠️ No sites are active. Search will not work until at least one site is enabled.
             </span>
           )}
