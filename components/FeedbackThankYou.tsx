@@ -80,7 +80,7 @@ export default function FeedbackThankYou({
                   A/B Comparison Survey
                 </h3>
                 <p className="text-blue-800 mb-4">
-                  We'll show you 3 different summaries and ask which you prefer!
+                  We'll show you between 1-3 summaries and ask which you prefer!
                 </p>
                 
                 <div className="space-y-2 text-sm text-blue-700">
@@ -90,7 +90,7 @@ export default function FeedbackThankYou({
                   </div>
                   <div className="flex items-center">
                     <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                    Takes about 2-3 minutes to complete
+                    Takes about 3-5 minutes to complete. Be patient with the AI models as they may take a while to generate the summaries.
                   </div>
                   <div className="flex items-center">
                     <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
