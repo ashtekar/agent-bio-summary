@@ -108,16 +108,16 @@ export default function UserIdentificationModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg card-shadow max-w-md w-full max-h-[90vh] overflow-y-auto fade-in">
         <div className="p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-xl font-semibold text-white">
               👍👎 Help us improve our summaries!
             </h2>
             <button
               onClick={handleClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-white/60 hover:text-white btn-hover"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -125,7 +125,7 @@ export default function UserIdentificationModal({
             </button>
           </div>
 
-          <p className="text-gray-600 mb-6">
+          <p className="text-white/80 mb-6">
             We'd love to know what you think! Please identify yourself to provide feedback.
           </p>
 
@@ -133,7 +133,7 @@ export default function UserIdentificationModal({
           {step === 'select' && (
             <div className="space-y-4">
               <div className="space-y-3">
-                <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                <label className="flex items-center p-4 border border-white/20 rounded-lg cursor-pointer hover:bg-white/10 transition-all duration-300 btn-hover">
                   <input
                     type="radio"
                     name="userType"
@@ -143,12 +143,12 @@ export default function UserIdentificationModal({
                     className="mr-3"
                   />
                   <div>
-                    <div className="font-medium">I'm an existing subscriber</div>
-                    <div className="text-sm text-gray-500">I already receive daily summaries</div>
+                    <div className="font-medium text-white">I'm an existing subscriber</div>
+                    <div className="text-sm text-white/70">I already receive daily summaries</div>
                   </div>
                 </label>
 
-                <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                <label className="flex items-center p-4 border border-white/20 rounded-lg cursor-pointer hover:bg-white/10 transition-all duration-300 btn-hover">
                   <input
                     type="radio"
                     name="userType"
@@ -158,8 +158,8 @@ export default function UserIdentificationModal({
                     className="mr-3"
                   />
                   <div>
-                    <div className="font-medium">I'm new here</div>
-                    <div className="text-sm text-gray-500">I want to provide feedback and join the community</div>
+                    <div className="font-medium text-white">I'm new here</div>
+                    <div className="text-sm text-white/70">I want to provide feedback and join the community</div>
                   </div>
                 </label>
               </div>
@@ -192,7 +192,7 @@ export default function UserIdentificationModal({
           {step === 'existing' && (
             <form onSubmit={handleExistingUserSubmit} className="space-y-4">
               <div>
-                <label htmlFor="existing-email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="existing-email" className="block text-sm font-medium text-white mb-2">
                   Email Address
                 </label>
                 <input
@@ -202,7 +202,7 @@ export default function UserIdentificationModal({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900"
+                  className="w-full px-3 py-2 border border-white/20 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-white bg-white/10 input-focus"
                 />
               </div>
 
@@ -210,14 +210,14 @@ export default function UserIdentificationModal({
                 <button
                   type="button"
                   onClick={() => setStep('select')}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  className="px-4 py-2 text-white/70 hover:text-white btn-hover"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading || !email.trim()}
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed btn-hover"
                 >
                   {isLoading ? 'Looking up...' : 'Look up my account'}
                 </button>

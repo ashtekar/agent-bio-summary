@@ -172,7 +172,7 @@ export function Settings() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-600">Loading settings...</div>
+        <div className="text-lg text-white/80">Loading settings...</div>
       </div>
     )
   }
@@ -180,8 +180,8 @@ export function Settings() {
   return (
     <div className="space-y-6">
       {/* Email Recipients */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Email Recipients</h2>
+      <div className="bg-white/10 backdrop-blur-md rounded-lg card-shadow p-6 fade-in">
+        <h2 className="text-lg font-semibold text-white mb-4">Email Recipients</h2>
         
         {/* Add New Recipient */}
         <div className="flex space-x-4 mb-6">
@@ -190,18 +190,18 @@ export function Settings() {
             placeholder="Email address"
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            className="flex-1 px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
           />
           <input
             type="text"
             placeholder="Name"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            className="flex-1 px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
           />
           <button
             onClick={addEmailRecipient}
-            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Add
           </button>
@@ -210,17 +210,17 @@ export function Settings() {
         {/* Recipients List */}
         <div className="space-y-3">
           {emailRecipients.map((recipient) => (
-            <div key={recipient.id} className="flex items-center justify-between p-3 border rounded-lg">
+            <div key={recipient.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300">
               <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
                   checked={recipient.is_active}
                   onChange={() => toggleRecipientActive(recipient.id)}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-blue-400 focus:ring-blue-400 border-white/30 rounded"
                 />
                 <div>
-                  <p className="font-medium text-gray-900">{recipient.name}</p>
-                  <p className="text-sm text-gray-500">{recipient.email}</p>
+                  <p className="font-medium text-white">{recipient.name}</p>
+                  <p className="text-sm text-white/70">{recipient.email}</p>
                 </div>
               </div>
               <button
@@ -235,59 +235,59 @@ export function Settings() {
       </div>
 
       {/* Search Sites */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Search Sites</h2>
-        <p className="text-sm text-gray-600 mb-4">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg card-shadow p-6 fade-in">
+        <h2 className="text-lg font-semibold text-white mb-4">Search Sites</h2>
+        <p className="text-sm text-white/80 mb-4">
           Configure which websites should be searched for articles. At least one site must be active for search to work.
         </p>
         <SearchSiteSelector />
       </div>
 
       {/* Search Settings */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Search Settings</h2>
+      <div className="bg-white/10 backdrop-blur-md rounded-lg card-shadow p-6 fade-in">
+        <h2 className="text-lg font-semibold text-white mb-4">Search Settings</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Time Window (hours)
             </label>
             <input
               type="number"
               value={searchSettings.time_window_hours}
               onChange={(e) => setSearchSettings({...searchSettings, time_window_hours: parseInt(e.target.value)})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Max Articles
             </label>
             <input
               type="number"
               value={searchSettings.max_articles}
               onChange={(e) => setSearchSettings({...searchSettings, max_articles: parseInt(e.target.value)})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             />
           </div>
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white/90 mb-2">
             Relevance Score Threshold
           </label>
           <select
             value={searchSettings.relevance_threshold}
             onChange={e => setSearchSettings({ ...searchSettings, relevance_threshold: parseFloat(e.target.value) })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
           >
             <option value={8.0}>🟢 Very Strict (8.0+) - Only the most relevant articles</option>
             <option value={6.0}>🟡 High Quality (6.0+) - Recommended</option>
             <option value={4.0}>🟠 Broader Coverage (4.0+)</option>
             <option value={0.0}>⚫ All Articles (0.0+) - No filtering</option>
           </select>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-white/70 mt-1">
             {searchSettings.relevance_threshold === 8.0 && 'Only articles with a relevance score of 8.0 or higher will be included. This is very strict and ensures only the most relevant articles are selected.'}
             {searchSettings.relevance_threshold === 6.0 && 'Only articles with a relevance score of 6.0 or higher will be included. This is recommended for high quality and relevance.'}
             {searchSettings.relevance_threshold === 4.0 && 'Articles with a relevance score of 4.0 or higher will be included. This allows for broader coverage, including some tangential content.'}
@@ -296,44 +296,44 @@ export function Settings() {
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white/90 mb-2">
             Keywords (comma-separated)
           </label>
           <input
             type="text"
             value={searchSettings.keywords.join(', ')}
             onChange={(e) => setSearchSettings({...searchSettings, keywords: e.target.value.split(',').map(k => k.trim())})}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             placeholder="synthetic biology, CRISPR, gene editing"
           />
         </div>
       </div>
 
       {/* System Settings */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">System Settings</h2>
+      <div className="bg-white/10 backdrop-blur-md rounded-lg card-shadow p-6 fade-in">
+        <h2 className="text-lg font-semibold text-white mb-4">System Settings</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Schedule Time
             </label>
             <input
               type="time"
               value={systemSettings.schedule_time}
               onChange={(e) => setSystemSettings({...systemSettings, schedule_time: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Summary Length
             </label>
             <select
               value={systemSettings.summary_length}
               onChange={(e) => setSystemSettings({...systemSettings, summary_length: e.target.value as any})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             >
               <option value="short">Short</option>
               <option value="medium">Medium</option>
@@ -343,13 +343,13 @@ export function Settings() {
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white/90 mb-2">
             OpenAI Model
           </label>
           <select
             value={systemSettings.openai_model}
             onChange={(e) => setSystemSettings({...systemSettings, openai_model: e.target.value})}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
           >
             <option value="gpt-4o-mini">GPT-4o Mini (Recommended)</option>
             <option value="gpt-4o">GPT-4o</option>
@@ -362,7 +362,7 @@ export function Settings() {
             <option value="gpt-5-nano">GPT-5 Nano</option>
             <option value="gpt-5-nano-2025-08-07">GPT-5 Nano (Latest)</option>
           </select>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-white/70 mt-1">
             Select the OpenAI model for generating summaries. GPT-4o Mini offers the best balance of quality and cost.
           </p>
         </div>
@@ -373,29 +373,29 @@ export function Settings() {
               type="checkbox"
               checked={systemSettings.include_images}
               onChange={(e) => setSystemSettings({...systemSettings, include_images: e.target.checked})}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              className="h-4 w-4 text-blue-400 focus:ring-blue-400 border-white/30 rounded"
             />
-            <span className="ml-2 text-sm text-gray-700">Include images in email summaries</span>
+            <span className="ml-2 text-sm text-white/90">Include images in email summaries</span>
           </label>
         </div>
       </div>
 
       {/* A/B Comparison Settings */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">🔬 A/B Comparison Settings</h2>
-        <p className="text-sm text-gray-600 mb-4">
+      <div className="bg-white/10 backdrop-blur-md rounded-lg card-shadow p-6 fade-in">
+        <h2 className="text-lg font-semibold text-white mb-4">🔬 A/B Comparison Settings</h2>
+        <p className="text-sm text-white/80 mb-4">
           Configure the advanced model used for A/B comparison testing. These settings affect the quality and cost of comparison summaries.
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Advanced Model for Comparison
             </label>
             <select
               value={systemSettings.comparison_model}
               onChange={(e) => setSystemSettings({...systemSettings, comparison_model: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             >
               <option value="gpt-5">GPT-5 (Latest & Most Capable)</option>
               <option value="gpt-5o">GPT-5o (Fast & Efficient)</option>
@@ -404,13 +404,13 @@ export function Settings() {
               <option value="claude-3-5-sonnet">Claude 3.5 Sonnet (Alternative)</option>
               <option value="gemini-2.0-flash">Gemini 2.0 Flash (Google)</option>
             </select>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-white/70 mt-1">
               Select the advanced model to compare against the current model in A/B tests.
             </p>
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white/90 mb-2">
               Max Tokens per Summary
             </label>
             <input
@@ -419,16 +419,16 @@ export function Settings() {
               onChange={(e) => setSystemSettings({...systemSettings, comparison_max_tokens: parseInt(e.target.value)})}
               min="100"
               max="1000"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
+              className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             />
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-white/70 mt-1">
               Maximum length of comparison summaries (100-1000 tokens).
             </p>
           </div>
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white/90 mb-2">
             Temperature: {systemSettings.comparison_temperature}
           </label>
           <input
@@ -440,12 +440,12 @@ export function Settings() {
             onChange={(e) => setSystemSettings({...systemSettings, comparison_temperature: parseFloat(e.target.value)})}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-white/70 mt-1">
             <span>Focused (0.0)</span>
             <span>Balanced (0.5)</span>
             <span>Creative (1.0)</span>
           </div>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-white/70 mt-2">
             Lower values produce more focused, consistent summaries. Higher values add more creativity and variety.
           </p>
         </div>
@@ -471,7 +471,7 @@ export function Settings() {
         <button
           onClick={saveSettings}
           disabled={saving}
-          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? 'Saving...' : 'Save Settings'}
         </button>

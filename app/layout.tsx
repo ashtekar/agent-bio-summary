@@ -20,15 +20,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <UserSessionProvider>
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-            <header className="bg-white shadow-sm border-b">
+          <div className="min-h-screen gradient-bg">
+            <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center py-6">
                   <div className="flex items-center">
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-white">
                       AgentBioSummary
                     </h1>
-                    <span className="ml-2 text-sm text-gray-500">
+                    <span className="ml-2 text-sm text-white/80">
                       Synthetic Biology Daily Digest
                     </span>
                   </div>
