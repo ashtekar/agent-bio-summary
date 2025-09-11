@@ -1,8 +1,17 @@
 # AgentBioSummary
 
-**Version:** 1.3.2 | **Latest Release:** September 2025
+**Version:** 1.3.3 | **Latest Release:** September 2025
 
 An automated agent system that performs daily web searches for synthetic biology content, creates easy to understand summaries using OpenAI models, and sends this summary via email. The system then uses human evals as feedback to fine tune the OpenAI model to generate better summaries in the future.
+
+## 🎉 What's New in v1.3.3
+
+### 🌙 **Complete Dark Theme Implementation**
+- **Comprehensive Dark Theme** - Full dark theme implementation across all components and pages
+- **Modern UI Design** - Consistent dark color scheme with proper contrast ratios
+- **Enhanced Form Styling** - Solid black form input backgrounds for better readability
+- **Component Consistency** - Unified dark theme across Dashboard, Settings, SearchSiteSelector, and all feedback components
+- **Professional Appearance** - Modern, clean interface with Inter font integration
 
 ## 🎉 What's New in v1.3.2
 
@@ -52,7 +61,7 @@ An automated agent system that performs daily web searches for synthetic biology
 - **Fixed A/B Comparison Flow** - Comparison flow now triggers automatically after authentication
 - **Fixed Email Feedback** - Email feedback links now work correctly with the new session-based system
 
-[📋 Full Release Notes](RELEASE_NOTES_V1.3.md) | [📋 v1.3.1 Release Notes](RELEASE_NOTES_V1.3.1.md)
+[📋 Full Release Notes](RELEASE_NOTES_V1.3.md) | [📋 v1.3.1 Release Notes](RELEASE_NOTES_V1.3.1.md) | [📋 v1.3.2 Release Notes](RELEASE_NOTES_V1.3.2.md) | [📋 v1.3.3 Release Notes](RELEASE_NOTES_V1.3.3.md)
 
 ## 🎯 Project Overview
 
