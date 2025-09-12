@@ -145,7 +145,7 @@ export class WebSearchModule {
             publishedDate: new Date().toISOString(), // Google API doesn't always provide dates
             content: item.snippet || '',
             summary: item.snippet || '',
-            relevanceScore: this.calculateRelevanceScore(item.title, item.snippet),
+            relevanceScore: this.calculateRelevanceScore(item.title, item.snippet, this.settings.keywords),
             keywords: this.extractKeywords(item.title + ' ' + item.snippet)
           }
           
@@ -196,7 +196,7 @@ export class WebSearchModule {
             publishedDate: new Date().toISOString(),
             content: abstract,
             summary: abstract.substring(0, 200) + '...',
-            relevanceScore: this.calculateRelevanceScore(title, abstract),
+            relevanceScore: this.calculateRelevanceScore(title, abstract, this.settings.keywords),
             keywords: this.extractKeywords(title + ' ' + abstract)
           })
         }
@@ -236,7 +236,7 @@ export class WebSearchModule {
             publishedDate: published,
             content: summary,
             summary: summary.substring(0, 200) + '...',
-            relevanceScore: this.calculateRelevanceScore(title, summary),
+            relevanceScore: this.calculateRelevanceScore(title, summary, this.settings.keywords),
             keywords: this.extractKeywords(title + ' ' + summary)
           })
         }
@@ -279,7 +279,7 @@ export class WebSearchModule {
             publishedDate: new Date().toISOString(),
             content: summary,
             summary: summary.substring(0, 200) + '...',
-            relevanceScore: this.calculateRelevanceScore(title, summary),
+            relevanceScore: this.calculateRelevanceScore(title, summary, this.settings.keywords),
             keywords: this.extractKeywords(title + ' ' + summary)
           })
         }
@@ -292,18 +292,12 @@ export class WebSearchModule {
     return articles
   }
 
-  private calculateRelevanceScore(title: string, content: string): number {
+  private calculateRelevanceScore(title: string, content: string, keywords: string[]): number {
     const text = (title + ' ' + content).toLowerCase()
     let score = 0
 
-    // Check for synthetic biology keywords
-    const syntheticBiologyKeywords = [
-      'synthetic biology', 'molecular biology', 'cellular biology','genetic engineering',
-      'crispr', 'gene editing', 'bioengineering', 'biotechnology', 'mRNA', 'CRISPR',
-      'metabolic engineering', 'synthetic genome', 'synthetic cell'
-    ]
-
-    syntheticBiologyKeywords.forEach(keyword => {
+    // Check for database keywords
+    keywords.forEach(keyword => {
       const count = (text.match(new RegExp(keyword, 'gi')) || []).length
       score += count * 2
     })
