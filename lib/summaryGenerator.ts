@@ -5,6 +5,14 @@ function isGpt5Model(model: string) {
   return model.startsWith('gpt-5') || model.startsWith('gpt-5o')
 }
 
+function isFineTunedModel(model: string) {
+  return model.startsWith('ft:')
+}
+
+function isAdvancedModel(model: string) {
+  return isGpt5Model(model) || isFineTunedModel(model)
+}
+
 export class SummaryGenerator {
   private openai: OpenAI
   private targetAudience: string
@@ -52,7 +60,7 @@ export class SummaryGenerator {
           }
         ]
       }
-      if (isGpt5Model(this.model)) {
+      if (isAdvancedModel(this.model)) {
         params.max_completion_tokens = 1000
         // Do not set temperature for GPT-5 models
       } else {
@@ -116,7 +124,7 @@ export class SummaryGenerator {
           }
         ]
       }
-      if (isGpt5Model(this.model)) {
+      if (isAdvancedModel(this.model)) {
         params.max_completion_tokens = 2000
         // Do not set temperature for GPT-5 models
       } else {
@@ -185,7 +193,7 @@ export class SummaryGenerator {
           }
         ]
       }
-      if (isGpt5Model(this.model)) {
+      if (isAdvancedModel(this.model)) {
         params.max_completion_tokens = 500
         // Do not set temperature for GPT-5 models
       } else {
@@ -212,7 +220,7 @@ export class SummaryGenerator {
       console.log(`Article content length: ${article.content?.length || 0}`)
       
       // Truncate content if it's too long for GPT-5
-      const maxContentLength = isGpt5Model(this.model) ? 8000 : 4000
+      const maxContentLength = isAdvancedModel(this.model) ? 8000 : 4000
       const truncatedContent = article.content?.length > maxContentLength 
         ? article.content.substring(0, maxContentLength) + '...'
         : article.content
@@ -251,7 +259,7 @@ export class SummaryGenerator {
           }
         ]
       }
-      if (isGpt5Model(this.model)) {
+      if (isAdvancedModel(this.model)) {
         // For GPT-5, don't set max_completion_tokens as it causes reasoning-only mode
         // Let GPT-5 generate naturally without token limits
         console.log('Using GPT-5 without max_completion_tokens to avoid reasoning-only mode')
@@ -343,7 +351,7 @@ export class SummaryGenerator {
           }
         ]
       }
-      if (isGpt5Model(this.model)) {
+      if (isAdvancedModel(this.model)) {
         // For GPT-5, don't set max_completion_tokens as it causes reasoning-only mode
         // Let GPT-5 generate naturally without token limits
         console.log('Using GPT-5 without max_completion_tokens to avoid reasoning-only mode')
