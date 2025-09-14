@@ -352,6 +352,7 @@ export function Settings() {
             className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
           >
             <option value="gpt-4o-mini">GPT-4o Mini (Recommended)</option>
+            <option value="ft:gpt-4.1-nano-2025-04-14:personal::CFRUvxM1">GPT-4.1 Nano Fine-Tuned (Custom)</option>
             <option value="gpt-4o">GPT-4o</option>
             <option value="gpt-4-turbo">GPT-4 Turbo</option>
             <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
@@ -398,6 +399,7 @@ export function Settings() {
               className="w-full px-3 py-2 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-white bg-white/10 input-focus"
             >
               <option value="gpt-5">GPT-5 (Latest & Most Capable)</option>
+              <option value="ft:gpt-4.1-nano-2025-04-14:personal::CFRUvxM1">GPT-4.1 Nano Fine-Tuned (Custom)</option>
               <option value="gpt-5o">GPT-5o (Fast & Efficient)</option>
               <option value="gpt-4o">GPT-4o (High Quality)</option>
               <option value="gpt-4-turbo">GPT-4 Turbo (Balanced)</option>
